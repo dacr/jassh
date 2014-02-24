@@ -1,0 +1,71 @@
+#!/bin/sh
+exec java -jar jassh.jar "$0" "$@"
+!#
+// jassh.jar can be downloaded here : http://code.google.com/p/janalyse-ssh/
+
+import jassh._
+
+import concurrent._
+import duration._
+import scala.util._
+
+val parallelismLevel=if (args.size>0) args(0).toInt else 50
+
+/* For local test : 
+ * /etc/ssh/sshd_config
+ *    Increase : 
+ *       MaxStartups 10  -> 60   (parallelismLevel + delta)
+ *       MaxSessions 10  -> 10   no change, because just 1 session / connection is used
+ * 
+ * The restart sshd
+ */
+
+val remotehosts = (1 to 1000) map { num =>
+  SSHOptions("127.0.0.1", username="test", password="testtest", name=Some(s"host#$num"))
+}
+
+
+// -----------------------------------------------------------------------
+// For ForkJoinPool JDK >= 7 Required Await.ready mandatory in that case
+//implicit val customEC = ExecutionContext.fromExecutorService(
+//    new java.util.concurrent.ForkJoinPool(parallelismLevel)
+//)
+
+// -----------------------------------------------------------------------
+// For any JDK >= 5
+import java.util.concurrent.{ Executors, ThreadPoolExecutor, TimeUnit }
+implicit val customEC = ExecutionContext.fromExecutorService(
+  Executors.newCachedThreadPool() match {
+    case e: ThreadPoolExecutor =>
+      e.setCorePoolSize(parallelismLevel)
+      //Too allow a quick exit from this script because default value is 60s
+      e.setKeepAliveTime(2, TimeUnit.SECONDS)
+      e
+    case x => x
+  }
+)
+// -----------------------------------------------------------------------
+
+
+
+val futuresResults = remotehosts.map { rh =>
+  future {
+    SSH.once(rh) { ssh =>
+      ssh.execute(s"""sleep 1 ; echo 'Hello from ${rh.name getOrElse "default"}'""")
+    }
+  }
+}
+
+//futuresResults.foreach( _ onSuccess { case x:String => println(x)})
+
+val allFuture = Future.sequence(futuresResults)
+
+allFuture onComplete { _ match {
+    case Failure(err) => println(err.getMessage)
+    case Success(messages) => println(messages.size)
+  }
+}
+
+// May me mandatory to avoid exit before the end of processing (depends of used ExecutionContext)
+// (Mandatory with ForkJoinPool)
+//Await.ready(allFuture, Duration.Inf)

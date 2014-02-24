@@ -1,0 +1,14 @@
+*.jar
+*.class
+dist/*
+target/
+*.pscala
+*~
+.classpath
+.project
+.cache
+.settings
+images/
+*.png
+nohup.out
+

@@ -1,0 +1,14 @@
+#!/bin/sh
+exec java -jar jassh.jar "$0" "$@"
+!#
+val host=if (args.size>0) args(0) else "localhost"
+val user=if (args.size>1) args(1) else util.Properties.userName
+val freq=if (args.size>2) args(2) else "2"
+val numb=if (args.size>3) args(3) else "10"
+val vmstatcmd="vmstat %s %s".format(freq, numb)
+
+import fr.janalyse.ssh._
+
+SSH.once(host, user)  {
+  _.run(vmstatcmd, {case ExecPart(content) => println(content) case _ => }).waitForEnd
+}

@@ -1,0 +1,41 @@
+#!/bin/sh
+exec java -jar jassh.jar "$0" "$@"
+!#
+// jassh.jar can be downloaded here : http://code.google.com/p/janalyse-ssh/
+
+import jassh._
+import concurrent._
+import duration._
+import scala.util._
+
+val remotehosts = (1 to 10) map { num =>
+  SSHOptions("127.0.0.1", username="test", password="testtest", name=Some(s"host#$num"))
+}
+
+// Custom executor, with this executor no need for a final Await.ready
+import java.util.concurrent.{ Executors, ThreadPoolExecutor, TimeUnit }
+implicit val customEC = ExecutionContext.fromExecutorService(
+  Executors.newCachedThreadPool() match {
+    case e: ThreadPoolExecutor =>
+      //Too allow a quick exit from this script because default value is 60s
+      e.setKeepAliveTime(2, TimeUnit.SECONDS)
+      e
+    case x => x
+  }
+)
+
+val futures = remotehosts.map { rh =>
+  future {
+    SSH.once(rh) { ssh =>
+      ssh.execute(s"""sleep 1 ; echo 'Hello from ${rh.name getOrElse "default"}'""")
+    }
+  }
+}
+
+val onefuture = Future.sequence(futures)
+
+onefuture onComplete {
+   case Failure(err) => println(err.getMessage)
+   case Success(messages) => println(messages.mkString("\n"))
+}
+
