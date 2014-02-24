@@ -12,12 +12,12 @@ This API is [JSCH](http://www.jcraft.com/jsch/) based. Interfaces are stable. Ma
 
 **Declare dependency in SBT as follow** :
 ```
-{{{libraryDependencies += "fr.janalyse"   %% "janalyse-ssh" % "0.9.10" % "compile"}}}
+libraryDependencies += "fr.janalyse"   %% "janalyse-ssh" % "0.9.10" % "compile"
 ```
 
 **Add JAnalyse repository in SBT as follow** :
 ```
-{{{resolvers += "JAnalyse Repository" at "http://www.janalyse.fr/repository/"}}}
+resolvers += "JAnalyse Repository" at "http://www.janalyse.fr/repository/"
 ```
 
 ----
