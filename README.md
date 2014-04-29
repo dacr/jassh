@@ -1,5 +1,7 @@
 #JASSH - SCALA SSH API#
 
+[![Build Status](https://travis-ci.org/dacr/jassh.png?branch=master)](https://travis-ci.org/dacr/jassh)
+
 High level scala SSH API for easy and fast operations on remote servers.
 
 This API is [JSCH](http://www.jcraft.com/jsch/) based. Interfaces are stable. Many helper functions are provided to simplify unix operations [ps, ls, cat, kill, find, ...](http://www.janalyse.fr/scaladocs/janalyse-ssh/#fr.janalyse.ssh.ShellOperations), an other goal of this API is to create an unix abstraction layer (Linux, Aix, Solaris, Darwin, ...).
