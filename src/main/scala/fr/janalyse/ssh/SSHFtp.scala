@@ -4,10 +4,10 @@ import com.jcraft.jsch.{ChannelSftp, SftpException}
 import java.io._
 import java.nio.charset.Charset
 import scala.io.BufferedSource
-import com.typesafe.scalalogging.slf4j.Logging
+import com.typesafe.scalalogging.slf4j.LazyLogging
 
 
-class SSHFtp(implicit ssh: SSH) extends TransfertOperations with Logging {
+class SSHFtp(implicit ssh: SSH) extends TransfertOperations with LazyLogging {
   private val channel: ChannelSftp = {
     //jschftpchannel.connect(link.connectTimeout)
     val ch = ssh.jschsession.openChannel("sftp").asInstanceOf[ChannelSftp]

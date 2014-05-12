@@ -16,7 +16,7 @@
 
 package fr.janalyse.ssh
 
-import com.typesafe.scalalogging.slf4j.Logging
+import com.typesafe.scalalogging.slf4j.LazyLogging
 import java.text.SimpleDateFormat
 import java.util.Date
 import scala.collection.generic.CanBuildFrom
@@ -25,7 +25,7 @@ import java.util.Locale
 /**
  * ShellOperations defines generic shell operations and common shell commands shortcuts
  */
-trait ShellOperations extends CommonOperations with Logging {
+trait ShellOperations extends CommonOperations with LazyLogging {
 
   /**
    * Execute the current command and return the result as a string

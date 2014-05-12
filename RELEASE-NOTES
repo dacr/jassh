@@ -43,6 +43,9 @@ Remarks & caveats:
 ------------------------------------------------------------------
 PERFORMANCES STATUS
 
+2014-05-12
+  - zorglub  : 539.8 c/s - 87.0 Mb/s (macosx 10.9.2 - java hotspot 1.7.0_51 64b - OpenSSH_6.2p2, OSSLShim 0.9.8r)
+
 2014-01-20
   - zorglub  : 507.2 c/s - 87.2 Mb/s (macosx 10.9.1 - java hotspot 1.7.0_40 64b - OpenSSH_6.2p2, OSSLShim 0.9.8r)
 
@@ -79,6 +82,15 @@ TODO LIST :
  - TODO : manage when sftp submodule is not available => throw the right exception
  - TODO : add sudo support / with password prompt recognition...
  
+------------------------------------------------------------------
+0.9.13 (2014-05-31)
+
+ - scala 2.11 support added
+ - scala-logging-slf4j 2.1.2
+ - scala-io 0.4.3
+ - scalatest 2.1.5
+ - jsch 0.1.51
+ - and various impact changes
 
 ------------------------------------------------------------------
 0.9.12 (2014-01-20)
