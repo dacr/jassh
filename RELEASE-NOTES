@@ -83,6 +83,14 @@ TODO LIST :
  - TODO : manage when sftp submodule is not available => throw the right exception
  - TODO : add sudo support / with password prompt recognition...
  
+
+------------------------------------------------------------------
+0.9.14 IN PROGRESS
+
+ - small test fix on test shell command
+ - pull request merged :
+   add Travis CI configuration file from zaneli authored on 29 Apr
+
 ------------------------------------------------------------------
 0.9.13 (2014-05-31)
 
