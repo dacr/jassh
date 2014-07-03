@@ -38,7 +38,7 @@ class CompressedTransfertTest extends FunSuite with ShouldMatchers with SomeHelp
     val content = "Hello world"
     val testedfile = "testme-tobecompressed.txt"
     val gztestedfile = testedfile + ".gz"
-    val gztestedfileMD5 = "00ec8273ecfb3c36b7e3c711f0628f8e"
+    val gztestedfileMD5 = "38570c70a362855368dd8c5f25a157f7"
       
     SSH.ftp(sshopts) { _.put(content, testedfile) }
     SSH.ftp(sshopts) { _.get(testedfile) } should equal(Some(content))
