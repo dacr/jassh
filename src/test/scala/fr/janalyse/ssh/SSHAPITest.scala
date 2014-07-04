@@ -496,5 +496,14 @@ class SSHAPITest extends FunSuite with ShouldMatchers with SomeHelp {
       sh.rmdir("truc"::Nil)
     }
   }
+
+  //==========================================================================================================
+  test("fred test") {
+    SSH.shell(sshopts) {sh =>
+      sh.execute("who") should include("test")
+    }
+  }
+
+  
 }
 
