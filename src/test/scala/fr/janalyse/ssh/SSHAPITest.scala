@@ -216,7 +216,7 @@ class SSHAPITest extends FunSuite with ShouldMatchers with SomeHelp {
   //==========================================================================================================
   test("Simplified persistent ssh shell usage") {
     SSH.shell("localhost", "test") { sh =>
-      sh.execute("ls")
+      sh.execute("ls -la")
       sh.execute("uname")
     }
   }
