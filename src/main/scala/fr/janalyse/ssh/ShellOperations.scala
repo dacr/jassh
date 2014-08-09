@@ -46,6 +46,7 @@ trait ShellOperations extends CommonOperations with LazyLogging {
    * @param cmds batch to be executed
    * @return result string collection
    */
+  @deprecated("","0.9.14")
   def executeAll(cmds: SSHBatch): Iterable[String] = cmds.cmdList.map(execute(_))
 
   /**
@@ -53,6 +54,7 @@ trait ShellOperations extends CommonOperations with LazyLogging {
    * @param commands commands collection
    * @return commands executions results collection
    */
+  @deprecated("","0.9.14")
   def execute[I <: Iterable[String]](commands: I)(implicit bf: CanBuildFrom[I, String, I]): I = {
     var builder = bf()
     for (cmd <- commands) builder += execute(cmd)
@@ -64,6 +66,7 @@ trait ShellOperations extends CommonOperations with LazyLogging {
    * @param cmd command to be executed
    * @param cont continuation code
    */
+  @deprecated("","0.9.14")
   def executeAndContinue(cmd: SSHCommand, cont: String => Unit): Unit = cont(execute(cmd))
 
   /**
@@ -85,6 +88,7 @@ trait ShellOperations extends CommonOperations with LazyLogging {
    * @param cmds batch to be executed
    * @return result trimmed string collection
    */
+  @deprecated("","0.9.14")
   def executeAllAndTrim(cmds: SSHBatch) = executeAll(cmds.cmdList) map { _.trim }
 
   /**
@@ -92,8 +96,17 @@ trait ShellOperations extends CommonOperations with LazyLogging {
    * @param cmds batch to be executed
    * @return result trimmed splitted string collection
    */
+  @deprecated("","0.9.14")
   def executeAllAndTrimSplit(cmds: SSHBatch) = executeAll(cmds.cmdList) map { _.trim.split("\r?\n") }
 
+  /**
+   * Disable shell history
+   */
+  def disableHistory() {
+    execute("unset HISTFILE")
+    execute("HISTSIZE=0")
+  }
+  
   /**
    * Remote file size in bytes
    * @param filename file name
@@ -112,18 +125,16 @@ trait ShellOperations extends CommonOperations with LazyLogging {
     osid match {
       case Linux =>
         // 2013-02-27 18:08:51.252312190 +0100
-        val sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S Z")
-        /*
-        genoptcmd(s"""ls -ld --full-time "$filename" """)
-          .map { line =>
-            val strdate = line.split("""\s+""")
-              .drop(5)
-              .take(3)
-              .mkString(" ")
-            fullTimeSDF.parse(strdate)
-          }
-          */
-        genoptcmd(s"""stat -c '%y' '$filename' """).map { sdf.parse(_) }
+        val lmLinuxSDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S Z")
+        genoptcmd(s"""stat -c '%y' '$filename' """)
+           .map { lmLinuxSDF.parse(_) }
+      
+      case Darwin =>
+        // Modify: 2014-07-03 21:43:08 CEST
+        val lmDarwinSDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z")
+        genoptcmd(s"""stat -t '%Y-%m-%d %H:%M:%S %Z' -x '$filename' | grep Modify""")
+           .map {_.split(":",2).drop(1).mkString.trim }
+           .map { lmDarwinSDF.parse(_)}
         
       case AIX =>
         // Last modified:  Fri Apr 30 09:10:22 DFT 2010
@@ -136,6 +147,7 @@ trait ShellOperations extends CommonOperations with LazyLogging {
       case _ => ???
     }
   }
+  
 
   /**
    * Remote tree file size in kilobytes
@@ -472,12 +484,22 @@ trait ShellOperations extends CommonOperations with LazyLogging {
   def kill(pids: Iterable[Int]) { execute(s"""kill -9 ${pids.mkString(" ")}""") }
 
   /**
+   * delete a file
+   */
+  def rm(file: String) { rm(file::Nil) }
+
+  /**
    * delete files
    */
   def rm(files: Iterable[String]) { execute(s"""rm -f ${files.mkString("'", "' '", "'")}""") }
 
   /**
-   * delete directory (directory must be empty
+   * delete directory (directory must be empty)
+   */
+  def rmdir(dir: String) { rmdir(dir::Nil)}
+  
+  /**
+   * delete directories (directories must be empty)
    */
   def rmdir(dirs: Iterable[String]) { execute(s"""rmdir ${dirs.mkString("'", "' '", "'")}""") }
 

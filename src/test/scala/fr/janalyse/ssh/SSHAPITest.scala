@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 David Crosson
+ * Copyright 2014 David Crosson
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,10 +28,8 @@ import scala.collection.parallel.ForkJoinTaskSupport
 import org.scalatest.OptionValues._
 
 @RunWith(classOf[JUnitRunner])
-class SSHAPITest extends FunSuite with ShouldMatchers with SomeHelp {
-  
-  info(s"Those tests require to have a user named '${sshopts.username}' with password '${sshopts.password}' on ${sshopts.host}")
-  
+class SSHAPITest extends SomeHelp {
+    
   //==========================================================================================================
   test("One line exec with automatic resource close") {
     SSH.once(sshopts) { _.execute("expr 1 + 1").trim } should equal("2")
@@ -242,52 +240,6 @@ class SSHAPITest extends FunSuite with ShouldMatchers with SomeHelp {
   }
 
   //==========================================================================================================
-  test("helper methods") {
-    val testfile="sshapitest.dummy"
-    val testdir="sshapitest-dummydir"
-    def now = new java.util.Date()
-    val started = now
-    SSH.shell("localhost", "test") {sh =>
-      
-      // create a dummy file and dummy directory
-      sh.execute("echo -n 'toto' > %s".format(testfile))
-      sh.execute("mkdir -p %s".format(testdir))
-      val homedir = sh.executeAndTrim("pwd")
-      val rhostname = sh.executeAndTrim("hostname")
-      
-      // now tests the utilities methods
-      import sh._
-      uname.toLowerCase       should (equal("linux") or equal("darwin") or equal("aix") or equal("sunos"))
-      osname                  should (equal("linux") or equal("darwin") or equal("aix") or equal("sunos"))
-      osid                    should (equal(Linux) or equal(Darwin) or equal(AIX) or equal(SunOS))
-      env.size                should be > (0)
-      hostname                should equal(rhostname)
-      fileSize(testfile)      should equal(Some(4))
-      md5sum(testfile)        should equal(Some("f71dbe52628a3f83a77ab494817525c6"))
-      md5sum(testfile)        should equal(Some(SSHTools.md5sum("toto")))
-      sha1sum(testfile)       should equal(Some("0b9c2625dc21ef05f6ad4ddf47c5f203837aa32c"))
-      ls                      should contain(testfile)
-      cd(testdir)
-      pwd                     should equal(homedir+"/"+testdir)
-      cd
-      pwd                     should equal(homedir)
-      sh.test("1 = 1")        should equal(true)
-      sh.test("1 = 2")        should equal(false)
-      isFile(testfile)        should equal(true)
-      isDirectory(testfile)   should equal(false)
-      exists(testfile)        should equal(true)
-      isExecutable(testfile)  should equal(false)
-      findAfterDate(".", started) should (have size(1) or have size(2)) // Added 2 because of .bash_history
-      val reftime = now.getTime
-      date().getTime          should (be>(reftime-1000) and be<(reftime+1000))
-      fsFreeSpace("/tmp")     should be('defined)
-      fileRights("/tmp")      should be('defined)
-      ps().filter(_.cmdline contains "java").size should be >(0)
-      du("/bin").value        should be >(0L)
-    }
-  }
-
-  //==========================================================================================================
   test("file transfert performances (with content loaded in memory)") {
     val testfile="test-transfert"
       
@@ -484,16 +436,6 @@ class SSHAPITest extends FunSuite with ShouldMatchers with SomeHelp {
     SSH.shell(sshopts) {sh =>
       val (_, rc) = sh.executeWithStatus("(echo toto ; exit 3)")
       rc should equal(3)
-    }
-  }
-  
-  //==========================================================================================================
-  test("more ls test") {
-    SSH.shell(sshopts) {sh =>
-      sh.execute("rm -fr ~/truc")
-      sh.mkdir("truc")
-      sh.ls("truc").size should equal(0)
-      sh.rmdir("truc"::Nil)
     }
   }
 

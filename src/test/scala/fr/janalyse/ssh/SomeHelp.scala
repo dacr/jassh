@@ -1,12 +1,17 @@
 package fr.janalyse.ssh
 
-trait SomeHelp {
-  val sshopts = SSHOptions("127.0.0.1", username = "test", password = "testtest")
-  //val sshopts = SSHOptions("192.168.2.238", "test", password=Some("testtest"), port=22022)
-  //val sshopts = SSHOptions("www.janalyse.fr")
+import org.scalatest.FunSuite
+import org.scalatest.matchers.ShouldMatchers
 
+trait SomeHelp extends FunSuite with ShouldMatchers {
+  val sshopts = SSHOptions("127.0.0.1", username = "test", password = "testtest")
+
+  info(s"Those tests require to have a user named '${sshopts.username}' with password '${sshopts.password}' on ${sshopts.host}")
+  
   def f(filename: String) = new java.io.File(filename)
 
+  def now = new java.util.Date()
+  
   def howLongFor[T](what: => T) = {
     val begin = System.currentTimeMillis()
     val result = what

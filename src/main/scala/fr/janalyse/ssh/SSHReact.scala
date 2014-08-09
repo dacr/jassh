@@ -5,11 +5,14 @@ import com.jcraft.jsch.{ ChannelShell }
 import java.util.concurrent.ArrayBlockingQueue
 import scala.concurrent._
 
+
+
 class SSHReact(implicit ssh: SSH) extends ShellOperations {
   // ------------------------------------------------
   val options: fr.janalyse.ssh.SSHOptions = ssh.options
-  def execute(cmd: fr.janalyse.ssh.SSHCommand): String = ???
-  def executeWithStatus(cmd: fr.janalyse.ssh.SSHCommand): (String, Int) = ???
+  // ------------------------------------------------  
+  def execute(that: fr.janalyse.ssh.SSHCommand): String = ???
+  def executeWithStatus(that: fr.janalyse.ssh.SSHCommand): (String, Int) = ???
 
   // ------------------------------------------------
   def perform(that: SSHCommand)(implicit ctx: ExecutionContext): Future[String] = future {

@@ -88,8 +88,13 @@ TODO LIST :
 0.9.14 IN PROGRESS
 
  - small test fix on test shell command
- - pull request merged :
-   add Travis CI configuration file from zaneli authored on 29 Apr
+ - pull request merged : add Travis CI configuration file from zaneli authored on 29 Apr
+ - scala 2.11.2
+ - commons-compress 1.8.1
+ - ShellOperations : lastModified darwin implementation added + test case
+ - ShellOperations : disableHistory method added + test case
+ - ShellOperationsTest class added.
+ - small tests cleanup and improvements
 
 ------------------------------------------------------------------
 0.9.13 (2014-05-31)

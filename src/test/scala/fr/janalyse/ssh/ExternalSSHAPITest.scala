@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 David Crosson
+ * Copyright 2014 David Crosson
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class ExternalSSHAPITest extends FunSuite with ShouldMatchers  with fr.janalyse.ssh.SomeHelp {
+class ExternalSSHAPITest extends fr.janalyse.ssh.SomeHelp {
 
   info(s"Those tests require to have a user named '${sshopts.username}' with password '${sshopts.password}' on ${sshopts.host}")
 

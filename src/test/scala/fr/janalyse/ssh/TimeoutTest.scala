@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 David Crosson
+ * Copyright 2014 David Crosson
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,18 +18,10 @@
 package fr.janalyse.ssh
 
 import org.junit.runner.RunWith
-import org.scalatest.FunSuite
-import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.junit.JUnitRunner
-import scala.io.Source
-import scala.util.Properties
-import java.io.File
-import java.io.IOException
-import scala.collection.parallel.ForkJoinTaskSupport
-import org.scalatest.OptionValues._
 
 @RunWith(classOf[JUnitRunner])
-class TimeoutTest extends FunSuite with ShouldMatchers with SomeHelp  {
+class TimeoutTest extends SomeHelp  {
 
   info(s"Those tests require to have a user named '${sshopts.username}' with password '${sshopts.password}' on ${sshopts.host}")
   
