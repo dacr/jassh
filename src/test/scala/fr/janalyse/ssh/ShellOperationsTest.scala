@@ -111,7 +111,7 @@ class ShellOperationsTest extends SomeHelp {
   }
    
   // TODO : improvements to be done within shell engine
-  ignore("shell history test") {
+  test("shell history test") {
     SSH.shell(sshopts) {sh =>
       import sh._
       sh.execute("history")
