@@ -115,38 +115,39 @@ trait ShellOperations extends CommonOperations with LazyLogging {
   def fileSize(filename: String): Option[Long] =
     genoptcmd(s"""ls -ld "$filename" """).map(_.split("""\s+""")(4).toLong)
 
+
   /**
    * Remote file last modified date (TZ is taken into account)
    * @param filename file name
    * @return optional date, or None if filename was not found
    */
-
   def lastModified(filename: String): Option[Date] = {
     osid match {
+      // -------------------------------------------------------
       case Linux =>
         // 2013-02-27 18:08:51.252312190 +0100
-        val lmLinuxSDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S Z")
         genoptcmd(s"""stat -c '%y' '$filename' """)
            .map { lmLinuxSDF.parse(_) }
-      
+      // -------------------------------------------------------      
       case Darwin =>
         // Modify: 2014-07-03 21:43:08 CEST
-        val lmDarwinSDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z")
         genoptcmd(s"""stat -t '%Y-%m-%d %H:%M:%S %Z' -x '$filename' | grep Modify""")
            .map {_.split(":",2).drop(1).mkString.trim }
            .map { lmDarwinSDF.parse(_)}
-        
+      // -------------------------------------------------------
       case AIX =>
         // Last modified:  Fri Apr 30 09:10:22 DFT 2010
-        val sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.US)
         genoptcmd(s"""istat '$filename' | grep "Last modified" """)
           .map {_.split(":",2).drop(1).mkString.trim }
           .map {_.replaceFirst("DFT","CET")} // Because DFT is a specific AIX TZ naming for CET !!!
-          .map { sdf.parse(_) }
-
+          .map { lmAixSDF.parse(_) }
+      // -------------------------------------------------------
       case _ => ???
     }
   }
+  private val lmLinuxSDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S Z")
+  private val lmDarwinSDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z")
+  private val lmAixSDF = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.US)
   
 
   /**
@@ -274,9 +275,9 @@ trait ShellOperations extends CommonOperations with LazyLogging {
    */
   def date(): Date = {
     val d = executeAndTrim("date -u '+%Y-%m-%d %H:%M:%S %Z'")
-    sdf.parse(d)
+    dateSDF.parse(d)
   }
-  private lazy val sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z")
+  private lazy val dateSDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z")
 
   /**
    * Get the content of a file
