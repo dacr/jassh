@@ -5,48 +5,58 @@ import com.jcraft.jsch.{ ChannelShell }
 import java.util.concurrent.ArrayBlockingQueue
 import scala.concurrent._
 
-
-
 class SSHReact(implicit ssh: SSH) extends ShellOperations {
-  
+
   val options = ssh.options
-  
-  def react(that:SSHCommand, interactor: (Int,Producer)=>Unit):String = {
-    sendCommand(that.cmd)
-    fromServer.getResponse()
-  }
-  
-  override def execute(that: SSHCommand): String = {
-    sendCommand(that.cmd)
-    fromServer.getResponse()
-  }
 
+  private type Interactor = (Int, Producer) => Unit
+  private var currentInteractor: Option[Interactor] = None
 
-  override def executeWithStatus(that: SSHCommand): Tuple2[String,Int] = {
-    val result = execute(that)
-    val rc = executeAndTrim("echo $?").toInt
-    (result, rc)
-  }
+  def nopInteractor(ch: Int, producer: Producer) {}
 
- 
-  def become(someoneelse:String, password:Option[String]=None):Boolean = {
-    execute("LANG=en; export LANG")
-    sendCommand(s"su - ${someoneelse}")
-    Thread.sleep(2000)
-    try {
-      if (options.username != "root")
-        password.foreach {it => toServer.send(it) }
-    } finally {
-      shellInit()
+  def react(that: SSHCommand, interactor: Option[Interactor] = None): String = {
+    synchronized {
+      try {
+        currentInteractor = interactor
+        sendCommand(that.cmd)
+        fromServer.getResponse()
+      } finally {
+        currentInteractor = None
+      }
     }
-    whoami == someoneelse
   }
- 
-  
-  
-  
-  
-  private def createReadyMessage = "ready-" + System.currentTimeMillis() 
+
+  override def execute(that: SSHCommand): String = {
+    synchronized {
+      sendCommand(that.cmd)
+      fromServer.getResponse()
+    }
+  }
+
+  override def executeWithStatus(that: SSHCommand): Tuple2[String, Int] = {
+    synchronized {
+      val result = execute(that)
+      val rc = executeAndTrim("echo $?").toInt
+      (result, rc)
+    }
+  }
+
+  def become(someoneelse: String, password: Option[String] = None): Boolean = {
+    synchronized {
+      execute("LANG=en; export LANG")
+      sendCommand(s"su - ${someoneelse}")
+      Thread.sleep(2000)
+      try {
+        if (options.username != "root")
+          password.foreach { it => toServer.send(it) }
+      } finally {
+        shellInit()
+      }
+      whoami == someoneelse
+    }
+  }
+
+  private def createReadyMessage = "ready-" + System.currentTimeMillis()
   private val defaultPrompt = """_T-:+"""
   private val customPromptGiven = ssh.options.prompt.isDefined
   private val prompt = ssh.options.prompt getOrElse defaultPrompt
@@ -76,56 +86,54 @@ class SSHReact(implicit ssh: SSH) extends ShellOperations {
     channel.disconnect()
   }
 
- 
-
   private def shellInit() = {
-      if (ssh.options.prompt.isEmpty) {
-        // if no prompt is given we assume that a standard sh/bash/ksh shell is used
-        val readyMessage = createReadyMessage
-        fromServer.setReadyMessage(readyMessage)
-        toServer.send("unset LS_COLORS")
-        toServer.send("unset EDITOR")
-        toServer.send("unset PAGER")
-        toServer.send("COLUMNS=500")
-        toServer.send("PS1='%s'".format(defaultPrompt))
-        toServer.send("history -d $((HISTCMD-2)) && history -d $((HISTCMD-1))") // Previous command must be hidden
-        //toServer.sendCommand("set +o emacs")  // => Makes everything not working anymore, JSCH problem ?
-        //toServer.sendCommand("set +o vi") // => Makes everything not working anymore, JSCH problem ?
-        toServer.send("echo '%s'".format(readyMessage)) // ' are important to distinguish between the command and the result
-        fromServer.waitReady()
-        fromServer.getResponse() // ready response
-      } else {
-        fromServer.waitReady()
-        fromServer.getResponse() // For the initial prompt
-      }
+    if (ssh.options.prompt.isEmpty) {
+      // if no prompt is given we assume that a standard sh/bash/ksh shell is used
+      val readyMessage = createReadyMessage
+      fromServer.setReadyMessage(readyMessage)
+      toServer.send("unset LS_COLORS")
+      toServer.send("unset EDITOR")
+      toServer.send("unset PAGER")
+      toServer.send("COLUMNS=500")
+      toServer.send("PS1='%s'".format(defaultPrompt))
+      toServer.send("history -d $((HISTCMD-2)) && history -d $((HISTCMD-1))") // Previous command must be hidden
+      //toServer.sendCommand("set +o emacs")  // => Makes everything not working anymore, JSCH problem ?
+      //toServer.sendCommand("set +o vi") // => Makes everything not working anymore, JSCH problem ?
+      toServer.send("echo '%s'".format(readyMessage)) // ' are important to distinguish between the command and the result
+      fromServer.waitReady()
+      fromServer.getResponse() // ready response
+    } else {
+      fromServer.waitReady()
+      fromServer.getResponse() // For the initial prompt
+    }
   }
 
   private var doInit = true
   private def sendCommand(cmd: String): Unit = {
     if (doInit) {
       shellInit()
-      doInit = false    
+      doInit = false
     }
     toServer.send(cmd)
   }
   // -----------------------------------------------------------------------------------
   class Producer(output: OutputStream) {
-    private def sendChar(char:Int) {
+    private def sendChar(char: Int) {
       output.write(char)
       output.flush()
     }
-    private def sendString(cmd:String) {
+    private def sendString(cmd: String) {
       output.write(cmd.getBytes)
       nl()
       output.flush()
     }
-    def send(cmd: String) {sendString(cmd)}
-    
-    def break()  {sendChar(3)}  // Ctrl-C
-    def exit()   {sendChar(4)}  // Ctrl-D
-    def excape() {sendChar(27)} // ESC
-    def nl()     {sendChar(10)} // LF or NEWLINE or ENTER or Ctrl-J
-    def cr()     {sendChar(13)} // CR
+    def send(cmd: String) { sendString(cmd) }
+
+    def break() { sendChar(3) } // Ctrl-C
+    def exit() { sendChar(4) } // Ctrl-D
+    def excape() { sendChar(27) } // ESC
+    def nl() { sendChar(10) } // LF or NEWLINE or ENTER or Ctrl-J
+    def cr() { sendChar(13) } // CR
 
     def close() { output.close() }
   }
@@ -133,13 +141,13 @@ class SSHReact(implicit ssh: SSH) extends ShellOperations {
   // -----------------------------------------------------------------------------------
   class ConsumerOutputStream(checkReady: Boolean) extends OutputStream {
     import java.util.concurrent.TimeUnit
-    
+
     private val resultsQueue = new ArrayBlockingQueue[String](10)
 
     def hasResponse() = resultsQueue.size > 0
-    
+
     def getResponse(timeout: Long = ssh.options.timeout) = {
-      if (timeout==0L) resultsQueue.take()
+      if (timeout == 0L) resultsQueue.take()
       else {
         resultsQueue.poll(timeout, TimeUnit.MILLISECONDS) match {
           case null =>
@@ -155,10 +163,10 @@ class SSHReact(implicit ssh: SSH) extends ShellOperations {
       }
     }
 
-    def setReadyMessage(newReadyMessage:String) = {
+    def setReadyMessage(newReadyMessage: String) = {
       ready = checkReady
       readyMessage = newReadyMessage
-      readyMessageQuotePrefix="'"+newReadyMessage
+      readyMessageQuotePrefix = "'" + newReadyMessage
     }
     private var readyMessage = ""
     private var ready = checkReady
@@ -166,40 +174,44 @@ class SSHReact(implicit ssh: SSH) extends ShellOperations {
     def waitReady() {
       if (ready == false) readyQueue.take()
     }
-    private var readyMessageQuotePrefix="'"+readyMessage
-    private val promptEqualPrefix="="+prompt
+    private var readyMessageQuotePrefix = "'" + readyMessage
+    private val promptEqualPrefix = "=" + prompt
 
     private val consumerAppender = new StringBuilder(8192)
     private val promptSize = prompt.size
     private val lastPromptChars = prompt.reverse.take(2).reverse
     private var searchForPromptIndex = 0
-    
+
     /*
      * Take are the following is executed from an internal JSCH thread 
      */
     def write(b: Int) {
       if (b != 13) { //CR removed... CR is always added by JSCH !!!!
-        val ch=b.toChar
+        val ch = b.toChar
         consumerAppender.append(ch) // TODO - Add charset support
         if (!ready) { // We want the response and only the response, not the echoed command, that's why the quote is prefixed
-          if ( consumerAppender.endsWith(readyMessage) && 
-              !consumerAppender.endsWith(readyMessageQuotePrefix)) {
+          if (consumerAppender.endsWith(readyMessage) &&
+            !consumerAppender.endsWith(readyMessageQuotePrefix)) {
             // wait for at least some results, will tell us that the ssh cnx is ready
             ready = true
             readyQueue.put("ready")
           }
-        } else if (consumerAppender.endsWith(lastPromptChars)
-                   && consumerAppender.endsWith(prompt)
-                   && !consumerAppender.endsWith(promptEqualPrefix)) {
-          val promptIndex = consumerAppender.size - promptSize
-          val firstNlIndex = consumerAppender.indexOf("\n")
-          val result = consumerAppender.substring(firstNlIndex + 1, promptIndex)
-          resultsQueue.put(result)
-          searchForPromptIndex = 0
-          consumerAppender.clear
         } else {
-          searchForPromptIndex = consumerAppender.size - promptSize
-          if (searchForPromptIndex < 0) searchForPromptIndex = 0
+          if (consumerAppender.endsWith(lastPromptChars)
+            && consumerAppender.endsWith(prompt)
+            && !consumerAppender.endsWith(promptEqualPrefix)) {
+            val promptIndex = consumerAppender.size - promptSize
+            val firstNlIndex = consumerAppender.indexOf("\n")
+            val result = consumerAppender.substring(firstNlIndex + 1, promptIndex)
+            resultsQueue.put(result)
+            searchForPromptIndex = 0
+            consumerAppender.clear
+          } else {
+            currentInteractor.foreach{_(b, toServer)}
+            
+            searchForPromptIndex = consumerAppender.size - promptSize
+            if (searchForPromptIndex < 0) searchForPromptIndex = 0
+          }
         }
       }
     }

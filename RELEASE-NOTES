@@ -96,6 +96,9 @@ TODO LIST :
  - ShellOperationsTest class added.
  - small tests cleanup and improvements
  - shell history can now be processed
+ - SSHReact class first implementation, it allows you to interact with a running command
+   (for example send the password at the right moment, or enter values required by a read command)
+ - SSHReact test class added
 
 ------------------------------------------------------------------
 0.9.13 (2014-05-31)
