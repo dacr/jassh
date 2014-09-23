@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import scala.collection.generic.CanBuildFrom
 import java.util.Locale
+import scala.util.matching.Regex
 
 /**
  * ShellOperations defines generic shell operations and common shell commands shortcuts
@@ -100,7 +101,8 @@ trait ShellOperations extends CommonOperations with LazyLogging {
   def executeAllAndTrimSplit(cmds: SSHBatch) = executeAll(cmds.cmdList) map { _.trim.split("\r?\n") }
 
   /**
-   * Disable shell history
+   * Disable shell history, the goal is to not add noises to your shell history, to 
+   * keep your shell commands history clean.
    */
   def disableHistory() {
     execute("unset HISTFILE")
@@ -442,6 +444,13 @@ trait ShellOperations extends CommonOperations with LazyLogging {
   }
 
   /**
+   * get pid of all processes matching the given command line regular expression
+   */
+  def pidof(regex:Regex): List[Int] = {
+    ps().filter{p => regex.findFirstIn(p.cmd).isDefined}.map(_.pid)
+  }
+  
+  /**
    * File system remaining space in MB
    * @return fs freespace in Mb if the path is valid
    */
@@ -515,6 +524,16 @@ trait ShellOperations extends CommonOperations with LazyLogging {
    */
   def mkdir(dirname: String) { execute(s"""mkdir -p '$dirname'""") }
 
+  /**
+   * get host up time, example formats :
+   * Linux  : 21:34:17 up 33 min,  5 users,  load average: 0.18, 0.27, 0.30
+   *          21:29:38 up 473 days, 22:21,  1 user,  load average: 0.09, 0.04, 0.00
+   * Darwin : 21:28  up 53 mins, 3 users, load averages: 1.40 1.49 1.52 
+   */
+  def uptime:String = {
+    execute("(LANG=en; uptime)")
+  }
+  
   // ==========================================================================================
 
   /**

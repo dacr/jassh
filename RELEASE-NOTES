@@ -81,11 +81,11 @@ TODO LIST :
  - TODO : BSD, Cygwin support
  - TODO : trying to find a solution with SCP and some special linux file (with unknown file size)
  - TODO : manage when sftp submodule is not available => throw the right exception
- - TODO : add sudo support / with password prompt recognition...
+ - INPG : add sudo support / with password prompt recognition...
  
 
 ------------------------------------------------------------------
-0.9.14 IN PROGRESS
+0.9.14 (2014-09-23)
 
  - small test fix on test shell command
  - pull request merged : add Travis CI configuration file from zaneli authored on 29 Apr
@@ -99,6 +99,10 @@ TODO LIST :
  - SSHReact class first implementation, it allows you to interact with a running command
    (for example send the password at the right moment, or enter values required by a read command)
  - SSHReact test class added
+ - new shell commands :
+   + pidof : get pid of all processes matching the given command line regular expression
+   + disableHistory : to not impact current user shell commands history
+   + uptime : get the uptime of the server
 
 ------------------------------------------------------------------
 0.9.13 (2014-05-31)
