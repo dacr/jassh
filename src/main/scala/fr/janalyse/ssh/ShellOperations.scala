@@ -129,7 +129,7 @@ trait ShellOperations extends CommonOperations with LazyLogging {
       case Linux =>
         // 2013-02-27 18:08:51.252312190 +0100
         genoptcmd(s"""stat -c '%y' '$filename' """)
-           .map { lmLinuxSDF.parse(_) }
+           .map { lmLinuxFix(_) }
       // -------------------------------------------------------      
       case Darwin =>
         // Modify: 2014-07-03 21:43:08 CEST
@@ -147,7 +147,15 @@ trait ShellOperations extends CommonOperations with LazyLogging {
       case _ => ???
     }
   }
-  private val lmLinuxSDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S Z")
+  private def lmLinuxFix(input:String):Date = {
+    input match {
+      case lmLinuxDateRE(date, time, millis, tz) =>
+        val shortenmillis = millis.take(3) // TAKE CARE only take first 3 digits of 432070011 !!!!
+        lmLinuxSDF.parse(s"$date $time.$shortenmillis $tz")
+    }
+  }
+  private val lmLinuxDateRE = """(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2})[.,](\d+) (.*)""".r
+  private val lmLinuxSDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S Z") // TAKE CARE only take first 3 digits of 432070011 !!!!
   private val lmDarwinSDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z")
   private val lmAixSDF = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.US)
   
@@ -533,6 +541,29 @@ trait ShellOperations extends CommonOperations with LazyLogging {
   def uptime:String = {
     execute("(LANG=en; uptime)")
   }
+
+  /**
+   * get dir name
+   * @param name a filename
+   * @return directory name
+   */
+  def dirname(name:String) = execute(s"""dirname "$name"""")
+
+  /**
+   * get base name
+   * @param name a name
+   * @return base name
+   */
+  def basename(name:String) = execute(s"""basename "$name"""")
+
+  /**
+   * get base name
+   * @param name a name
+   * @param suffix filename suffix
+   * @return base name
+   */
+  def basename(name:String, suffix:String) = execute(s"""basename "$name" "$suffix"""")
+
   
   // ==========================================================================================
 

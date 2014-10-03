@@ -83,6 +83,12 @@ TODO LIST :
  - TODO : manage when sftp submodule is not available => throw the right exception
  - INPG : add sudo support / with password prompt recognition...
  
+------------------------------------------------------------------
+0.9.15 (2014-xx-xx)
+
+ - ShellOperations : dirname added
+ - ShellOperations : basename added
+ - ShellOperations : lastModified fix because of millis
 
 ------------------------------------------------------------------
 0.9.14 (2014-09-23)
