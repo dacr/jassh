@@ -89,6 +89,8 @@ TODO LIST :
  - ShellOperations : dirname added
  - ShellOperations : basename added
  - ShellOperations : lastModified fix because of millis
+ - ShellOperations : id added
+ - ShellOperations : touch added
 
 ------------------------------------------------------------------
 0.9.14 (2014-09-23)

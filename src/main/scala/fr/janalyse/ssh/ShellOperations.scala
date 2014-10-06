@@ -564,6 +564,16 @@ trait ShellOperations extends CommonOperations with LazyLogging {
    */
   def basename(name:String, suffix:String) = execute(s"""basename "$name" "$suffix"""")
 
+  /**
+   * touch
+   * @param files list of files to touch
+   */
+  def touch(files:String*) { execute(s"""touch ${files.mkString("'", "' '", "'")}""") }
+
+  /**
+   * id
+   */
+  def id: String = execute("id")
   
   // ==========================================================================================
 
