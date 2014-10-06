@@ -232,6 +232,7 @@ class SSH(val options: SSHOptions) extends ShellOperations with TransfertOperati
       .foreach(f => jsch.addIdentity(f.getAbsolutePath))
 
     val ses = jsch.getSession(options.username, options.host, options.port)
+    for {proxy <- options.proxy} ses.setProxy(proxy)
     ses.setServerAliveInterval(2000)
     ses.setTimeout(options.connectTimeout.toInt) // Timeout for the ssh connection (unplug cable to simulate) 
     ses.setUserInfo(SSHUserInfo(options.password.password, options.passphrase.password))

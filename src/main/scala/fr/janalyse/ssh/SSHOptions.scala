@@ -2,7 +2,7 @@ package fr.janalyse.ssh
 
 import scala.util.{ Properties => SP }
 import java.io.File.{ separator => FS, pathSeparator => PS }
-
+import com.jcraft.jsch._
 
 /**
  * SSHOptions stores all ssh parameters
@@ -26,8 +26,12 @@ case class SSHOptions(
   noneCipher: Boolean = true,
   compress: Option[Int] = None,
   execWithPty:Boolean = false,    // Sometime some command doesn't behave the same with or without tty, cf mysql
-  ciphers:Array[String]="none,aes128-cbc,aes192-cbc,aes256-cbc,3des-cbc,blowfish-cbc,aes128-ctr,aes192-ctr,aes256-ctr".split(",")
+  ciphers:Array[String]="none,aes128-cbc,aes192-cbc,aes256-cbc,3des-cbc,blowfish-cbc,aes128-ctr,aes192-ctr,aes256-ctr".split(","),
+  proxy:Option[Proxy]=None
   ) {
   val keyfiles2lookup = sshKeyFile ++ List("id_rsa", "id_dsa") // ssh key search order (from sshUserDir)
   def compressed = this.copy(compress=Some(5))
+  def viaProxyHttp(host:String, port:Int=80) = this.copy(proxy = Some(new ProxyHTTP(host,port)))
+  def viaProxySOCKS4(host:String, port:Int=1080) = this.copy(proxy = Some(new ProxySOCKS4(host,port)))
+  def viaProxySOCKS5(host:String, port:Int=1080) = this.copy(proxy = Some(new ProxySOCKS5(host,port)))
 }
