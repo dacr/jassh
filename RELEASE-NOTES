@@ -91,6 +91,7 @@ TODO LIST :
  - ShellOperations : lastModified fix because of millis
  - ShellOperations : id added
  - ShellOperations : touch added
+ - SSH through tunnel support added (ProxyHTTP, ProxySocks4, ProxySocks5)
 
 ------------------------------------------------------------------
 0.9.14 (2014-09-23)
