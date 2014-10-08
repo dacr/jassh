@@ -1,4 +1,5 @@
 language: scala
+
 scala:
   - 2.10.4
   - 2.11.0
@@ -7,6 +8,10 @@ jdk:
   - oraclejdk7
   - openjdk7
   - openjdk6
+
+os:
+  - linux
+  - osx
 
 before_script:
   - sh src/test/resources/setup_travis.sh
