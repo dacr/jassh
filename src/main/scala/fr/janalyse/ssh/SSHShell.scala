@@ -47,7 +47,7 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
     var ch: ChannelShell = ssh.jschsession.openChannel("shell").asInstanceOf[ChannelShell]
     ch.setPtyType("dumb")
     ch.setXForwarding(false)
-    //ch.setEnv("COLUMNS", "500") // Can't be use, by default PermitUserEnvironment=no in sshd_config 
+    //ch.setEnv("COLUMNS", "500") // Can't be use, by default PermitUserEnvironment=no in sshd_config
 
     val pos = new PipedOutputStream()
     val pis = new PipedInputStream(pos)
@@ -73,12 +73,12 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
       // if no prompt is given we assume that a standard sh/bash/ksh shell is used
       val readyMessage = createReadyMessage
       fromServer.setReadyMessage(readyMessage)
-      toServer.send("unset LS_COLORS")
-      toServer.send("unset EDITOR")
-      toServer.send("unset PAGER")
-      toServer.send("COLUMNS=500")
-      toServer.send("PS1='%s'".format(defaultPrompt))
-      toServer.send("history -d $((HISTCMD-2)) && history -d $((HISTCMD-1))") // Previous command must be hidden
+      //toServer.send("unset LS_COLORS")
+      //toServer.send("unset EDITOR")
+      //toServer.send("unset PAGER")
+      //toServer.send("COLUMNS=500")
+      //toServer.send("PS1='%s'".format(defaultPrompt))
+      //toServer.send("history -d $((HISTCMD-2)) && history -d $((HISTCMD-1))") // Previous command must be hidden
       //toServer.sendCommand("set +o emacs")  // => Makes everything not working anymore, JSCH problem ?
       //toServer.sendCommand("set +o vi") // => Makes everything not working anymore, JSCH problem ?
       toServer.send("echo '%s'".format(readyMessage)) // ' are important to distinguish between the command and the result

@@ -1,6 +1,6 @@
 name := "janalyse-ssh"
 
-version := "0.9.15-alpha"
+version := "0.9.15-alpha-gangstead"
 
 organization :="fr.janalyse"
 

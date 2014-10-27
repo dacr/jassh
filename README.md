@@ -1,5 +1,7 @@
 #JASSH - SCALA SSH API#
 
+**The purpose of this fork is to take the unix assumptions out of the other end of the shell**
+
 [![Build Status](https://travis-ci.org/dacr/jassh.png?branch=master)](https://travis-ci.org/dacr/jassh)
 
 High level scala SSH API for easy and fast operations on remote servers.
