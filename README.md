@@ -1,7 +1,5 @@
 #JASSH - SCALA SSH API#
 
-**The purpose of this fork is to take the unix assumptions out of the other end of the shell**
-
 [![Build Status](https://travis-ci.org/dacr/jassh.png?branch=master)](https://travis-ci.org/dacr/jassh)
 
 High level scala SSH API for easy and fast operations on remote servers.
@@ -64,6 +62,20 @@ jassh.SSH.shell("localhost", "test", "testtest") { sh =>
   cd("/tmp")
   println(s"now it is ${pwd}")
 }
+```
+
+##Shell session to an SSH enabled  PowerShell Server (windows)
+This functions much the same as a regular SSH connection, but many of the unix like commands are not supported and the terminal behaves differently
+````scala
+import fr.janalyse.ssh._
+
+val settings = SSHOptions(host = host, username=user, password = pass, prompt = Some(prompt), timeout = timeout)
+val session = SSH(settings)
+
+val shell = session.newPowerShell
+
+println(shell.ls)
+println(shell.pwd)
 ```
 
 ##SSH Configuration notes##

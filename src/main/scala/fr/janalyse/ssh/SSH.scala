@@ -1,12 +1,12 @@
 /*
  * Copyright 2013 David Crosson
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -104,6 +104,42 @@ object SSH {
    * @return "withssh" returns type
    */
   def shell[T](someOptions: Option[SSHOptions])(withsh: (SSHShell) => T): Option[T] = someOptions map { shell[T](_)(withsh) }
+
+  /**
+   * Executes the given code then closes the new ssh powershell channel associated session.
+   * @param host ip address or hostname
+   * @param username user name
+   * @param password user password (if ommitted, will try public key authentication)
+   * @param passphrase keys passphrase (if required)
+   * @param port remote ssh port
+   * @param timeout timeout
+   * @param withsh code bloc to execute
+   * @return "withsh" returns type
+   */
+  def powershell[T](
+    host: String = "localhost",
+    username: String = util.Properties.userName,
+    password: SSHPassword = NoPassword,
+    passphrase: SSHPassword = NoPassword,
+    port: Int = 22,
+    timeout: Int = 300000)(withsh: (SSHPowerShell) => T): T = powershell[T](SSHOptions(host = host, username = username, password = password, passphrase = passphrase, port = port, timeout = timeout))(withsh)
+
+  /**
+   * Executes the given code then closes the new ssh powershell associated session.
+   * @param options ssh options
+   * @param withsh code bloc to execute
+   * @return "withssh" returns type
+   */
+  def powershell[T](options: SSHOptions)(withsh: (SSHPowerShell) => T): T = using(new SSH(options)) { ssh =>
+    ssh.powershell { sh => withsh(sh) }
+  }
+  /**
+   * Executes the given code then closes the new ssh powershell associated session.
+   * @param someOptions Some ssh options or None, if None is given, nothing will be done
+   * @param withsh code bloc to execute
+   * @return "withssh" returns type
+   */
+  def powershell[T](someOptions: Option[SSHOptions])(withsh: (SSHPowerShell) => T): Option[T] = someOptions map { powershell[T](_)(withsh) }
 
   /**
    * Executes the given code then closes the new ssh ftp channel associated session.
@@ -234,7 +270,7 @@ class SSH(val options: SSHOptions) extends ShellOperations with TransfertOperati
     val ses = jsch.getSession(options.username, options.host, options.port)
     for {proxy <- options.proxy} ses.setProxy(proxy)
     ses.setServerAliveInterval(2000)
-    ses.setTimeout(options.connectTimeout.toInt) // Timeout for the ssh connection (unplug cable to simulate) 
+    ses.setTimeout(options.connectTimeout.toInt) // Timeout for the ssh connection (unplug cable to simulate)
     ses.setUserInfo(SSHUserInfo(options.password.password, options.passphrase.password))
     ses.connect(options.connectTimeout.toInt)
     if (ssh.options.noneCipher) {
@@ -263,6 +299,8 @@ class SSH(val options: SSHOptions) extends ShellOperations with TransfertOperati
 
   def shell[T](proc: (SSHShell) => T) = SSH.using(new SSHShell) { proc(_) }
 
+  def powershell[T](proc: (SSHPowerShell) => T) = SSH.using(new SSHPowerShell) { proc(_) }
+
   def ftp[T](proc: (SSHFtp) => T) = SSH.using(new SSHFtp) { proc(_) }
 
   def scp[T](proc: (SSHScp) => T) = SSH.using(new SSHScp) { proc(_) }
@@ -272,12 +310,12 @@ class SSH(val options: SSHOptions) extends ShellOperations with TransfertOperati
   def run(cmd: String, out: ExecResult => Any, err: ExecResult => Any = noerr) = new SSHExec(cmd, out, err)
 
   override def execute(cmd: SSHCommand) = execOnce(cmd) // Using SSHExec channel (better performances)
-    
+
   override def executeWithStatus(cmd: SSHCommand): Tuple2[String,Int] = execOnceWithStatus(cmd)
-    
+
   override def executeAll(cmds: SSHBatch) = shell { _ executeAll cmds }
 
-  
+
   def execOnceAndTrim(scmd: SSHCommand) = execOnce(scmd).trim()
 
   def execOnce(scmd: SSHCommand) = {
@@ -311,7 +349,7 @@ class SSH(val options: SSHOptions) extends ShellOperations with TransfertOperati
   }
 
   private var firstHasFailed=false
-  
+
   private def opWithFallback[T]( primary : => T, fallback: => T ):T = {
     if (firstHasFailed) fallback
     else {
@@ -324,16 +362,16 @@ class SSH(val options: SSHOptions) extends ShellOperations with TransfertOperati
       }
     }
   }
-  
+
   override def get(remoteFilename: String): Option[String] =
-    opWithFallback( 
+    opWithFallback(
         ssh.scp(_ get remoteFilename),
         ssh.ftp(_ get remoteFilename)
     )
 
 
   override def getBytes(remoteFilename: String): Option[Array[Byte]] =
-    opWithFallback( 
+    opWithFallback(
       ssh.scp( _ getBytes remoteFilename),
       ssh.ftp( _ getBytes remoteFilename)
     )
@@ -346,14 +384,14 @@ class SSH(val options: SSHOptions) extends ShellOperations with TransfertOperati
   }
 
   override def put(data: String, remoteDestination: String) {
-    opWithFallback( 
+    opWithFallback(
       ssh.scp(_ put (data, remoteDestination)),
       ssh.ftp(_ put (data, remoteDestination))
     )
   }
 
   override def putBytes(data: Array[Byte], remoteDestination: String) {
-    opWithFallback( 
+    opWithFallback(
       ssh.scp(_ putBytes (data, remoteDestination)),
       ssh.ftp(_ putBytes (data, remoteDestination))
     )
@@ -363,7 +401,7 @@ class SSH(val options: SSHOptions) extends ShellOperations with TransfertOperati
     // Never use fallback mechanism for that case, because data stream is consumed...
     ssh.scp(_ putFromStream(data, howmany, remoteDestination))
   }
-  
+
   override def send(fromLocalFile: File, remoteDestination: String) {
     opWithFallback(
       ssh.scp(_.send(fromLocalFile, remoteDestination)),
@@ -435,6 +473,11 @@ class SSH(val options: SSHOptions) extends ShellOperations with TransfertOperati
    * returns a new shell for current SSH session, you must manage close operation by your self
    */
   def newShell = new SSHShell
+
+  /**
+   * returns a new powershell for current SSH session, you must manage close operation by your self
+   */
+  def newPowerShell = new SSHPowerShell
 
   /**
    * returns a new ftp for current SSH session, you must manage close operation by your self
