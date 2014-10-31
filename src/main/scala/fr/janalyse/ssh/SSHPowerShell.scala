@@ -8,7 +8,7 @@ class SSHPowerShell(implicit ssh: SSH) extends PowerShellOperations {
 
   override def execute(cmd: SSHCommand): String = {
     synchronized {
-      sendCommand(cmd.cmd)
+      sendCommand(cmd.cmd.replace('\n',' '))
       fromServer.getResponse()
     }
   }
