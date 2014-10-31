@@ -4,15 +4,15 @@ exec java -jar jassh.jar "$0" "$@"
 
 import fr.janalyse.ssh._
 
-val user = "CSBSP\\sshsvc"
-val pass = "zaq12wsxZAQ!@WSX"
-val host = "cpEX1.csbsp.wan"
+val user = "username"
+val pass = "password"
+val host = "host"
 val prompt = "PS C:\\ProgramData>"
 val timeout = 10 * 1000
 
 val settings = SSHOptions(host = host, username=user, password = pass, prompt = Some(prompt), timeout = timeout)
 val session = SSH(settings)
-session.jschsession.setConfig("StrictHostKeyChecking", "no")
+
 val shell = session.newPowerShell
 
 println(shell.ls)
