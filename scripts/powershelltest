@@ -1,0 +1,19 @@
+#!/bin/sh
+exec java -jar jassh.jar "$0" "$@"
+!#
+
+import fr.janalyse.ssh._
+
+val user = "username"
+val pass = "password"
+val host = "host"
+val timeout = 10 * 1000
+
+val settings = SSHOptions(host = host, username=user, password = pass, timeout = timeout)
+val session = SSH(settings)
+
+val shell = session.newPowerShell
+
+println(shell.ls)
+
+println(shell.pwd)
