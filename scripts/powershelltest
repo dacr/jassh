@@ -7,10 +7,9 @@ import fr.janalyse.ssh._
 val user = "username"
 val pass = "password"
 val host = "host"
-val prompt = "PS C:\\ProgramData>"
 val timeout = 10 * 1000
 
-val settings = SSHOptions(host = host, username=user, password = pass, prompt = Some(prompt), timeout = timeout)
+val settings = SSHOptions(host = host, username=user, password = pass, timeout = timeout)
 val session = SSH(settings)
 
 val shell = session.newPowerShell

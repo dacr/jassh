@@ -13,8 +13,7 @@ class SSHPowerShell(implicit ssh: SSH) extends PowerShellOperations {
     }
   }
 
-  //private def createReadyMessage = "ready-" + System.currentTimeMillis()
-  private val defaultPrompt = """PS C:\\ProgramData>"""
+  private val defaultPrompt = """_T-:+"""
   val prompt = ssh.options.prompt getOrElse defaultPrompt
 
   val options = ssh.options
@@ -44,7 +43,11 @@ class SSHPowerShell(implicit ssh: SSH) extends PowerShellOperations {
   }
 
   private def shellInit() = {
-    fromServer.getResponse() // For the initial prompt
+    toServer.send(s"""function prompt {"$prompt"}""")
+
+    //Must read output twice to get through the set prompt command echo and then the initial prompt
+    fromServer.getResponse()
+    fromServer.getResponse()
   }
 
   private var doInit = true
@@ -111,7 +114,6 @@ class SSHPowerShell(implicit ssh: SSH) extends PowerShellOperations {
         val ch = b.toChar
         consumerAppender.append(ch) // TODO - Add charset support
 
-        //TODO: change prompt to be a regex since powershell prompts are of the form "PS [pwd]>".  Currently it doesn't support changing directories
         if (consumerAppender.endsWith(prompt)) {
           val promptIndex = consumerAppender.size - promptSize
           val firstNlIndex = consumerAppender.indexOf("\n")
