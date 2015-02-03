@@ -86,6 +86,7 @@ TODO LIST :
 ------------------------------------------------------------------
 0.9.15 (2014-xx-xx)
 
+ - ShellOperations : sudoNoPasswordTest added
  - ShellOperations : dirname added
  - ShellOperations : basename added
  - ShellOperations : lastModified fix because of millis

@@ -21,11 +21,10 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
     }
   }
 
-  def become(someoneelse: String, password: Option[String] = None): Boolean = {
-    synchronized {
+  private def becomeWithSU(someoneelse: String, password: Option[String] = None):Boolean = {
       execute("LANG=en; export LANG")
       sendCommand(s"su - ${someoneelse}")
-      Thread.sleep(2000)
+      Thread.sleep(2000) // TODO - TO BE IMPROVED
       try {
         if (options.username != "root")
           password.foreach { it => toServer.send(it) }
@@ -33,6 +32,29 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
         shellInit()
       }
       whoami == someoneelse
+  }
+  private def becomeWithSUDO(someoneelse: String, password: Option[String] = None):Boolean = {
+    if (sudoNoPasswordTest()) {
+      execute("LANG=en; export LANG")
+      sendCommand(s"sudo -n su - root ${someoneelse}")
+      shellInit()
+    } else {
+      execute("LANG=en; export LANG")
+      sendCommand(s"sudo -S su - ${someoneelse}")
+      Thread.sleep(2000)  // TODO - TO BE IMPROVED
+      try {
+        if (options.username != "root")
+          password.foreach { it => toServer.send(it) }
+      } finally {
+        shellInit()
+      }
+    }
+    whoami == someoneelse
+  }  
+  def become(someoneelse: String, password: Option[String] = None): Boolean = {
+    synchronized {
+      becomeWithSU(someoneelse, password) ||
+        becomeWithSUDO(someoneelse, password)
     }
   }
 
