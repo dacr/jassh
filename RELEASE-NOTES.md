@@ -93,6 +93,9 @@ TODO LIST :
  - ShellOperations : id added
  - ShellOperations : touch added
  - SSH through tunnel support added (ProxyHTTP, ProxySocks4, ProxySocks5)
+ - scala 2.11.5
+ - commons-compress 1.9
+ - scala-test 2.2.1
 
 ------------------------------------------------------------------
 0.9.14 (2014-09-23)
