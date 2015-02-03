@@ -56,7 +56,9 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
   }  
   /**
    * Become someoneelse on the current shell session, first the command
-   * will try (if new user u
+   * will try (if new user password is given) su - newuser then if unsuccessful
+   * it will try the sudo su - approach, in that case it is the current user
+   * pass that will be used, new user password will be ignored.
    *  
    * @param someoneelse become this new user
    * @param password new user password
@@ -64,8 +66,8 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
    */
   def become(someoneelse: String, password: Option[String] = None): Boolean = {
     synchronized {
-      becomeWithSUDO(someoneelse, password) ||
-        becomeWithSU(someoneelse, password)
+      becomeWithSU(someoneelse, password) ||
+        becomeWithSUDO(someoneelse, password)
     }
   }
 
