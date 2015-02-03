@@ -36,25 +36,36 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
   private def becomeWithSUDO(someoneelse: String, password: Option[String] = None):Boolean = {
     if (sudoNoPasswordTest()) {
       execute("LANG=en; export LANG")
-      sendCommand(s"sudo -n su - root ${someoneelse}")
+      sendCommand(s"sudo -n su - ${someoneelse}")
       shellInit()
     } else {
       execute("LANG=en; export LANG")
       sendCommand(s"sudo -S su - ${someoneelse}")
       Thread.sleep(2000)  // TODO - TO BE IMPROVED
       try {
-        if (options.username != "root")
-          password.foreach { it => toServer.send(it) }
+        if (options.username != "root") {
+          //password.foreach { it => toServer.send(it) }
+          // current user password is to be used on that case, not the new user password
+          options.password.password.foreach{ it => toServer.send(it)}
+        }
       } finally {
         shellInit()
       }
     }
     whoami == someoneelse
   }  
+  /**
+   * Become someoneelse on the current shell session, first the command
+   * will try (if new user u
+   *  
+   * @param someoneelse become this new user
+   * @param password new user password
+   * @return true if operation is successfull, the current user is the new one
+   */
   def become(someoneelse: String, password: Option[String] = None): Boolean = {
     synchronized {
-      becomeWithSU(someoneelse, password) ||
-        becomeWithSUDO(someoneelse, password)
+      becomeWithSUDO(someoneelse, password) ||
+        becomeWithSU(someoneelse, password)
     }
   }
 
