@@ -4,57 +4,29 @@ import java.io._
 import com.jcraft.jsch.{ ChannelShell }
 import java.util.concurrent.ArrayBlockingQueue
 import scala.concurrent._
+import collection.immutable._
 
-class SSHReact(implicit ssh: SSH) extends ShellOperations {
-
+class SSHReact(val timeout:Long)(implicit ssh: SSH) {
   val options = ssh.options
 
-  private type Interactor = (Int, Producer) => Unit
-  private var currentInteractor: Option[Interactor] = None
-
-  def nopInteractor(ch: Int, producer: Producer) {}
-
-  def react(that: SSHCommand, interactor: Option[Interactor] = None): String = {
-    synchronized {
-      try {
-        currentInteractor = interactor
-        sendCommand(that.cmd)
-        fromServer.getResponse()
-      } finally {
-        currentInteractor = None
-      }
-    }
+  // send command to the shell
+  def react(that: SSHCommand): SSHReact = {
+    toServer.send(that.cmd)
+    this
+  }
+  
+  // react on key
+  def onFirst(key:String, write:String):SSHReact = {
+    this
+  }
+  
+  // consume line until false
+  def consumeLine( it: (String => Boolean)):SSHReact = {
+    this
   }
 
-  override def execute(that: SSHCommand): String = {
-    synchronized {
-      sendCommand(that.cmd)
-      fromServer.getResponse()
-    }
-  }
 
-  override def executeWithStatus(that: SSHCommand): Tuple2[String, Int] = {
-    synchronized {
-      val result = execute(that)
-      val rc = executeAndTrim("echo $?").toInt
-      (result, rc)
-    }
-  }
-
-  def become(someoneelse: String, password: Option[String] = None): Boolean = {
-    synchronized {
-      execute("LANG=en; export LANG")
-      sendCommand(s"su - ${someoneelse}")
-      Thread.sleep(2000)
-      try {
-        if (options.username != "root")
-          password.foreach { it => toServer.send(it) }
-      } finally {
-        shellInit()
-      }
-      whoami == someoneelse
-    }
-  }
+  
 
   private def createReadyMessage = "ready-" + System.currentTimeMillis()
   private val defaultPrompt = """_T-:+"""
@@ -199,7 +171,7 @@ class SSHReact(implicit ssh: SSH) extends ShellOperations {
         } else {
           if (consumerAppender.endsWith(lastPromptChars)
             && consumerAppender.endsWith(prompt)
-            && !consumerAppender.endsWith(promptEqualPrefix)) {
+            && !consumerAppender.endsWith(promptEqualPrefix)) { // END OF RESULTS FOR CURRENT COMMAND
             val promptIndex = consumerAppender.size - promptSize
             val firstNlIndex = consumerAppender.indexOf("\n")
             val result = consumerAppender.substring(firstNlIndex + 1, promptIndex)
@@ -207,8 +179,6 @@ class SSHReact(implicit ssh: SSH) extends ShellOperations {
             searchForPromptIndex = 0
             consumerAppender.clear
           } else {
-            currentInteractor.foreach{_(b, toServer)}
-            
             searchForPromptIndex = consumerAppender.size - promptSize
             if (searchForPromptIndex < 0) searchForPromptIndex = 0
           }

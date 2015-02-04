@@ -23,24 +23,17 @@ import org.scalatest.OptionValues._
 @RunWith(classOf[JUnitRunner])
 class SSHReactTest extends SomeHelp {
 
-  //==========================================================================================================
-  test("react attempts") {
+  
+  ignore("react attempts") {
     SSH.once(sshopts) { implicit ssh =>
-      val sh = new SSHReact()
-      try {
-        val buf = new StringBuilder() // Warn : mutable
-        def ageInteractor(nextChar:Int, prod:sh.Producer) {
-          buf.append(nextChar.toChar)
-          if (buf.endsWith("age=")) prod.send("32")
-        }
-        val result = sh.react("""echo -n "age=" ; read age ; echo my age is $age""", Some(ageInteractor))
+      val sh = new SSHReact(timeout=5000L)
+      
+      sh.react("echo -n 'age='")
+        .react("read age")
+        .onFirst("age=", "32")
+        .react("echo my age is $age")
+        .consumeLine(line => false)
         
-        info(result)
-        result.split("\n").last should equal("my age is 32")
-        
-      } finally {
-        sh.close
-      }
     }
   }
 
