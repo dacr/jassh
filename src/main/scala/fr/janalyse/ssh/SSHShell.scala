@@ -22,18 +22,27 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
   }
 
   private def becomeWithSU(someoneelse: String, password: Option[String] = None):Boolean = {
+    val curuser = whoami
+    if (curuser == "root") {
+      execute("LANG=en; export LANG")
+      sendCommand(s"su - ${someoneelse}")
+      Thread.sleep(2000) // TODO - TO BE IMPROVED
+      shellInit()
+    } else if (password.isDefined) {
       execute("LANG=en; export LANG")
       sendCommand(s"su - ${someoneelse}")
       Thread.sleep(2000) // TODO - TO BE IMPROVED
       try {
-        if (options.username != "root")
           password.foreach { it => toServer.send(it) }
+          Thread.sleep(1000)
       } finally {
         shellInit()
       }
+    }
       whoami == someoneelse
   }
-  private def becomeWithSUDO(someoneelse: String, password: Option[String] = None):Boolean = {
+  private def becomeWithSUDO(someoneelse: String):Boolean = {
+    val curuser = whoami
     if (sudoNoPasswordTest()) {
       execute("LANG=en; export LANG")
       sendCommand(s"sudo -n su - ${someoneelse}")
@@ -43,10 +52,9 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
       sendCommand(s"sudo -S su - ${someoneelse}")
       Thread.sleep(2000)  // TODO - TO BE IMPROVED
       try {
-        if (options.username != "root") {
-          //password.foreach { it => toServer.send(it) }
-          // current user password is to be used on that case, not the new user password
+        if (curuser != "root") { // do not use whoami here as we are in transitional state...
           options.password.password.foreach{ it => toServer.send(it)}
+          Thread.sleep(1000)
         }
       } finally {
         shellInit()
@@ -65,10 +73,12 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
    * @return true if operation is successfull, the current user is the new one
    */
   def become(someoneelse: String, password: Option[String] = None): Boolean = {
-    synchronized {
-      becomeWithSU(someoneelse, password) ||
-        becomeWithSUDO(someoneelse, password)
-    }
+    if (whoami != someoneelse) {
+      synchronized {
+        becomeWithSU(someoneelse, password) ||
+          becomeWithSUDO(someoneelse)
+      }
+    } else true
   }
 
   private def createReadyMessage = "ready-" + System.currentTimeMillis()
