@@ -105,6 +105,7 @@ TODO LIST :
  - scala 2.11.5
  - commons-compress 1.9
  - scala-test 2.2.1
+ - sudoNoPasswordTest test enhancement for older sudo command releases (without -n option)
 
 
 ------------------------------------------------------------------
