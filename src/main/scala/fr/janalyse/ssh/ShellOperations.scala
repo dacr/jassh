@@ -579,7 +579,10 @@ trait ShellOperations extends CommonOperations with LazyLogging {
    * sudo without password test
    * @return true if sudo is available and no password is required for current user
    */
-   def sudoNoPasswordTest():Boolean = execute("""echo "echo OK" | sudo -S su - 2>/dev/null""").trim == "OK"
+   def sudoNoPasswordTest():Boolean = {
+    val testedmsg="SUDOOK"
+    execute(s"""echo "echo $testedmsg" | sudo -S su - 2>/dev/null""").trim.contains(testedmsg)
+  }
    // BAD because we want to test the su
    //   sudo -n echo OK 2>/dev/null
    //
