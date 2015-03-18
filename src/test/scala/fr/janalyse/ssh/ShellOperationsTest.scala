@@ -74,7 +74,7 @@ class ShellOperationsTest extends SomeHelp {
       notExists(testfile)     should equal(true)
       rmdir(testdir)
       notExists(testdir)      should equal(true)
-      echo("hello")           should contains("hello")
+      echo("hello")          should equal("hello\n")
       alive()                 should equal(true)
     }
   }
