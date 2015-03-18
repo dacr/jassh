@@ -4,7 +4,7 @@ seq(assemblySettings: _*)
 
 name := "janalyse-ssh-onejar"
 
-scalaVersion := "2.10.4"
+scalaVersion := "2.10.5"
 
 mainClass in assembly := Some("fr.janalyse.ssh.Main")
 
@@ -16,7 +16,7 @@ libraryDependencies <++=  scalaVersion { sv =>
        ("org.scala-lang" % "scalap"          % sv  % "compile")  ::Nil
 }
 
-libraryDependencies += "fr.janalyse"   %% "janalyse-ssh" % "0.9.15" % "compile"
+libraryDependencies += "fr.janalyse"   %% "janalyse-ssh" % "0.9.16" % "compile"
 
 resolvers += "JAnalyse Repository" at "http://www.janalyse.fr/repository/"
 
