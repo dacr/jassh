@@ -21,11 +21,11 @@ test class.
 
 [**Scala docs**](http://www.janalyse.fr/scaladocs/janalyse-ssh)
 
-**Current releases** :  **0.9.14** (for scala 2.10 and 2.11)   **0.9.5b3** (for scala 2.9.1, 2.9.2)
+**Current releases** :  **0.9.16** (for scala 2.10 and 2.11)   **0.9.5b3** (for scala 2.9.1, 2.9.2)
 
 **Declare dependency in SBT as follow** :
 ```
-libraryDependencies += "fr.janalyse"   %% "janalyse-ssh" % "0.9.14" % "compile"
+libraryDependencies += "fr.janalyse"   %% "janalyse-ssh" % "0.9.16" % "compile"
 ```
 
 **Add JAnalyse repository in SBT as follow** :
