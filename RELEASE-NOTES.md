@@ -93,7 +93,14 @@ TODO LIST :
     http://www.programmingforliving.com/2014/10/com.jcraft.jsch.JSchException-Algorithm-negotiation-fail.html
   
 ------------------------------------------------------------------
-0.9.15 (2014-xx-xx)
+0.9.16 (2015-03-18)
+
+ - ShellOperations : echo added
+ - ShellOperations : alive added
+ - become tests ignored
+
+------------------------------------------------------------------
+0.9.15 (2015-03-18)
  - SSHShell : become enhancements (su - or sudo su - support)
  - ShellOperations : sudoNoPasswordTest added
  - ShellOperations : dirname added
@@ -102,9 +109,10 @@ TODO LIST :
  - ShellOperations : id added
  - ShellOperations : touch added
  - SSH through tunnel support added (ProxyHTTP, ProxySocks4, ProxySocks5)
- - scala 2.11.5
+ - scala 2.11.6
  - commons-compress 1.9
  - scala-test 2.2.1
+ - sudoNoPasswordTest test enhancement for older sudo command releases (without -n option)
 
 
 ------------------------------------------------------------------
