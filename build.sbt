@@ -1,6 +1,6 @@
 name := "janalyse-ssh"
 
-version := "0.9.15-beta"
+version := "0.9.15"
 
 organization :="fr.janalyse"
 
@@ -10,7 +10,7 @@ scalaVersion := "2.11.6"
 
 scalacOptions ++= Seq( "-deprecation", "-unchecked", "-feature")
 
-crossScalaVersions := Seq("2.10.4", "2.11.6")
+crossScalaVersions := Seq("2.10.5", "2.11.6")
 
 // Mandatory as tests are also used for performances testing...
 parallelExecution in Test := false
