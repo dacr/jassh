@@ -23,7 +23,7 @@ import org.scalatest.junit.JUnitRunner
 @RunWith(classOf[JUnitRunner])
 class BecomeTest extends SomeHelp {
 
-  test("become tests") {
+  ignore("become tests") {
     import util.Properties.{userName=>user}
     info("For this test to success, you must allow current user to be able ")
     info("  to log on localhost without password authentication")

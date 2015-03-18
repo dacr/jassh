@@ -615,4 +615,18 @@ trait ShellOperations extends CommonOperations with LazyLogging {
     executeAndTrim(cmd).toInt == 0
   }
 
+  /**
+   * echo something and return back what has been printed
+   * @param message to print
+   * @return printed message
+   */
+  def echo(message:String) = execute(s"""echo $message""")
+
+  /**
+   * get dir name
+   * @param name a filename
+   * @return directory name
+   */
+  def alive():Boolean = echo("ALIVE").contains("ALIVE")
+
 }
