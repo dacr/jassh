@@ -33,16 +33,18 @@ class ShellOperationsTest extends SomeHelp {
       
       // create a dummy file and dummy directory
       sh.execute("echo -n 'toto' > %s".format(testfile))
-      sh.execute("mkdir -p %s".format(testdir))
+
       val homedir = sh.executeAndTrim("pwd")
       val rhostname = sh.executeAndTrim("hostname")
       
       // now tests the utilities methods
       import sh._
+      mkdir(testdir)          should equal(true)
       uname.toLowerCase       should (equal("linux") or equal("darwin") or equal("aix") or equal("sunos"))
       osname                  should (equal("linux") or equal("darwin") or equal("aix") or equal("sunos"))
       whoami                  should equal(sshopts.username)
       osid                    should (equal(Linux) or equal(Darwin) or equal(AIX) or equal(SunOS))
+      id                      should include("test")
       arch                    should not be 'empty
       env.size                should be > (0)
       hostname                should equal(rhostname)
@@ -72,9 +74,17 @@ class ShellOperationsTest extends SomeHelp {
       cat(testfile)           should include("toto")
       rm(testfile)
       notExists(testfile)     should equal(true)
-      rmdir(testdir)
+      rmdir(testdir)          should equal(true)
+      mkcd(testdir)           should equal(true)
+      basename(pwd())         should equal(testdir)
+      dirname(pwd())          should equal(homedir)
+      touch("hello")
+      exists("hello")         should equal(true)
+      rm("hello")
+      cd("..")
+      rmdir(testdir)          should equal(true)      
       notExists(testdir)      should equal(true)
-      echo("hello")          should equal("hello\n")
+      echo("hello")           should equal("hello\n")
       alive()                 should equal(true)
     }
   }
@@ -122,12 +132,18 @@ class ShellOperationsTest extends SomeHelp {
   }
 
   
-  test("more ls test") {
+  test("more ls and mkdir tests") {
     SSH.shell(sshopts) {sh =>
-      sh.execute("rm -fr ~/truc")
-      sh.mkdir("truc")
-      sh.ls("truc").size should equal(0)
-      sh.rmdir("truc"::Nil)
+      import sh._
+      sh.execute("rm -fr ~/truc ~/machin")
+      
+      mkdir("truc")          should equal(true)
+      ls("truc").size        should equal(0)
+      rmdir("truc"::Nil)     should equal(true)
+      mkcd("machin")         should equal(true)
+      pwd().split("/").last  should equal("machin")
+      cd("..")
+      rmdir("machin")        should equal(true)
     }
   }
 

@@ -514,12 +514,12 @@ trait ShellOperations extends CommonOperations with LazyLogging {
   /**
    * delete directory (directory must be empty)
    */
-  def rmdir(dir: String) { rmdir(dir::Nil)}
+  def rmdir(dir: String):Boolean = { rmdir(dir::Nil)}
   
   /**
    * delete directories (directories must be empty)
    */
-  def rmdir(dirs: Iterable[String]) { execute(s"""rmdir ${dirs.mkString("'", "' '", "'")}""") }
+  def rmdir(dirs: Iterable[String]):Boolean = { executeAndTrim(s"""rmdir ${dirs.mkString("'", "' '", "'")} && echo $$?""") == "0" }
 
   /**
    * get server architecture string
@@ -529,9 +529,17 @@ trait ShellOperations extends CommonOperations with LazyLogging {
 
   /**
    * Create a new directory
+   * @return true if the directory was successfully created
    */
-  def mkdir(dirname: String) { execute(s"""mkdir -p '$dirname'""") }
+  def mkdir(dirname: String):Boolean = { executeAndTrim(s"""mkdir -p '$dirname' && echo $$?""") == "0" }
 
+  /**
+   * Create a new directory and enter it
+   * @return true if the directory was successfully created and we were able to enter it
+   */
+  def mkcd(dirname: String):Boolean = { executeAndTrim(s"""mkdir -p '$dirname' && cd '$dirname' && echo $$?""") == "0"}
+
+  
   /**
    * get host up time, example formats :
    * Linux  : 21:34:17 up 33 min,  5 users,  load average: 0.18, 0.27, 0.30
@@ -547,14 +555,14 @@ trait ShellOperations extends CommonOperations with LazyLogging {
    * @param name a filename
    * @return directory name
    */
-  def dirname(name:String) = execute(s"""dirname "$name"""")
+  def dirname(name:String) = executeAndTrim(s"""dirname "$name"""")
 
   /**
    * get base name
    * @param name a name
    * @return base name
    */
-  def basename(name:String) = execute(s"""basename "$name"""")
+  def basename(name:String) = executeAndTrim(s"""basename "$name"""")
 
   /**
    * get base name

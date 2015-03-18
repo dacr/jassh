@@ -44,6 +44,9 @@ Remarks & caveats:
 PERFORMANCES STATUS
 
 2014-05-12
+  - zorglub  : 490.1 c/s - 88.2 Mb/s (macosx 10.10.2 - java hotspot 1.7.0_51 64b - OpenSSH_6.2p2, OSSLShim 0.9.8r)
+
+2014-05-12
   - lanfeust : 630.5 c/s - 48.6 Mb/s (gentoo3.12.13 - java hotspot 1.7.0_55 64b - OpenSSH_5.9_p1-r4
   - zorglub  : 539.8 c/s - 87.0 Mb/s (macosx 10.9.2 - java hotspot 1.7.0_51 64b - OpenSSH_6.2p2, OSSLShim 0.9.8r)
 
@@ -91,7 +94,15 @@ TODO LIST :
   => More information available here :
     http://stackoverflow.com/questions/26424621/algorithm-negotiation-fail-ssh-in-jenkins
     http://www.programmingforliving.com/2014/10/com.jcraft.jsch.JSchException-Algorithm-negotiation-fail.html
-  
+
+------------------------------------------------------------------
+0.9.17 (2015-03-xx)
+ 
+ - ShellOperations : mkcd added (mkdir && cd tied together)
+ - ShellOperations : mkdir now returns true if successfull
+ - ShellOperations : rmdir now returns true if successfull
+ - more tests for ShellOperations, increased coverage => with various related fixes
+ 
 ------------------------------------------------------------------
 0.9.16 (2015-03-18)
 
