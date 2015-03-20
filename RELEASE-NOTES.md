@@ -43,6 +43,10 @@ Remarks & caveats:
 ------------------------------------------------------------------
 PERFORMANCES STATUS
 
+2015-03-20
+  - lanfeust : 632.2 c/s - 41.6 Mb/s (gentoo3.16.5   - java hotspot 1.7.0_76 64b - OpenSSH_6.7p1-hpn14v5, OpenSSL 1.0.1k 8 Jan 2015
+  - zorglub  : 496.1 c/s - 88.0 Mb/s (macosx 10.10.2 - java hotspot 1.7.0_51 64b - OpenSSH_6.2p2, OSSLShim 0.9.8r)
+
 2015-03-19
   - zorglub  : 490.1 c/s - 88.2 Mb/s (macosx 10.10.2 - java hotspot 1.7.0_51 64b - OpenSSH_6.2p2, OSSLShim 0.9.8r)
 
