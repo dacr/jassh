@@ -43,7 +43,7 @@ Remarks & caveats:
 ------------------------------------------------------------------
 PERFORMANCES STATUS
 
-2014-05-12
+2015-03-19
   - zorglub  : 490.1 c/s - 88.2 Mb/s (macosx 10.10.2 - java hotspot 1.7.0_51 64b - OpenSSH_6.2p2, OSSLShim 0.9.8r)
 
 2014-05-12
