@@ -1,6 +1,6 @@
 name := "janalyse-ssh"
 
-version := "0.9.16"
+version := "0.9.17-SNAPSHOT"
 
 organization :="fr.janalyse"
 
@@ -16,7 +16,7 @@ crossScalaVersions := Seq("2.10.5", "2.11.6")
 parallelExecution in Test := false
 
 libraryDependencies ++= Seq(
-    "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2"
+    "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0"
    ,"com.jcraft"         % "jsch"               % "0.1.51"
    ,"org.apache.commons" % "commons-compress"   % "1.9"
    ,"org.scalatest"     %% "scalatest"          % "2.2.1"    % "test"
