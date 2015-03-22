@@ -35,6 +35,20 @@ resolvers += "JAnalyse Repository" at "http://www.janalyse.fr/repository/"
 
 **The standalone jassh executable** : [jassh.jar](http://dnld.crosson.org/jassh.jar)
 
+The procedure to generate your own executable :
+```bash
+$ git clone https://github.com/dacr/jassh.git
+$ cd jassh/onejar/
+$ sbt assembly
+...
+[info] Packaging target/scala-2.10/jassh.jar ...
+[info] Done packaging.
+$ java -jar target/scala-2.10/jassh.jar
+scala> SSH("localhost", "test").shell(_.echo("hello `whoami` at `date`")).trim
+res4: String = hello test at Sun Mar 22 16:17:55 CET 2015
+
+```
+
 ----
 
 ##hello world script##
