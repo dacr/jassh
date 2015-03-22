@@ -47,6 +47,7 @@ Remarks & caveats:
    and because no support for scala2.10 in scala-logging 3.x
    replaced by slf4j-api
  - junit test dependency removed
+ - onejar subproject, sbt assembly release update (0.13)
 
 ------------------------------------------------------------------
 0.9.17 (2015-03-22)
