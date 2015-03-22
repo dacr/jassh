@@ -1,7 +1,3 @@
-import AssemblyKeys._
-
-seq(assemblySettings: _*)
-
 name := "janalyse-ssh-onejar"
 
 scalaVersion := "2.10.5"
