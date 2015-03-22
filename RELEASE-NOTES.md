@@ -100,12 +100,13 @@ TODO LIST :
     http://www.programmingforliving.com/2014/10/com.jcraft.jsch.JSchException-Algorithm-negotiation-fail.html
 
 ------------------------------------------------------------------
-0.9.17 (2015-03-xx)
+0.9.17 (2015-03-22)
  
  - ShellOperations : mkcd added (mkdir && cd tied together)
  - ShellOperations : mkdir now returns true if successfull
  - ShellOperations : rmdir now returns true if successfull
  - more tests for ShellOperations, increased coverage => with various related fixes
+ - Depend on scalalogging instead of scalalogging-slf4j : mgregson (https://github.com/mgregson)
  
 ------------------------------------------------------------------
 0.9.16 (2015-03-18)
