@@ -4,7 +4,6 @@ import com.jcraft.jsch.{ChannelSftp, SftpException}
 import java.io._
 import java.nio.charset.Charset
 import scala.io.BufferedSource
-import com.typesafe.scalalogging.LazyLogging
 
 
 class SSHFtp(implicit ssh: SSH) extends TransfertOperations with LazyLogging {

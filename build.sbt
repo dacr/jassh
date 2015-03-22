@@ -1,6 +1,6 @@
 name := "janalyse-ssh"
 
-version := "0.9.17-SNAPSHOT"
+version := "0.9.18"
 
 organization :="fr.janalyse"
 
@@ -16,11 +16,10 @@ crossScalaVersions := Seq("2.10.5", "2.11.6")
 parallelExecution in Test := false
 
 libraryDependencies ++= Seq(
-    "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0"
-   ,"com.jcraft"         % "jsch"               % "0.1.51"
+    "com.jcraft"         % "jsch"               % "0.1.52"
    ,"org.apache.commons" % "commons-compress"   % "1.9"
-   ,"org.scalatest"     %% "scalatest"          % "2.2.1"    % "test"
-   ,"junit"              % "junit"              % "4.11"   % "test"
+   ,"org.slf4j"          % "slf4j-api"          % "1.7.+"
+   ,"org.scalatest"     %% "scalatest"          % "2.2.+"  % "test"
    ,"com.github.scala-incubator.io" %% "scala-io-core"      % "0.4.3" % "test"
    ,"com.github.scala-incubator.io" %% "scala-io-file"      % "0.4.3" % "test"
 )

@@ -16,11 +16,9 @@
 
 package fr.janalyse.ssh
 
-import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.OptionValues._
 
-@RunWith(classOf[JUnitRunner])
 class SSHReactTest extends SomeHelp {
 
   

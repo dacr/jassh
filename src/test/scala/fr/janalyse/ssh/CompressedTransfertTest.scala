@@ -16,13 +16,10 @@
 
 package fr.janalyse.ssh
 
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
 import org.scalatest.OptionValues._
 import scalax.file._
 import scalax.file.ImplicitConversions._
 
-@RunWith(classOf[JUnitRunner])
 class CompressedTransfertTest extends SomeHelp {
 
   info(s"Those tests require to have a user named '${sshopts.username}' with password '${sshopts.password}' on ${sshopts.host}")

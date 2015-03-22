@@ -16,12 +16,9 @@
 
 package fr.janalyse.ssh.external
 
-import org.junit.runner.RunWith
 import org.scalatest.FunSuite
-import org.scalatest.matchers.ShouldMatchers
-import org.scalatest.junit.JUnitRunner
+import org.scalatest.ShouldMatchers
 
-@RunWith(classOf[JUnitRunner])
 class ExternalSSHAPITest extends fr.janalyse.ssh.SomeHelp {
 
   info(s"Those tests require to have a user named '${sshopts.username}' with password '${sshopts.password}' on ${sshopts.host}")

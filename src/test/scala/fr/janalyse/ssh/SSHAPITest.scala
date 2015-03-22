@@ -16,10 +16,8 @@
 
 package fr.janalyse.ssh
 
-import org.junit.runner.RunWith
 import org.scalatest.FunSuite
-import org.scalatest.matchers.ShouldMatchers
-import org.scalatest.junit.JUnitRunner
+import org.scalatest.ShouldMatchers
 import scala.io.Source
 import scala.util.Properties
 import java.io.File
@@ -27,7 +25,6 @@ import java.io.IOException
 import scala.collection.parallel.ForkJoinTaskSupport
 import org.scalatest.OptionValues._
 
-@RunWith(classOf[JUnitRunner])
 class SSHAPITest extends SomeHelp {
     
   //==========================================================================================================

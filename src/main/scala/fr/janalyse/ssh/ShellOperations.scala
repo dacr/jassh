@@ -16,7 +16,6 @@
 
 package fr.janalyse.ssh
 
-import com.typesafe.scalalogging.LazyLogging
 import java.text.SimpleDateFormat
 import java.util.Date
 import scala.collection.generic.CanBuildFrom

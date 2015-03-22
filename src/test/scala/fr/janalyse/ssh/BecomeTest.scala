@@ -17,10 +17,6 @@
 
 package fr.janalyse.ssh
 
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
-
-@RunWith(classOf[JUnitRunner])
 class BecomeTest extends SomeHelp {
 
   ignore("become tests") {

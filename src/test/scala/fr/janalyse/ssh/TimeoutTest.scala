@@ -17,10 +17,6 @@
 
 package fr.janalyse.ssh
 
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
-
-@RunWith(classOf[JUnitRunner])
 class TimeoutTest extends SomeHelp  {
 
   info(s"Those tests require to have a user named '${sshopts.username}' with password '${sshopts.password}' on ${sshopts.host}")
