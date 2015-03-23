@@ -43,7 +43,10 @@ Remarks & caveats:
 ------------------------------------------------------------------
 0.9.19 (2015-03-23)
  - ShellOperations : sudoNoPasswordTest renamed to sudoSuMinusOnlyWithoutPasswordTest
- - ShellOperations : sudoSuSupportTest added
+ - ShellOperations : sudo operations moved to SSHShell class
+ - SSHShell : catData method added
+ - SSHShell : sudoSuMinusOnlyWithPasswordTest method added
+ - SSHShell : sudoSuMinusWithCommandTest method added
 
 ------------------------------------------------------------------
 0.9.18 (2015-03-22)

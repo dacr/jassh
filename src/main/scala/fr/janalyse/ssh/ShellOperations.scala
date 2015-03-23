@@ -303,6 +303,11 @@ trait ShellOperations extends CommonOperations with SSHLazyLogging {
   def cat(filenames: List[String]) = execute("cat %s".format(filenames.mkString(" ")))
 
   /**
+   * data to specified filespec
+   */
+  def catData(data:String, filespec:String):Boolean
+  
+  /**
    * Find file modified after the given date (Warning, minimal resolution = 1 minute)
    * @param root Search for file from this root directory
    * @param after Date parameter
@@ -578,63 +583,24 @@ trait ShellOperations extends CommonOperations with SSHLazyLogging {
   def touch(files:String*) { execute(s"""touch ${files.mkString("'", "' '", "'")}""") }
 
   /**
-   * id
+   * Get used id information
+   * @return user id data
    */
   def id: String = execute("id")
   
   /**
-   * Does the command "sudo su -" without password works ?
-   * The typical usage that maximizes compatibilities accross various linux is to pipe the
-   *    command to the sudo -S su -
-   * Options such as -k, -A, -p ... may not be supported everywhere. 
-   * Some notes :
-   *     BAD because we want to test the su
-   *       sudo -n echo OK 2>/dev/null
-   *
-   *     BAD because with older linux, -n option was not available
-   *       sudo -n su - -c "echo OK" 2>/dev/null
-   *
-   *     ~GOOD but NOK if only su - is allowed 
-   *       echo | sudo -S su - -c echo "OK" 2>/dev/null
-   *
-   *     GOOD
-   *       echo "echo OK" | sudo -S su - 2>/dev/null
-   * @return true if just "sudo su -" is possible without password for current user
+   * echo something and return back what has been printed
+   * @param message to print
+   * @return printed message
    */
-  def sudoSuMinusOnlyWithoutPasswordTest():Boolean = {
-     val testedmsg="SUDOOK"
-     execute(s"""echo "echo $testedmsg" | sudo -S su - 2>/dev/null""").trim.contains(testedmsg)
-  }
+  def echo(message:String) = execute(s"""echo $message""")
 
   /**
-   * 
-   * Here tty can be preserved
+   * get dir name
+   * @param name a filename
+   * @return directory name
    */
-  def sudoSuMinusOnlyWithPasswordTest():Boolean = {
-    val cur = s"""SUDO_PROMPT="password:" sudo -S su -"""
-    // TODO
-    false
-  }
-  
-  /**
-   * Does the command sudo "su - -c theGivenCommand" works ?
-   * Transparently with or without password
-   * @return true if it works
-   */
-  def sudoSuMinusWithCommandTest(cmd:String="whoami"):Boolean = {
-    val askpass=""
-    val password=options.password.password.getOrElse("")
-    val script=
-     s"""
-        |echo '$password'
-        |""".stripMargin
-    
-    //TODO 
-        
-    execute(s"""$askpass | SUDO_PROMPT="" sudo -S su - -c $cmd 2>&1 >/dev/null; echo $$?""")
-      .trim
-      .equals("0")
-  }
+  def alive():Boolean = echo("ALIVE").contains("ALIVE")
 
   
   // ==========================================================================================
@@ -657,18 +623,5 @@ trait ShellOperations extends CommonOperations with SSHLazyLogging {
     executeAndTrim(cmd).toInt == 0
   }
 
-  /**
-   * echo something and return back what has been printed
-   * @param message to print
-   * @return printed message
-   */
-  def echo(message:String) = execute(s"""echo $message""")
-
-  /**
-   * get dir name
-   * @param name a filename
-   * @return directory name
-   */
-  def alive():Boolean = echo("ALIVE").contains("ALIVE")
 
 }

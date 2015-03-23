@@ -19,6 +19,23 @@ package fr.janalyse.ssh
 
 class BecomeTest extends SomeHelp {
 
+  test("catData test") {
+    SSH.shell(sshopts) { sh =>
+      import sh._
+      rm("checkthat") 
+      catData("hello\nworld", "checkthat")
+      cat("checkthat").trim should equal("hello\nworld")
+    }
+  }
+  
+  test("sudos test") {
+    import util.Properties.{userName=>user}
+    val opts = SSHOptions("127.0.0.1", username=user, timeout=10000)
+    SSH.shell(opts) {sh =>
+      sh.sudoSuMinusWithCommandTest() should equal(false)
+    }
+  }
+  
   ignore("become tests") {
     import util.Properties.{userName=>user}
     info("For this test to success, you must allow current user to be able ")

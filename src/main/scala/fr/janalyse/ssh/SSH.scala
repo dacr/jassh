@@ -409,6 +409,11 @@ class SSH(val options: SSHOptions) extends ShellOperations with TransfertOperati
     )
   }
 
+  override def catData(data:String, filespec:String):Boolean = {
+    put(data, filespec)
+    true // TODO 
+  }
+  
   /**
    * Remote host/port => local port (client-side)
    * @param lport remote host port will be mapped on this port on client side (bound to localhost)

@@ -6,6 +6,84 @@ import java.util.concurrent.ArrayBlockingQueue
 
 class SSHShell(implicit ssh: SSH) extends ShellOperations {
 
+  
+  /**
+   * Does the command "sudo su -" without password works ?
+   * The typical usage that maximizes compatibilities accross various linux is to pipe the
+   *    command to the sudo -S su -
+   * Options such as -k, -A, -p ... may not be supported everywhere. 
+   * Some notes :
+   *     BAD because we want to test the su
+   *       sudo -n echo OK 2>/dev/null
+   *
+   *     BAD because with older linux, -n option was not available
+   *       sudo -n su - -c "echo OK" 2>/dev/null
+   *
+   *     ~GOOD but NOK if only su - is allowed 
+   *       echo | sudo -S su - -c echo "OK" 2>/dev/null
+   *
+   *     GOOD
+   *       echo "echo OK" | sudo -S su - 2>/dev/null
+   * @return true if just "sudo su -" is possible without password for current user
+   */
+  def sudoSuMinusOnlyWithoutPasswordTest():Boolean = {
+     val testedmsg="SUDOOK"
+     execute(s"""echo "echo $testedmsg" | sudo -S su - 2>/dev/null""").trim.contains(testedmsg)
+  }
+
+  /**
+   * Does the sudo su - command works with the current user password ?
+   *   while preserving the TTY stdin !
+   * @return true if OK
+   */
+  def sudoSuMinusOnlyWithPasswordTest():Boolean = {
+    val cur = s"""SUDO_PROMPT="password:" sudo -S su -"""
+    ???
+  }
+  
+  /**
+   * Does the command sudo "su - -c theGivenCommand" works ?
+   * Transparently with or without password
+   * @return true if it works
+   */
+  def sudoSuMinusWithCommandTest(cmd:String="whoami"):Boolean = {
+    val password=options.password.password.getOrElse("")
+    val scriptname=".custom-askpass-"+(scala.math.random*10000000l).toLong
+    val script=
+     s"""
+        |echo '$password'
+        |#self destruction
+        |rm -f $$HOME/$scriptname
+        |""".stripMargin
+    catData(script, s"""$$HOME/$scriptname""")
+    execute(s"""chmod u+x $$HOME/$scriptname""")
+    execute(s"""$$HOME/$scriptname | SUDO_PROMPT="" sudo -S su - -c "$cmd" >/dev/null 2>&1 ; echo $$?""")
+      .trim
+      .equals("0")
+  }
+
+  
+  /**
+   * write some data to the specified filespec
+   * @param filespec the file to write to
+   * @return true if data was written to the given file destination
+   */
+  override def catData(data:String, filespec:String):Boolean = {
+    synchronized {
+      execute(s"""touch "$filespec" >/dev/null 2>&1 ; echo $$?""").trim().equals("0") match {
+        case false => false
+        case true => 
+          sendCommand(s"""cat > "$filespec" """)
+          toServer.write(data)
+          toServer.nl()
+          toServer.eot()
+          val ignored = fromServer.getResponse()
+          true
+      }
+    }
+  }
+
+  
   override def execute(cmd: SSHCommand): String = {
     synchronized {
       sendCommand(cmd.cmd)
@@ -143,6 +221,8 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
     }
     toServer.send(cmd)
   }
+
+  
   // -----------------------------------------------------------------------------------
   class Producer(output: OutputStream) {
     private def sendChar(char: Int) {
@@ -155,12 +235,17 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
       output.flush()
     }
     def send(cmd: String) { sendString(cmd) }
+    def write(str: String) {
+      output.write(str.getBytes)
+      output.flush()
+    }
 
-    def break() { sendChar(3) } // Ctrl-C
-    def exit() { sendChar(4) } // Ctrl-D
-    def excape() { sendChar(27) } // ESC
+    def brk() { sendChar(3) } // Ctrl-C
+    def eot() { sendChar(4) } // Ctrl-D - End of Transmission
+    def esc() { sendChar(27) } // ESC
     def nl() { sendChar(10) } // LF or NEWLINE or ENTER or Ctrl-J
     def cr() { sendChar(13) } // CR
+
 
     def close() { output.close() }
   }
@@ -178,7 +263,7 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
       else {
         resultsQueue.poll(timeout, TimeUnit.MILLISECONDS) match {
           case null =>
-            toServer.break()
+            toServer.brk()
             //val output = resultsQueue.take() => Already be blocked with this wait instruction...
             val output = resultsQueue.poll(5, TimeUnit.SECONDS) match {
               case null => "**no return value - couldn't break current operation**"
