@@ -41,6 +41,11 @@ Remarks & caveats:
      differently with or without a TTY/VTTY (sudo, mysql, ...)
 
 ------------------------------------------------------------------
+0.9.19 (2015-03-23)
+ - ShellOperations : sudoNoPasswordTest renamed to sudoSuMinusOnlyWithoutPasswordTest
+ - ShellOperations : sudoSuSupportTest added
+
+------------------------------------------------------------------
 0.9.18 (2015-03-22)
  - jsch 0.1.52 
  - scalalogging usage removed because of api incompatibilities between scala 2.10 and 2.11 !!

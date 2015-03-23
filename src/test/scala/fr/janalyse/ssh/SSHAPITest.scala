@@ -444,9 +444,9 @@ class SSHAPITest extends SomeHelp {
   }
 
   //==========================================================================================================
-  test("sudo no password tesdt test") {
+  test("sudo no password test") {
     SSH.shell(sshopts) {sh =>
-      sh.sudoNoPasswordTest() should equal(false)
+      sh.sudoSuMinusOnlyWithoutPasswordTest() should equal(false)
     }
   }
   

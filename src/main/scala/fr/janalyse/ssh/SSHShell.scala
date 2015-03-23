@@ -43,7 +43,7 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
   }
   private def becomeWithSUDO(someoneelse: String):Boolean = {
     val curuser = whoami
-    if (sudoNoPasswordTest()) {
+    if (sudoSuMinusOnlyWithoutPasswordTest()) {
       execute("LANG=en; export LANG")
       sendCommand(s"sudo -n su - ${someoneelse}")
       shellInit()
