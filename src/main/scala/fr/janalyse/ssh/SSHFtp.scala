@@ -6,7 +6,7 @@ import java.nio.charset.Charset
 import scala.io.BufferedSource
 
 
-class SSHFtp(implicit ssh: SSH) extends TransfertOperations with LazyLogging {
+class SSHFtp(implicit ssh: SSH) extends TransfertOperations with SSHLazyLogging {
   private val channel: ChannelSftp = {
     //jschftpchannel.connect(link.connectTimeout)
     val ch = ssh.jschsession.openChannel("sftp").asInstanceOf[ChannelSftp]

@@ -2,6 +2,6 @@ package fr.janalyse.ssh
 
 import org.slf4j._
 
-trait LazyLogging {
+trait SSHLazyLogging {
   val logger = LoggerFactory.getLogger(getClass)
 }

@@ -25,7 +25,7 @@ import scala.util.matching.Regex
 /**
  * ShellOperations defines generic shell operations and common shell commands shortcuts
  */
-trait PowerShellOperations extends LazyLogging {
+trait PowerShellOperations extends SSHLazyLogging {
 
   /**
    * Execute the current command and return the result as a string
