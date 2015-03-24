@@ -19,16 +19,13 @@ package fr.janalyse.ssh
 
 class BecomeTest extends SomeHelp {
 
-  test("catData test") {
-    SSH.shell(sshopts) { sh =>
-      import sh._
-      rm("checkthat") 
-      catData("hello\nworld", "checkthat")
-      cat("checkthat").trim should equal("hello\nworld")
+  ignore("'sudo su -' no password test") {
+    SSH.shell(sshopts) {sh =>
+      sh.sudoSuMinusOnlyWithoutPasswordTest() should equal(false)
     }
   }
-  
-  test("sudos test") {
+
+  ignore("'su - -c acommand' test") {
     import util.Properties.{userName=>user}
     val opts = SSHOptions("127.0.0.1", username=user, timeout=10000)
     SSH.shell(opts) {sh =>

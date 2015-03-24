@@ -41,12 +41,13 @@ Remarks & caveats:
      differently with or without a TTY/VTTY (sudo, mysql, ...)
 
 ------------------------------------------------------------------
-0.9.19 (2015-03-23)
+0.9.19 (2015-03-xx)
  - ShellOperations : sudoNoPasswordTest renamed to sudoSuMinusOnlyWithoutPasswordTest
  - ShellOperations : sudo operations moved to SSHShell class
  - SSHShell : catData method added
  - SSHShell : sudoSuMinusOnlyWithPasswordTest method added
  - SSHShell : sudoSuMinusWithCommandTest method added
+ - SSHShell : executeWithExpects quick'n very dirty implementation
 
 ------------------------------------------------------------------
 0.9.18 (2015-03-22)
