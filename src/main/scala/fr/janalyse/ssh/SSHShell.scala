@@ -355,8 +355,9 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
     }
     
 //    final def consumerAppenderendsWith(str:String):Boolean = {
-//      val idx = consumerAppender.lastIndexOf(str)
-//      idx != -1 && (consumerAppender.size-idx == str.length)
+//      val from= consumerAppender.size - str.length
+//      val idx = consumerAppender.lastIndexOf(str, if (from>=0) from else 0)
+//      idx!= -1 && consumerAppender.size-idx == str.length
 //    }
     
   }
