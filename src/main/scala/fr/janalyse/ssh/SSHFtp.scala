@@ -38,6 +38,15 @@ class SSHFtp(implicit ssh: SSH) extends TransfertOperations with SSHLazyLogging 
     }
   }
 
+  /**
+   * Rename a remote file or directory
+   * @param origin Original remote file name
+   * @param dest Destination (new) remote file name
+   */
+  def rename(origin: String, dest: String) = {
+    channel.rename(origin, dest)
+  }
+
   override def receive(remoteFilename: String, outputStream: OutputStream) {
     try {
       channel.get(remoteFilename, outputStream)
