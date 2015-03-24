@@ -44,10 +44,11 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
   def sudoSuMinusOnlyWithPasswordTest(): Boolean = {
     val prompt = "password:"
     val sudosu = s"""SUDO_PROMPT="$prompt" sudo -S su -"""
-    val expects = List(
-      Expect(_.equals(prompt), options.password.password.getOrElse("")))
-    executeWithExpects(sudosu, expects)
-    whoami == "root"
+    val expect = Expect(_.endsWith(prompt), options.password.password.getOrElse("")+"\n")
+    val (_, rc) = executeWithExpects(sudosu, expect::Nil)
+    val result = rc==0 && whoami == "root"
+    if (result) execute("exit")
+    result
   }
 
   /**
@@ -222,6 +223,7 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
       toServer.send("unset EDITOR")
       toServer.send("unset PAGER")
       toServer.send("COLUMNS=500")
+      toServer.send("SUDO_PS1='%s'".format(defaultPrompt))
       toServer.send("PS1='%s'".format(defaultPrompt))
       toServer.send("history -d $((HISTCMD-2)) && history -d $((HISTCMD-1))") // Previous command must be hidden
       //toServer.sendCommand("set +o emacs")  // => Makes everything not working anymore, JSCH problem ?
