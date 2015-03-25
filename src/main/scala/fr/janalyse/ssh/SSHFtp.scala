@@ -4,7 +4,7 @@ import com.jcraft.jsch.{ChannelSftp, SftpException}
 import java.io._
 import java.nio.charset.Charset
 import scala.io.BufferedSource
-
+import collection.JavaConverters._
 
 class SSHFtp(implicit ssh: SSH) extends TransfertOperations with SSHLazyLogging {
   private val channel: ChannelSftp = {
@@ -46,6 +46,12 @@ class SSHFtp(implicit ssh: SSH) extends TransfertOperations with SSHLazyLogging 
   def rename(origin: String, dest: String) = {
     channel.rename(origin, dest)
   }
+
+  /**
+   * List contents of a remote directory
+   * @param path The path of the directory on the remote system
+   */
+  def ls(path: String) = channel.ls(path).asScala
 
   override def receive(remoteFilename: String, outputStream: OutputStream) {
     try {
