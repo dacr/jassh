@@ -51,7 +51,7 @@ class SSHFtp(implicit ssh: SSH) extends TransfertOperations with SSHLazyLogging 
    * List contents of a remote directory
    * @param path The path of the directory on the remote system
    */
-  def ls(path: String) = channel.ls(path).asScala
+  def ls(path: String) = channel.ls(path).asScala.map(_.asInstanceOf[channel.LsEntry].getLongname)
 
   override def receive(remoteFilename: String, outputStream: OutputStream) {
     try {
