@@ -54,6 +54,7 @@ Remarks & caveats:
      with found identifies in $HOME/.ssh/ such as id_rsa, id_dsa, id_ecdsa, identity, ...
    + SSHOptions.addIdentity can be used to add a new identity, new ones are added first
    + SSHOptions(identities=SSHIdentity(...)::Nil) can be use to specify a particular identity
+ - Merged : Added cd, rm, and rmdir to sftp coming from : mgregson (https://github.com/mgregson)
 
 ------------------------------------------------------------------
 0.9.18 (2015-03-22)
