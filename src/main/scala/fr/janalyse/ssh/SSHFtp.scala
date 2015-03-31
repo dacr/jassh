@@ -38,6 +38,33 @@ class SSHFtp(implicit ssh: SSH) extends TransfertOperations with SSHLazyLogging 
     }
   }
 
+  /**
+   * Rename a remote file or directory
+   * @param origin Original remote file name
+   * @param dest Destination (new) remote file name
+   */
+  def rename(origin: String, dest: String) = {
+    channel.rename(origin, dest)
+  }
+
+  /**
+   * Remove a file from a remote system
+   * @param path The path of the remote file to remove
+   */
+  def rm(path: String): Unit = channel.rm(path)
+
+  /**
+   * Remove a directory from a remote system
+   * @param path The path of the directory to remove
+   */
+  def rmdir(path: String): Unit = channel.rmdir(path)
+
+  /**
+   * Change the working directory on the remote system
+   * @param path The new working directory, relative to the current one
+   */
+  def cd(path: String): Unit = channel.cd(path)
+
   override def receive(remoteFilename: String, outputStream: OutputStream) {
     try {
       channel.get(remoteFilename, outputStream)
