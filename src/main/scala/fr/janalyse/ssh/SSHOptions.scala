@@ -55,6 +55,6 @@ object SSHOptions {
       )
   val defaultIdentities=
     defaultPrivKeyFilenames
-       .map(SP.userHome + FS + ".ssh" + _)
+       .map(SP.userHome + FS + ".ssh" + FS + _)
        .map(SSHIdentity(_))
 }
