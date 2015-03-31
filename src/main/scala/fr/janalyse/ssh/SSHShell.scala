@@ -223,9 +223,9 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
       toServer.send("unset EDITOR")
       toServer.send("unset PAGER")
       toServer.send("COLUMNS=500")
-      toServer.send("SUDO_PS1='%s'".format(defaultPrompt))
-      toServer.send("PS1='%s'".format(defaultPrompt))
-      toServer.send("history -d $((HISTCMD-2)) && history -d $((HISTCMD-1))") // Previous command must be hidden
+      toServer.send("SUDO_PS1='%s'".format(defaultPrompt)) // MUST BE REMOVED FROM THE HISTORY !!
+      toServer.send("PS1='%s'".format(defaultPrompt))      // MUST BE REMOVED FROM THE HISTROY !!
+      toServer.send("history -d $((HISTCMD-3)) && history -d $((HISTCMD-2)) && history -d $((HISTCMD-1))") // REMOVING DEDICATED PS1 VAR EN COMMANDS
       //toServer.sendCommand("set +o emacs")  // => Makes everything not working anymore, JSCH problem ?
       //toServer.sendCommand("set +o vi") // => Makes everything not working anymore, JSCH problem ?
       toServer.send("echo '%s'".format(readyMessage)) // ' are important to distinguish between the command and the result
