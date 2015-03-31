@@ -261,12 +261,18 @@ class SSH(val options: SSHOptions) extends ShellOperations with TransfertOperati
   private implicit val ssh = this
   private val jsch = new JSch
   val jschsession: Session = {
-    options.keyfiles2lookup
-      .toStream
-      .map(new File(options.sshUserDir, _))
-      .filter(_.exists)
-      .foreach(f => jsch.addIdentity(f.getAbsolutePath))
-
+    for {
+      ident <- options.identities
+      fident = new File(ident.privkey)
+      if fident.isFile()
+      passphraseOpt = ident.passphrase.password.orElse(options.passphrase.password)
+      } {
+        passphraseOpt match {
+          case Some(pass) => jsch.addIdentity(fident.getAbsolutePath, pass)
+          case None => jsch.addIdentity(fident.getAbsolutePath)
+        }
+    }
+      
     val ses = jsch.getSession(options.username, options.host, options.port)
     for {proxy <- options.proxy} ses.setProxy(proxy)
     ses.setServerAliveInterval(2000)
@@ -275,14 +281,13 @@ class SSH(val options: SSHOptions) extends ShellOperations with TransfertOperati
     ses.connect(options.connectTimeout.toInt)
     if (ssh.options.noneCipher) {
       /* Default : jsch 0.1.48 (2012-06-26)
-		cipher.s2c=aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc
-		cipher.c2s=aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc
+		  cipher.s2c=aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc
+		  cipher.c2s=aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc
        */
       //ses.setConfig("cipher.s2c", "none,aes128-cbc,3des-cbc,blowfish-cbc")
       //ses.setConfig("cipher.c2s", "none,aes128-cbc,3des-cbc,blowfish-cbc")
       ses.setConfig("cipher.s2c", options.ciphers.mkString(","))
- 	  ses.setConfig("cipher.c2s", options.ciphers.mkString(","))
-
+ 	    ses.setConfig("cipher.c2s", options.ciphers.mkString(","))
       ses.rekey()
     }
     if (ssh.options.compress.isDefined) {

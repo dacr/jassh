@@ -41,13 +41,17 @@ Remarks & caveats:
      differently with or without a TTY/VTTY (sudo, mysql, ...)
 
 ------------------------------------------------------------------
-0.9.19 (2015-03-25)
+0.9.19 (2015-04-xx)
  - ShellOperations : sudoNoPasswordTest renamed to sudoSuMinusOnlyWithoutPasswordTest
  - ShellOperations : sudo operations moved to SSHShell class
  - SSHShell : catData method added
  - SSHShell : sudoSuMinusOnlyWithPasswordTest method added
  - SSHShell : sudoSuMinusWithCommandTest method added
  - SSHShell : executeWithExpects quick'n dirty implementation
+ - SSHOptions :
+   + sshUserDir sshKeyFile parameters removed.
+   + replaced by identities parameter which is prefilled 
+     with default identifies $HOME/.ssh/id_rsa, $HOME/.ssh/id_dsa
 
 ------------------------------------------------------------------
 0.9.18 (2015-03-22)
