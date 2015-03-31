@@ -51,7 +51,9 @@ Remarks & caveats:
  - SSHOptions :
    + sshUserDir sshKeyFile parameters removed.
    + replaced by identities parameter which is prefilled 
-     with default identifies $HOME/.ssh/id_rsa, $HOME/.ssh/id_dsa
+     with found identifies in $HOME/.ssh/ such as id_rsa, id_dsa, id_ecdsa, identity, ...
+   + SSHOptions.addIdentity can be used to add a new identity, new ones are added first
+   + SSHOptions(identities=SSHIdentity(...)::Nil) can be use to specify a particular identity
 
 ------------------------------------------------------------------
 0.9.18 (2015-03-22)
