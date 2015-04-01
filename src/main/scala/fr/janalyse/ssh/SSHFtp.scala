@@ -1,10 +1,17 @@
 package fr.janalyse.ssh
 
-import com.jcraft.jsch.{ChannelSftp, SftpException}
+import com.jcraft.jsch.{ChannelSftp, SftpException, SftpATTRS}
 import java.io._
 import java.nio.charset.Charset
 import scala.io.BufferedSource
 import collection.JavaConverters._
+
+object SSHFtp {
+  /**
+   * A representation of the entries in a directory listing.
+   */
+  case class LsEntry(filename: String, longname: String, attrs: SftpATTRS)
+}
 
 class SSHFtp(implicit ssh: SSH) extends TransfertOperations with SSHLazyLogging {
   private val channel: ChannelSftp = {
@@ -51,7 +58,12 @@ class SSHFtp(implicit ssh: SSH) extends TransfertOperations with SSHLazyLogging 
    * List contents of a remote directory
    * @param path The path of the directory on the remote system
    */
-  def ls(path: String) = channel.ls(path).asScala.map(_.asInstanceOf[channel.LsEntry].getLongname)
+  def ls(path: String): List[SSHFtp.LsEntry] =
+    channel.ls(path)
+      .asScala
+      .map(_.asInstanceOf[channel.LsEntry])
+      .map(entry => SSHFtp.LsEntry(entry.getFilename, entry.getLongname, entry.getAttrs))
+      .toList
 
   override def receive(remoteFilename: String, outputStream: OutputStream) {
     try {
