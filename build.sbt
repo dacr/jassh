@@ -1,6 +1,6 @@
 name := "janalyse-ssh"
 
-version := "0.9.19-SNAPSHOT"
+version := "0.9.19-rc4"
 
 organization :="fr.janalyse"
 
@@ -31,3 +31,8 @@ publishTo := Some(
          "/home/tomcat/webapps-janalyse/repository"
      ) as("tomcat", new File(util.Properties.userHome+"/.ssh/id_rsa"))
 )
+
+initialCommands in console := """
+    |import fr.janalyse.ssh._
+    |import java.io.File
+    |""".stripMargin

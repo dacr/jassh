@@ -41,12 +41,20 @@ Remarks & caveats:
      differently with or without a TTY/VTTY (sudo, mysql, ...)
 
 ------------------------------------------------------------------
-0.9.19 (2015-03-23)
+0.9.19 (2015-04-xx)
  - ShellOperations : sudoNoPasswordTest renamed to sudoSuMinusOnlyWithoutPasswordTest
  - ShellOperations : sudo operations moved to SSHShell class
  - SSHShell : catData method added
  - SSHShell : sudoSuMinusOnlyWithPasswordTest method added
  - SSHShell : sudoSuMinusWithCommandTest method added
+ - SSHShell : executeWithExpects quick'n dirty implementation
+ - SSHOptions :
+   + sshUserDir sshKeyFile parameters removed.
+   + replaced by identities parameter which is prefilled 
+     with found identifies in $HOME/.ssh/ such as id_rsa, id_dsa, id_ecdsa, identity, ...
+   + SSHOptions.addIdentity can be used to add a new identity, new ones are added first
+   + SSHOptions(identities=SSHIdentity(...)::Nil) can be use to specify a particular identity
+ - Merged : Added cd, rm, and rmdir to sftp coming from : mgregson (https://github.com/mgregson)
 
 ------------------------------------------------------------------
 0.9.18 (2015-03-22)

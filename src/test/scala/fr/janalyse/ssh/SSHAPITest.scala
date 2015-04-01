@@ -444,11 +444,16 @@ class SSHAPITest extends SomeHelp {
   }
 
   //==========================================================================================================
-  test("sudo no password test") {
-    SSH.shell(sshopts) {sh =>
-      sh.sudoSuMinusOnlyWithoutPasswordTest() should equal(false)
+  test("catData test") {
+    SSH.shell(sshopts) { sh =>
+      import sh._
+      rm("checkthat") 
+      catData("hello\nworld", "checkthat")
+      cat("checkthat").trim should equal("hello\nworld")
     }
   }
+
+
   
 }
 

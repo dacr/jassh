@@ -103,6 +103,16 @@ class ShellOperationsTest extends SomeHelp {
     }
   }  
   
+  // TODO : improvements to be done within shell engine
+  test("shell history test") {
+    SSH.shell(sshopts) {sh =>
+      import sh._
+      sh.execute("history")
+      whoami                  should equal(sshopts.username)
+    }    
+  }
+
+  
   // TODO : something wrong is happening with travis test platform
   ignore("last modified tests") {
     val testfile="sshapitestZZ.dummy"
@@ -119,15 +129,6 @@ class ShellOperationsTest extends SomeHelp {
     }
   }
    
-  // TODO : improvements to be done within shell engine
-  test("shell history test") {
-    SSH.shell(sshopts) {sh =>
-      import sh._
-      sh.execute("history")
-      whoami                  should equal(sshopts.username)
-    }    
-  }
-
   
   test("more ls and mkdir tests") {
     SSH.shell(sshopts) {sh =>

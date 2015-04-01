@@ -6,12 +6,17 @@ import java.util.concurrent.ArrayBlockingQueue
 
 class SSHShell(implicit ssh: SSH) extends ShellOperations {
 
-  
   /**
    * Does the command "sudo su -" without password works ?
-   * The typical usage that maximizes compatibilities accross various linux is to pipe the
+   *
+   * This typical usage that maximizes compatibilities across various linux is to pipe the
    *    command to the sudo -S su -
-   * Options such as -k, -A, -p ... may not be supported everywhere. 
+   *
+   * BUT with this usage you loose the TTY, so interactive commands such as the shell are no more possible
+   *    and you directly get back to previous sh.
+   *
+   * Options such as -k, -A, -p ... may not be supported everywhere.
+   *
    * Some notes :
    *     BAD because we want to test the su
    *       sudo -n echo OK 2>/dev/null
@@ -19,38 +24,43 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
    *     BAD because with older linux, -n option was not available
    *       sudo -n su - -c "echo OK" 2>/dev/null
    *
-   *     ~GOOD but NOK if only su - is allowed 
+   *     ~GOOD but NOK if only su - is allowed
    *       echo | sudo -S su - -c echo "OK" 2>/dev/null
    *
    *     GOOD
    *       echo "echo OK" | sudo -S su - 2>/dev/null
    * @return true if just "sudo su -" is possible without password for current user
    */
-  def sudoSuMinusOnlyWithoutPasswordTest():Boolean = {
-     val testedmsg="SUDOOK"
-     execute(s"""echo "echo $testedmsg" | sudo -S su - 2>/dev/null""").trim.contains(testedmsg)
+  def sudoSuMinusOnlyWithoutPasswordTest(): Boolean = {
+    val testedmsg = "SUDOOK"
+    execute(s"""echo "echo $testedmsg" | sudo -S su - 2>/dev/null""").trim.contains(testedmsg)
   }
 
   /**
-   * Does the sudo su - command works with the current user password ?
+   * Does the command sudo su -  works with the current user password ?
    *   while preserving the TTY stdin !
    * @return true if OK
    */
-  def sudoSuMinusOnlyWithPasswordTest():Boolean = {
-    val cur = s"""SUDO_PROMPT="password:" sudo -S su -"""
-    ???
+  def sudoSuMinusOnlyWithPasswordTest(): Boolean = {
+    val prompt = "password:"
+    val sudosu = s"""SUDO_PROMPT="$prompt" sudo -S su -"""
+    val expect = Expect(_.endsWith(prompt), options.password.password.getOrElse("")+"\n")
+    val (_, rc) = executeWithExpects(sudosu, expect::Nil)
+    val result = rc==0 && whoami == "root"
+    if (result) execute("exit")
+    result
   }
-  
+
   /**
    * Does the command sudo "su - -c theGivenCommand" works ?
    * Transparently with or without password
    * @return true if it works
    */
-  def sudoSuMinusWithCommandTest(cmd:String="whoami"):Boolean = {
-    val password=options.password.password.getOrElse("")
-    val scriptname=".custom-askpass-"+(scala.math.random*10000000l).toLong
-    val script=
-     s"""
+  def sudoSuMinusWithCommandTest(cmd: String = "whoami"): Boolean = {
+    val password = options.password.password.getOrElse("")
+    val scriptname = ".custom-askpass-" + (scala.math.random * 10000000l).toLong
+    val script =
+      s"""
         |echo '$password'
         |#self destruction
         |rm -f $$HOME/$scriptname
@@ -62,17 +72,16 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
       .equals("0")
   }
 
-  
   /**
    * write some data to the specified filespec
    * @param filespec the file to write to
    * @return true if data was written to the given file destination
    */
-  override def catData(data:String, filespec:String):Boolean = {
+  override def catData(data: String, filespec: String): Boolean = {
     synchronized {
       execute(s"""touch "$filespec" >/dev/null 2>&1 ; echo $$?""").trim().equals("0") match {
         case false => false
-        case true => 
+        case true =>
           sendCommand(s"""cat > "$filespec" """)
           toServer.write(data)
           toServer.nl()
@@ -83,7 +92,21 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
     }
   }
 
-  
+  /**
+   *
+   * @return the command result and the number of consumed expects
+   */
+  def executeWithExpects(cmd: SSHCommand, expects: List[Expect]): (String, Int) = {
+    try {
+      fromServer.setExpects(expects)
+      val result = execute(cmd)
+      val sz = fromServer.expectsRemaining()
+      (result, sz)
+    } finally {
+      fromServer.resetExpects()
+    }
+  }
+
   override def execute(cmd: SSHCommand): String = {
     synchronized {
       sendCommand(cmd.cmd)
@@ -99,7 +122,7 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
     }
   }
 
-  private def becomeWithSU(someoneelse: String, password: Option[String] = None):Boolean = {
+  private def becomeWithSU(someoneelse: String, password: Option[String] = None): Boolean = {
     val curuser = whoami
     if (curuser == "root") {
       execute("LANG=en; export LANG")
@@ -111,15 +134,15 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
       sendCommand(s"su - ${someoneelse}")
       Thread.sleep(2000) // TODO - TO BE IMPROVED
       try {
-          password.foreach { it => toServer.send(it) }
-          Thread.sleep(1000)
+        password.foreach { it => toServer.send(it) }
+        Thread.sleep(1000)
       } finally {
         shellInit()
       }
     }
-      whoami == someoneelse
+    whoami == someoneelse
   }
-  private def becomeWithSUDO(someoneelse: String):Boolean = {
+  private def becomeWithSUDO(someoneelse: String): Boolean = {
     val curuser = whoami
     if (sudoSuMinusOnlyWithoutPasswordTest()) {
       execute("LANG=en; export LANG")
@@ -128,10 +151,10 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
     } else {
       execute("LANG=en; export LANG")
       sendCommand(s"sudo -S su - ${someoneelse}")
-      Thread.sleep(2000)  // TODO - TO BE IMPROVED
+      Thread.sleep(2000) // TODO - TO BE IMPROVED
       try {
         if (curuser != "root") { // do not use whoami here as we are in transitional state...
-          options.password.password.foreach{ it => toServer.send(it)}
+          options.password.password.foreach { it => toServer.send(it) }
           Thread.sleep(1000)
         }
       } finally {
@@ -139,13 +162,13 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
       }
     }
     whoami == someoneelse
-  }  
+  }
   /**
    * Become someoneelse on the current shell session, first the command
    * will try (if new user password is given) su - newuser then if unsuccessful
    * it will try the sudo su - approach, in that case it is the current user
    * pass that will be used, new user password will be ignored.
-   *  
+   *
    * @param someoneelse become this new user
    * @param password new user password
    * @return true if operation is successfull, the current user is the new one
@@ -200,8 +223,9 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
       toServer.send("unset EDITOR")
       toServer.send("unset PAGER")
       toServer.send("COLUMNS=500")
-      toServer.send("PS1='%s'".format(defaultPrompt))
-      toServer.send("history -d $((HISTCMD-2)) && history -d $((HISTCMD-1))") // Previous command must be hidden
+      toServer.send("SUDO_PS1='%s'".format(defaultPrompt)) // MUST BE REMOVED FROM THE HISTORY !!
+      toServer.send("PS1='%s'".format(defaultPrompt))      // MUST BE REMOVED FROM THE HISTROY !!
+      toServer.send("history -d $((HISTCMD-3)) && history -d $((HISTCMD-2)) && history -d $((HISTCMD-1))") // REMOVING DEDICATED PS1 VAR EN COMMANDS
       //toServer.sendCommand("set +o emacs")  // => Makes everything not working anymore, JSCH problem ?
       //toServer.sendCommand("set +o vi") // => Makes everything not working anymore, JSCH problem ?
       toServer.send("echo '%s'".format(readyMessage)) // ' are important to distinguish between the command and the result
@@ -222,7 +246,6 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
     toServer.send(cmd)
   }
 
-  
   // -----------------------------------------------------------------------------------
   class Producer(output: OutputStream) {
     private def sendChar(char: Int) {
@@ -246,13 +269,17 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
     def nl() { sendChar(10) } // LF or NEWLINE or ENTER or Ctrl-J
     def cr() { sendChar(13) } // CR
 
-
     def close() { output.close() }
   }
 
   // -----------------------------------------------------------------------------------
   class ConsumerOutputStream(checkReady: Boolean) extends OutputStream {
     import java.util.concurrent.TimeUnit
+
+    private var currentExpects = List.empty[Expect]
+    def setExpects(expects: List[Expect]): Unit = { currentExpects = expects }
+    def expectsRemaining() = currentExpects.size
+    def resetExpects(): Unit = { currentExpects = List.empty }
 
     private val resultsQueue = new ArrayBlockingQueue[String](10)
 
@@ -267,7 +294,7 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
             //val output = resultsQueue.take() => Already be blocked with this wait instruction...
             val output = resultsQueue.poll(5, TimeUnit.SECONDS) match {
               case null => "**no return value - couldn't break current operation**"
-              case x => x
+              case x    => x
             }
             throw new SSHTimeoutException(output, "") // We couldn't distinguish stdout from stderr within a shell session
           case x => x
@@ -294,7 +321,7 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
     private val lastPromptChars = prompt.reverse.take(2).reverse
     private var searchForPromptIndex = 0
 
-    def write(b: Int) {
+    final def write(b: Int) {
       if (b != 13) { //CR removed... CR is always added by JSCH !!!!
         val ch = b.toChar
         consumerAppender.append(ch) // TODO - Add charset support
@@ -305,21 +332,36 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
             ready = true
             readyQueue.put("ready")
           }
-        } else if (consumerAppender.endsWith(lastPromptChars)
-          && consumerAppender.endsWith(prompt)
-          && !consumerAppender.endsWith(promptEqualPrefix)) {
-          val promptIndex = consumerAppender.size - promptSize
-          val firstNlIndex = consumerAppender.indexOf("\n")
-          val result = consumerAppender.substring(firstNlIndex + 1, promptIndex)
-          resultsQueue.put(result)
-          searchForPromptIndex = 0
-          consumerAppender.clear
         } else {
-          searchForPromptIndex = consumerAppender.size - promptSize
-          if (searchForPromptIndex < 0) searchForPromptIndex = 0
+          if (currentExpects.size>0
+              && currentExpects.head.when(consumerAppender.toString()) // TODO : Bad perf !
+              ) {
+            toServer.write(currentExpects.head.send)
+            currentExpects = currentExpects.tail
+          }
+          if (consumerAppender.endsWith(lastPromptChars)
+            && consumerAppender.endsWith(prompt)
+            && !consumerAppender.endsWith(promptEqualPrefix)) {
+            val promptIndex = consumerAppender.size - promptSize
+            val firstNlIndex = consumerAppender.indexOf("\n")
+            val result = consumerAppender.substring(firstNlIndex + 1, promptIndex)
+            resultsQueue.put(result)
+            searchForPromptIndex = 0
+            consumerAppender.clear
+          } else {
+            searchForPromptIndex = consumerAppender.size - promptSize
+            if (searchForPromptIndex < 0) searchForPromptIndex = 0
+          }
         }
       }
     }
+    
+//    final def consumerAppenderendsWith(str:String):Boolean = {
+//      val from= consumerAppender.size - str.length
+//      val idx = consumerAppender.lastIndexOf(str, if (from>=0) from else 0)
+//      idx!= -1 && consumerAppender.size-idx == str.length
+//    }
+    
   }
 
 }
