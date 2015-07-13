@@ -41,7 +41,7 @@ Remarks & caveats:
      differently with or without a TTY/VTTY (sudo, mysql, ...)
 
 ------------------------------------------------------------------
-0.9.19 (2015-04-xx)
+0.9.19-SNAPSHOT (2015-07-13)
  - ShellOperations : sudoNoPasswordTest renamed to sudoSuMinusOnlyWithoutPasswordTest
  - ShellOperations : sudo operations moved to SSHShell class
  - SSHShell : catData method added
@@ -55,6 +55,8 @@ Remarks & caveats:
    + SSHOptions.addIdentity can be used to add a new identity, new ones are added first
    + SSHOptions(identities=SSHIdentity(...)::Nil) can be use to specify a particular identity
  - Merged : Added cd, rm, and rmdir to sftp coming from : mgregson (https://github.com/mgregson)
+ - scala 2.11.7
+ - jsch 0.1.53
 
 ------------------------------------------------------------------
 0.9.18 (2015-03-22)
