@@ -38,12 +38,12 @@ resolvers += "JAnalyse Repository" at "http://www.janalyse.fr/repository/"
 The procedure to generate your own executable :
 ```bash
 $ git clone https://github.com/dacr/jassh.git
-$ cd jassh/onejar/
+$ cd jassh/
 $ sbt assembly
 ...
-[info] Packaging target/scala-2.10/jassh.jar ...
+[info] Packaging target/scala-2.11/jassh.jar ...
 [info] Done packaging.
-$ java -jar target/scala-2.10/jassh.jar
+$ java -jar target/scala-2.11/jassh.jar
 scala> SSH("localhost", "test").shell(_.echo("hello `whoami` at `date`")).trim
 res4: String = hello test at Sun Mar 22 16:17:55 CET 2015
 
