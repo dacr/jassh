@@ -115,5 +115,5 @@ LINUX SSHD CONFIGURATION
 SOLARIS SSHD CONFIGURATION
 ```
     vi /usr/local/etc/ssh/sshd_config
-    ???/lib/svc/method/sshd restart ???
+    svcadm restart ssh
 ```
