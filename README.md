@@ -117,3 +117,9 @@ SOLARIS SSHD CONFIGURATION
     vi /usr/local/etc/ssh/sshd_config
     svcadm restart ssh
 ```
+
+MAC OS X CONFIGURATION
+```
+    sudo vi /etc/sshd_config
+    sudo launchctl load -w /System/Library/LaunchDaemons/ssh.plist
+```
