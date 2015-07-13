@@ -31,6 +31,8 @@ initialCommands in console := """
     |import java.io.File
     |""".stripMargin
 
+test in assembly := {}
+
 artifactName in assembly := { (sv: ScalaVersion, module: ModuleID, artifact: Artifact) =>
      artifact.name + "." + artifact.extension
 }
