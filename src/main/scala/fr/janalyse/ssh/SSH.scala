@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 David Crosson
+ * Copyright 2015 David Crosson
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -277,6 +277,7 @@ class SSH(val options: SSHOptions) extends ShellOperations with TransfertOperati
     for {proxy <- options.proxy} ses.setProxy(proxy)
     ses.setServerAliveInterval(2000)
     ses.setTimeout(options.connectTimeout.toInt) // Timeout for the ssh connection (unplug cable to simulate)
+    ses.setConfig("PreferredAuthentications", "publickey,keyboard-interactive,password")
     ses.setUserInfo(SSHUserInfo(options.password.password, options.passphrase.password))
     ses.connect(options.connectTimeout.toInt)
     if (ssh.options.noneCipher) {

@@ -57,6 +57,8 @@ Remarks & caveats:
  - Merged : Added cd, rm, and rmdir to sftp coming from : mgregson (https://github.com/mgregson)
  - scala 2.11.7
  - jsch 0.1.53
+ - ses.setConfig("PreferredAuthentications", "publickey,keyboard-interactive,password")
+   added as suggested by herbinator (https://github.com/herbinator)
 
 ------------------------------------------------------------------
 0.9.18 (2015-03-22)

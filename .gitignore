@@ -12,4 +12,5 @@ images/
 *.png
 nohup.out
 .target
-
+bin/
+.cache-*
