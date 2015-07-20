@@ -443,17 +443,6 @@ class SSHAPITest extends SomeHelp {
     }
   }
 
-  //==========================================================================================================
-  ignore("catData test") {
-    SSH.shell(sshopts) { sh =>
-      import sh._
-      rm("checkthat") 
-      catData("hello\nworld", "checkthat")
-      cat("checkthat").trim should equal("hello\nworld")
-    }
-  }
-
-
   
 }
 
