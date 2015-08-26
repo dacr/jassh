@@ -16,8 +16,8 @@
 
 package fr.janalyse.ssh
 
-import com.jcraft.jsch.{JSch, Session}
-import java.io.{File,OutputStream}
+import com.jcraft.jsch.{ JSch, Session }
+import java.io.{ File, OutputStream }
 
 import language.implicitConversions
 import language.reflectiveCalls
@@ -263,36 +263,38 @@ class SSH(val options: SSHOptions) extends ShellOperations with TransfertOperati
 
   val jschsession: () => Session = {
     // closure to hide the current checked session
-    var checkedsession=buildSession()    
-    () => try {
+    var checkedsession = buildSession()
+    () => synchronized {
+      try {
         val testChannel = checkedsession.openChannel("exec").asInstanceOf[com.jcraft.jsch.ChannelExec]
         testChannel.setCommand("true")
         testChannel.connect()
         testChannel.disconnect()
-    } catch {
-      case ex:Exception =>
-        try {checkedsession.disconnect()} catch {case e:Exception =>}
-        logger.warn("Session is KO, reconnecting...");
-        checkedsession=buildSession()
+      } catch {
+        case ex: Exception =>
+          try { checkedsession.disconnect() } catch { case e: Exception => }
+          logger.warn("Session is KO, reconnecting...");
+          checkedsession = buildSession()
+      }
+      checkedsession
     }
-    checkedsession
   }
-    
+
   private def buildSession(): Session = {
     for {
       ident <- options.identities
       fident = new File(ident.privkey)
       if fident.isFile()
       passphraseOpt = ident.passphrase.password.orElse(options.passphrase.password)
-      } {
-        passphraseOpt match {
-          case Some(pass) => jsch.addIdentity(fident.getAbsolutePath, pass)
-          case None => jsch.addIdentity(fident.getAbsolutePath)
-        }
+    } {
+      passphraseOpt match {
+        case Some(pass) => jsch.addIdentity(fident.getAbsolutePath, pass)
+        case None       => jsch.addIdentity(fident.getAbsolutePath)
+      }
     }
-      
+
     val ses = jsch.getSession(options.username, options.host, options.port)
-    for {proxy <- options.proxy} ses.setProxy(proxy)
+    for { proxy <- options.proxy } ses.setProxy(proxy)
     ses.setServerAliveInterval(5000)
     ses.setServerAliveCountMax(5)
     ses.setTimeout(options.connectTimeout.toInt) // Timeout for the ssh connection (unplug cable to simulate)
@@ -313,11 +315,11 @@ class SSH(val options: SSHOptions) extends ShellOperations with TransfertOperati
        */
       //ses.setConfig("cipher.s2c", "none,aes128-cbc,3des-cbc,blowfish-cbc")
       //ses.setConfig("cipher.c2s", "none,aes128-cbc,3des-cbc,blowfish-cbc")
-//      ses.setConfig("cipher.s2c", options.ciphers.mkString(","))
-// 	    ses.setConfig("cipher.c2s", options.ciphers.mkString(","))
-      ses.setConfig("cipher.s2c", ("none"::options.ciphers.toList).mkString(","))
-      ses.setConfig("cipher.c2s", ("none"::options.ciphers.toList).mkString(","))
-    } else { 
+      //      ses.setConfig("cipher.s2c", options.ciphers.mkString(","))
+      // 	    ses.setConfig("cipher.c2s", options.ciphers.mkString(","))
+      ses.setConfig("cipher.s2c", ("none" :: options.ciphers.toList).mkString(","))
+      ses.setConfig("cipher.c2s", ("none" :: options.ciphers.toList).mkString(","))
+    } else {
       ses.setConfig("cipher.s2c", (options.ciphers).mkString(","))
       ses.setConfig("cipher.c2s", (options.ciphers).mkString(","))
     }
@@ -348,10 +350,9 @@ class SSH(val options: SSHOptions) extends ShellOperations with TransfertOperati
 
   override def execute(cmd: SSHCommand) = execOnce(cmd) // Using SSHExec channel (better performances)
 
-  override def executeWithStatus(cmd: SSHCommand): Tuple2[String,Int] = execOnceWithStatus(cmd)
+  override def executeWithStatus(cmd: SSHCommand): Tuple2[String, Int] = execOnceWithStatus(cmd)
 
   override def executeAll(cmds: SSHBatch) = shell { _ executeAll cmds }
-
 
   def execOnceAndTrim(scmd: SSHCommand) = execOnce(scmd).trim()
 
@@ -359,16 +360,16 @@ class SSH(val options: SSHOptions) extends ShellOperations with TransfertOperati
     val (result, _) = execOnceWithStatus(scmd)
     result
   }
-  def execOnceWithStatus(scmd: SSHCommand): Tuple2[String,Int] = {
+  def execOnceWithStatus(scmd: SSHCommand): Tuple2[String, Int] = {
     val stdout = new StringBuilder()
     val stderr = new StringBuilder()
     var exitCode = -1
-    def outputReceiver(buffer:StringBuilder)(content: ExecResult) {
+    def outputReceiver(buffer: StringBuilder)(content: ExecResult) {
       content match {
         case ExecPart(part) =>
           if (buffer.size > 0) buffer.append("\n")
           buffer.append(part)
-        case ExecEnd(rc) => exitCode=rc.toInt
+        case ExecEnd(rc) => exitCode = rc.toInt
         case ExecTimeout =>
       }
     }
@@ -377,7 +378,7 @@ class SSH(val options: SSHOptions) extends ShellOperations with TransfertOperati
       runner = Some(new SSHExec(scmd.cmd, outputReceiver(stdout), outputReceiver(stderr)))
       runner foreach { _.waitForEnd }
     } catch {
-      case e:InterruptedException =>
+      case e: InterruptedException =>
         throw new SSHTimeoutException(stdout.toString, stderr.toString)
     } finally {
       runner foreach { _.close }
@@ -385,16 +386,16 @@ class SSH(val options: SSHOptions) extends ShellOperations with TransfertOperati
     (stdout.toString(), exitCode)
   }
 
-  private var firstHasFailed=false
+  private var firstHasFailed = false
 
-  private def opWithFallback[T]( primary : => T, fallback: => T ):T = {
+  private def opWithFallback[T](primary: => T, fallback: => T): T = {
     if (firstHasFailed) fallback
     else {
       try {
         primary
       } catch {
-        case x:RuntimeException if x.getMessage contains "SSH transfert protocol error" =>
-          firstHasFailed=true
+        case x: RuntimeException if x.getMessage contains "SSH transfert protocol error" =>
+          firstHasFailed = true
           fallback
       }
     }
@@ -402,55 +403,48 @@ class SSH(val options: SSHOptions) extends ShellOperations with TransfertOperati
 
   override def get(remoteFilename: String): Option[String] =
     opWithFallback(
-        ssh.scp(_ get remoteFilename),
-        ssh.ftp(_ get remoteFilename)
-    )
-
+      ssh.scp(_ get remoteFilename),
+      ssh.ftp(_ get remoteFilename))
 
   override def getBytes(remoteFilename: String): Option[Array[Byte]] =
     opWithFallback(
-      ssh.scp( _ getBytes remoteFilename),
-      ssh.ftp( _ getBytes remoteFilename)
-    )
+      ssh.scp(_ getBytes remoteFilename),
+      ssh.ftp(_ getBytes remoteFilename))
 
   override def receive(remoteFilename: String, outputStream: OutputStream) {
     opWithFallback(
       ssh.scp(_.receive(remoteFilename, outputStream)),
-      ssh.ftp(_.receive(remoteFilename, outputStream))
-    )
+      ssh.ftp(_.receive(remoteFilename, outputStream)))
   }
 
   override def put(data: String, remoteDestination: String) {
     opWithFallback(
       ssh.scp(_ put (data, remoteDestination)),
-      ssh.ftp(_ put (data, remoteDestination))
-    )
+      ssh.ftp(_ put (data, remoteDestination)))
   }
 
   override def putBytes(data: Array[Byte], remoteDestination: String) {
     opWithFallback(
       ssh.scp(_ putBytes (data, remoteDestination)),
-      ssh.ftp(_ putBytes (data, remoteDestination))
-    )
+      ssh.ftp(_ putBytes (data, remoteDestination)))
   }
 
-  override def putFromStream(data: java.io.InputStream, howmany:Int, remoteDestination: String) {
+  override def putFromStream(data: java.io.InputStream, howmany: Int, remoteDestination: String) {
     // Never use fallback mechanism for that case, because data stream is consumed...
-    ssh.scp(_ putFromStream(data, howmany, remoteDestination))
+    ssh.scp(_ putFromStream (data, howmany, remoteDestination))
   }
 
   override def send(fromLocalFile: File, remoteDestination: String) {
     opWithFallback(
       ssh.scp(_.send(fromLocalFile, remoteDestination)),
-      ssh.ftp(_.send(fromLocalFile, remoteDestination))
-    )
+      ssh.ftp(_.send(fromLocalFile, remoteDestination)))
   }
 
-  override def catData(data:String, filespec:String):Boolean = {
+  override def catData(data: String, filespec: String): Boolean = {
     put(data, filespec)
     true // TODO 
   }
-  
+
   /**
    * Remote host/port => local port (client-side)
    * @param lport remote host port will be mapped on this port on client side (bound to localhost)
