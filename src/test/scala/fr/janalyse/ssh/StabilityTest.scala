@@ -29,6 +29,8 @@ class StabilityTest extends SomeHelp {
 
   //==========================================================================================================
   test("stability test") {
+    info("Will fail with OpenSSH_6.9p1-hpn14v5, OpenSSL 1.0.1p 9 Jul 2015")
+    info("Will fail with OpenSSH_6.9p1-hpn14v5, OpenSSL 1.0.2d 9 Jul 2015")
     val max=1000
     var reached=0
     try {
