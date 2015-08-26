@@ -190,7 +190,7 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
   val options = ssh.options
 
   private val (channel, toServer, fromServer) = {
-    var ch: ChannelShell = ssh.jschsession.openChannel("shell").asInstanceOf[ChannelShell]
+    var ch: ChannelShell = ssh.jschsession().openChannel("shell").asInstanceOf[ChannelShell]
     ch.setPtyType("dumb")
     ch.setXForwarding(false)
     //ch.setEnv("COLUMNS", "500") // Can't be use, by default PermitUserEnvironment=no in sshd_config 

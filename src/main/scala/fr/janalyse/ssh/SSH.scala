@@ -260,7 +260,25 @@ object SSH {
 class SSH(val options: SSHOptions) extends ShellOperations with TransfertOperations {
   private implicit val ssh = this
   private val jsch = new JSch
-  val jschsession: Session = {
+
+  val jschsession: () => Session = {
+    // closure to hide the current checked session
+    var checkedsession=buildSession()    
+    () => try {
+        val testChannel = checkedsession.openChannel("exec").asInstanceOf[com.jcraft.jsch.ChannelExec]
+        testChannel.setCommand("true")
+        testChannel.connect()
+        testChannel.disconnect()
+    } catch {
+      case ex:Exception =>
+        try {checkedsession.disconnect()} catch {case e:Exception =>}
+        logger.warn("Session is KO, reconnecting...");
+        checkedsession=buildSession()
+    }
+    checkedsession
+  }
+    
+  private def buildSession(): Session = {
     for {
       ident <- options.identities
       fident = new File(ident.privkey)
@@ -275,22 +293,35 @@ class SSH(val options: SSHOptions) extends ShellOperations with TransfertOperati
       
     val ses = jsch.getSession(options.username, options.host, options.port)
     for {proxy <- options.proxy} ses.setProxy(proxy)
-    ses.setServerAliveInterval(2000)
+    ses.setServerAliveInterval(5000)
+    ses.setServerAliveCountMax(5)
     ses.setTimeout(options.connectTimeout.toInt) // Timeout for the ssh connection (unplug cable to simulate)
     ses.setConfig("PreferredAuthentications", "publickey,keyboard-interactive,password")
     ses.setUserInfo(SSHUserInfo(options.password.password, options.passphrase.password))
     ses.connect(options.connectTimeout.toInt)
     if (ssh.options.noneCipher) {
-      /* Default : jsch 0.1.48 (2012-06-26)
-		  cipher.s2c=aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc
-		  cipher.c2s=aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc
+      //logger.debug("cipher.s2c : "+ses.getConfig("cipher.s2c"))
+      //logger.debug("cipher.c2s : "+ses.getConfig("cipher.c2s"))
+      /* 
+       * Default : jsch 0.1.53 (2015-08-24)
+       *   cipher.s2c=aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-ctr,aes192-cbc,aes256-ctr,aes256-cbc
+       *   cipher.c2s=aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-ctr,aes192-cbc,aes256-ctr,aes256-cbc
+       *   
+       * Default : jsch 0.1.48 (2012-06-26)
+		   *   cipher.s2c=aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc
+		   *   cipher.c2s=aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc
        */
       //ses.setConfig("cipher.s2c", "none,aes128-cbc,3des-cbc,blowfish-cbc")
       //ses.setConfig("cipher.c2s", "none,aes128-cbc,3des-cbc,blowfish-cbc")
-      ses.setConfig("cipher.s2c", options.ciphers.mkString(","))
- 	    ses.setConfig("cipher.c2s", options.ciphers.mkString(","))
-      ses.rekey()
+//      ses.setConfig("cipher.s2c", options.ciphers.mkString(","))
+// 	    ses.setConfig("cipher.c2s", options.ciphers.mkString(","))
+      ses.setConfig("cipher.s2c", ("none"::options.ciphers.toList).mkString(","))
+      ses.setConfig("cipher.c2s", ("none"::options.ciphers.toList).mkString(","))
+    } else { 
+      ses.setConfig("cipher.s2c", (options.ciphers).mkString(","))
+      ses.setConfig("cipher.c2s", (options.ciphers).mkString(","))
     }
+    ses.rekey()
     if (ssh.options.compress.isDefined) {
       ses.setConfig("compression.s2c", "zlib@openssh.com,zlib,none");
       ses.setConfig("compression.c2s", "zlib@openssh.com,zlib,none");
@@ -427,7 +458,7 @@ class SSH(val options: SSHOptions) extends ShellOperations with TransfertOperati
    * @param hport remote port (on remote host) to bring back locally
    */
   def remote2Local(lport: Int, host: String, hport: Int) = {
-    jschsession.setPortForwardingL(lport, host, hport)
+    jschsession().setPortForwardingL(lport, host, hport)
   }
 
   /**
@@ -438,7 +469,7 @@ class SSH(val options: SSHOptions) extends ShellOperations with TransfertOperati
    * @return chosen local listening port
    */
   def remote2Local(host: String, hport: Int) = {
-    jschsession.setPortForwardingL(0, host, hport)
+    jschsession().setPortForwardingL(0, host, hport)
   }
 
   /**
@@ -448,7 +479,7 @@ class SSH(val options: SSHOptions) extends ShellOperations with TransfertOperati
    * @param lport the port to foward
    */
   def local2Remote(rport: Int, lhost: String, lport: Int) {
-    jschsession.setPortForwardingR(rport, lhost, lport);
+    jschsession().setPortForwardingR(rport, lhost, lport);
   }
 
   /**
@@ -499,6 +530,6 @@ class SSH(val options: SSHOptions) extends ShellOperations with TransfertOperati
   /**
    * close current ssh session
    */
-  def close() { jschsession.disconnect }
+  def close() { jschsession().disconnect }
 
 }

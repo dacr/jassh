@@ -31,10 +31,11 @@ case class SSHOptions(
   retryDelay: Int = 2000,
   identities: List[SSHIdentity]=SSHOptions.defaultIdentities,
   charset: String = "ISO-8859-15",
-  noneCipher: Boolean = true,
+  noneCipher: Boolean = false,
   compress: Option[Int] = None,
   execWithPty:Boolean = false,    // Sometime some command doesn't behave the same with or without tty, cf mysql
-  ciphers:Array[String]="none,aes128-cbc,aes192-cbc,aes256-cbc,3des-cbc,blowfish-cbc,aes128-ctr,aes192-ctr,aes256-ctr".split(","),
+  //ciphers:Array[String]="none,aes128-cbc,aes192-cbc,aes256-cbc,3des-cbc,blowfish-cbc,aes128-ctr,aes192-ctr,aes256-ctr".split(","),
+  ciphers:Array[String]="aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-ctr,aes192-cbc,aes256-ctr,aes256-cbc".split(","),
   proxy:Option[Proxy]=None
   ) {
   //val keyfiles2lookup = sshKeyFile ++ List("id_rsa", "id_dsa") // ssh key search order (from sshUserDir)

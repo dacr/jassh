@@ -28,6 +28,14 @@ Remarks & caveats:
      MaxStartups = 10 (default) the maximum number of concurrent unauthenticated connections to the SSH daemon
      MaxSessions = 10 (default) the maximum number of open sessions permitted per network connection
 
+  => ?? With such MaxStartups configuration (at least with OpenSSH_6.9p1-hpn14v5, OpenSSL 1.0.1p 9 Jul 2015) : 
+     ?? MaxStartups 10:30:100
+     ?? --> Random failures may occurs ?? more frequently ?? than with just "MaxStartups 10" ??
+     ??   com.jcraft.jsch.JSchException: session is down
+     ??      at com.jcraft.jsch.Channel.sendChannelOpen(Channel.java:762)
+     ??   com.jcraft.jsch.JSchException: Session.connect: java.net.SocketException: Connection reset
+     ??      at com.jcraft.jsch.Session.connect(Session.java:558)
+
   => AIX sshd & SSHExecChannel (no persistence) doesn't work well when virtual tty is used
      (execWithPty must be keep to false, this is the default value)
      strange behavior : when SFtp subchannel is enabled, the maximum number of ExecChannel in // decrease...

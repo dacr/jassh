@@ -8,7 +8,7 @@ import java.io.{InputStream, BufferedInputStream, InterruptedIOException}
 class SSHExec(cmd: String, out: ExecResult => Any, err: ExecResult => Any)(implicit ssh: SSH) {
 
   private val (channel, stdout, stderr, stdin) = {
-    val ch = ssh.jschsession.openChannel("exec").asInstanceOf[ChannelExec]
+    val ch = ssh.jschsession().openChannel("exec").asInstanceOf[ChannelExec]
     ch.setCommand(cmd.getBytes())
     val stdout = ch.getInputStream()
     val stderr = ch.getErrStream()

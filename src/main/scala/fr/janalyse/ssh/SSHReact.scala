@@ -34,7 +34,7 @@ class SSHReact(val timeout:Long)(implicit ssh: SSH) {
   private val prompt = ssh.options.prompt getOrElse defaultPrompt
 
   private val (channel, toServer, fromServer) = {
-    var ch: ChannelShell = ssh.jschsession.openChannel("shell").asInstanceOf[ChannelShell]
+    var ch: ChannelShell = ssh.jschsession().openChannel("shell").asInstanceOf[ChannelShell]
     ch.setPtyType("dumb")
     ch.setXForwarding(false)
     //ch.setEnv("COLUMNS", "500") // Can't be use, by default PermitUserEnvironment=no in sshd_config 

@@ -80,7 +80,7 @@ class SSHScp(implicit ssh: SSH) extends TransfertOperations {
     datasize: Long,
     remoteFilename: String,
     remoteDirectory: String) {
-    val ch = ssh.jschsession.openChannel("exec").asInstanceOf[ChannelExec]
+    val ch = ssh.jschsession().openChannel("exec").asInstanceOf[ChannelExec]
     try {
       ch.setCommand("""scp -p -t "%s"""".format(remoteDirectory))
       val sin = new BufferedInputStream(ch.getInputStream())
@@ -139,7 +139,7 @@ class SSHScp(implicit ssh: SSH) extends TransfertOperations {
   def remoteFile2OutputStream(
     remoteFilenameMask: String,
     outputStreamBuilder: (String) => OutputStream): Int = {
-    val ch = ssh.jschsession.openChannel("exec").asInstanceOf[ChannelExec]
+    val ch = ssh.jschsession().openChannel("exec").asInstanceOf[ChannelExec]
     try {
       ch.setCommand("""scp -f "%s"""".format(remoteFilenameMask))
       val sin = new BufferedInputStream(ch.getInputStream())

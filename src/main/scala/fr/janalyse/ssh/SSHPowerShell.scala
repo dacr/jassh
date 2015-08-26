@@ -19,7 +19,7 @@ class SSHPowerShell(implicit ssh: SSH) extends PowerShellOperations {
   val options = ssh.options
 
   private val (channel, toServer, fromServer) = {
-    var ch: ChannelShell = ssh.jschsession.openChannel("shell").asInstanceOf[ChannelShell]
+    var ch: ChannelShell = ssh.jschsession().openChannel("shell").asInstanceOf[ChannelShell]
     ch.setPtyType("dumb")
     ch.setXForwarding(false)
 
