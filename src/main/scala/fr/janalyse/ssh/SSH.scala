@@ -266,6 +266,7 @@ class SSH(val options: SSHOptions) extends ShellOperations with TransfertOperati
     var checkedsession = buildSession()
     () => synchronized {
       try {
+        checkedsession.sendKeepAliveMsg()
         val testChannel = checkedsession.openChannel("exec").asInstanceOf[com.jcraft.jsch.ChannelExec]
         testChannel.setCommand("true")
         testChannel.connect()
