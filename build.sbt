@@ -1,6 +1,6 @@
 name := "janalyse-ssh"
 
-version := "0.9.19-SNAPSHOT"
+version := "0.9.19"
 
 jarName in assembly := "jassh.jar"
 
