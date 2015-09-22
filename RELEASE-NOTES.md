@@ -1,12 +1,13 @@
-------------------------------------------------------------------
-JASSH - JANALYSE-SSH - SCALA SSH API
-Crosson David - crosson.david@gmail.com
-------------------------------------------------------------------
+#JASSH - JANALYSE-SSH - SCALA SSH API
 
-Remarks & caveats:
+Crosson David - crosson.david@gmail.com
+
+##Remarks & caveats:
+
+```
   => ssh persisted shell session operations must be executed within the same thread,
-     (this is jassh.jar default behavior as it transparently add the -Yrepl-sync)    
-     do not span a persisted shell session across several threads => it may generates exception
+   (this is jassh.jar default behavior as it transparently add the -Yrepl-sync)    
+    do not span a persisted shell session across several threads => it may generates exception
 
      So be careful when using REPL with default config, as each "evaluation" is done within a new thread !
      Workaround : Start the interpreter (REPL) with the "-Yrepl-sync" option.
@@ -15,7 +16,7 @@ Remarks & caveats:
      No problem in scala scripts.
      
   => SCP operations can't retrieve special file such as /proc/cpuinfo, because their size are not known !
-     Workarounds : use SFTP  OR  use a command such as "cat /proc/cpuinfo". 
+     Workarounds : use SFTP  OR  use a command such as "cat /proc/cpuinfo".
      (The last one is the "best workaround", will work in all cases)
      
   => Be aware of the fact that SFTP SSH Channel may be not available, 
@@ -42,14 +43,20 @@ Remarks & caveats:
   
   => Take care of system limits for sshd (nofile & nproc)
      Check /etc/security/limits.conf for linux systems
+     if nproc max process/threads limit has been reached for the user you want to connect with, 
+       you'll get a failure 
 
   => Password expiration may ask you for a new password, so you can be blocked waiting for a result that never comes.
 
   => Remember that some operations may require a TTY (or let's rather say a virtual TTY) or behave 
      differently with or without a TTY/VTTY (sudo, mysql, ...)
+     
+```
 
-------------------------------------------------------------------
-0.9.19-SNAPSHOT (2015-07-13)
+## Major changes
+
+### 0.9.19-SNAPSHOT (2015-07-13)
+
  - ShellOperations : sudoNoPasswordTest renamed to sudoSuMinusOnlyWithoutPasswordTest
  - ShellOperations : sudo operations moved to SSHShell class
  - SSHShell : catData method added
@@ -68,8 +75,8 @@ Remarks & caveats:
  - ses.setConfig("PreferredAuthentications", "publickey,keyboard-interactive,password")
    added as suggested by herbinator (https://github.com/herbinator)
 
-------------------------------------------------------------------
-0.9.18 (2015-03-22)
+### 0.9.18 (2015-03-22)
+
  - jsch 0.1.52 
  - scalalogging usage removed because of api incompatibilities between scala 2.10 and 2.11 !!
    and because no support for scala2.10 in scala-logging 3.x
@@ -77,23 +84,22 @@ Remarks & caveats:
  - junit test dependency removed
  - onejar subproject, sbt assembly release update (0.13)
 
-------------------------------------------------------------------
-0.9.17 (2015-03-22)
+### 0.9.17 (2015-03-22)
+
  - ShellOperations : mkcd added (mkdir && cd tied together)
  - ShellOperations : mkdir now returns true if successfull
  - ShellOperations : rmdir now returns true if successfull
  - more tests for ShellOperations, increased coverage => with various related fixes
  - Depend on scalalogging instead of scalalogging-slf4j : mgregson (https://github.com/mgregson)
  
-------------------------------------------------------------------
-0.9.16 (2015-03-18)
+### 0.9.16 (2015-03-18)
 
  - ShellOperations : echo added
  - ShellOperations : alive added
  - become tests ignored
 
-------------------------------------------------------------------
-0.9.15 (2015-03-18)
+### 0.9.15 (2015-03-18)
+
  - SSHShell : become enhancements (su - or sudo su - support)
  - ShellOperations : sudoNoPasswordTest added
  - ShellOperations : dirname added
@@ -108,8 +114,7 @@ Remarks & caveats:
  - sudoNoPasswordTest test enhancement for older sudo command releases (without -n option)
 
 
-------------------------------------------------------------------
-0.9.14 (2014-09-23)
+### 0.9.14 (2014-09-23)
 
  - small test fix on test shell command
  - pull request merged : add Travis CI configuration file from zaneli authored on 29 Apr
@@ -128,8 +133,7 @@ Remarks & caveats:
    + disableHistory : to not impact current user shell commands history
    + uptime : get the uptime of the server
 
-------------------------------------------------------------------
-0.9.13 (2014-05-31)
+### 0.9.13 (2014-05-31)
 
  - scala 2.11 support added
  - scala-logging-slf4j 2.1.2
@@ -138,8 +142,7 @@ Remarks & caveats:
  - jsch 0.1.51
  - and various impact changes
 
-------------------------------------------------------------------
-0.9.12 (2014-01-20)
+### 0.9.12 (2014-01-20)
 
  - sbt-eclipse 2.4.0
  - sbt-assembly 0.10.2
@@ -147,8 +150,7 @@ Remarks & caveats:
  - scala 2.10.3
  - commons-compress 1.7
 
-------------------------------------------------------------------
-0.9.11 (2013-09-24)
+### 0.9.11 (2013-09-24)
 
  - receiveNcompress was not using localbasename parameter with already compressed remote files.
  - sbt-eclipse 2.3.0
@@ -156,8 +158,7 @@ Remarks & caveats:
    none,aes128-cbc,aes192-cbc,aes256-cbc,3des-cbc,blowfish-cbc,aes128-ctr,aes192-ctr,aes256-ctr
  - ciphers parameter added to SSHOptions in order to allow custom ciphers list
    
-------------------------------------------------------------------
-0.9.10 (2013-07-03)
+### 0.9.10 (2013-07-03)
 
  - DONE : add su support / with password prompt recognition...
     SSHShell.become method added, allow to become someoneelse.
@@ -177,8 +178,7 @@ Remarks & caveats:
  - scala 2.10.2
  - sbt assembly 0.9.0
  
-------------------------------------------------------------------
-0.9.9 (2013-05-09)
+### 0.9.9 (2013-05-09)
 
  - scala 2.10.1
  - scalalogging 1.0.1
@@ -192,8 +192,7 @@ Remarks & caveats:
  - SSHOptions - removing second parameter list, host comes back to the first and unik parameter list.
    (Two parameters list for SSHOptions was a bad idea)
 
-------------------------------------------------------------------
-0.9.8 (2013-02-22)
+### 0.9.8 (2013-02-22)
 
  - jsch session is now configured with tcp keep alive of 2s
    (setServerAliveInterval(2000))
@@ -218,8 +217,7 @@ Remarks & caveats:
    -nocompdaemon -savecompiled
    -deprecation 
 
-------------------------------------------------------------------
-0.9.7 (2013-02-10)
+### 0.9.7 (2013-02-10)
 
  - scala >=2.10 is now mandatory
  - ChannelExec now is using a virtual tty by default
@@ -234,18 +232,16 @@ Remarks & caveats:
    + ps test case added
  - logging support added (using scala-logging)
 
-------------------------------------------------------------------
-0.9.6 (2013-01-07)
+### 0.9.6 (2013-01-07)
 
  - scala 2.10.0 support added
 
-------------------------------------------------------------------
-0.9.5-b3 (2012-11-26)
+### 0.9.5-b3 (2012-11-26)
 
  - general transfert methods (available in SSH class) are now using automatic fallback, if SCP fails, then SFTP will be tryied.
 
-------------------------------------------------------------------
-0.9.5-b2 (2012-11-05)
+### 0.9.5-b2 (2012-11-05)
+
  - JSCH updated to 0.1.49
  - now using sbt 0.12.1
  - now using scalatest 2.0-M5
@@ -275,8 +271,8 @@ Remarks & caveats:
    define the following method :
    localmd5sum(filename:String):Option[String]
    
-------------------------------------------------------------------
-0.9.3
+### 0.9.3
+
  - now using sbt-assembly 0.8.3
  - fixes relatives to implicit conversions with SSHPassword
  - fixes relatives to implicit conversion to SSHCommand and SSHBatch
@@ -286,8 +282,8 @@ Remarks & caveats:
  - external (package) usage tests completed (ExternalSSHAPITest.scala)
  - small fix about how private key passphrase is taken into account (when pub-key auth is used)
 
-------------------------------------------------------------------
-0.9.2
+### 0.9.2
+
  - date '+%Y-%m-%d %H:%M:%S %z' %z and %Z gives the same result on AIX, this result corresponds to linux %Z
    So modifying code to use %Z instead of %z.
    Now using GMT, "date -u '+%Y-%m-%d %H:%M:%S %Z'" in order to everything work well in all cases.
@@ -295,13 +291,13 @@ Remarks & caveats:
  - New test source file : ExternalSSHAPITest.scala => Testing the API from an external package 
  - Fixed : minor problem with script when invoking jajmx.SSH... or fr.janalyse.sh.SSH... without imports...
  
-------------------------------------------------------------------
-0.9.1
+### 0.9.1
+
  - SSH tunneling fix, cleanup, and scaladocumented
  - Intricated SSH tunneling test added (self intrication, to simplify test case)
  
-------------------------------------------------------------------
-0.9.0
+### 0.9.0
+
  - now using sbt-assembly 0.8.1
  - now using scalatest 0.8
  - SSHCommand, SSHBatch methods ! renamed
@@ -339,8 +335,8 @@ Remarks & caveats:
    + def remote2Local(rport:Int, lhost:String, lport:Int)
    + def local2Remote(lport:Int, rhost:String, rport:Int) 
   
-------------------------------------------------------------------
-0.8.0
+### 0.8.0
+
  - now using sbt 0.11.3
  - now using sbteclipse 2.1.0-RC1
  - Set of new method to help with commons remote commands :
@@ -350,16 +346,16 @@ Remarks & caveats:
  - md5sum method added to SSHTools object
  - manage well connect timeout (default = 30s) and general socket timeout (default = 5mn)
 
-------------------------------------------------------------------
-0.7.4 
+### 0.7.4 
+
  - SSHPassword toString method added (return the password)
  - updated for scala 2.9.2 support
  - scalatest 1.7.2
  - no more support for scala 2.8.1 & 2.8.2
 
 
-------------------------------------------------------------------
-0.7.3
+### 0.7.3
+
  - JCSH updated to release 0.1.47
  - SSHOptions now contains an extra field "name" which allow user to friendly identify a remote ssh system
  - SSHOptions password type is now of SSHPassword type instead of String.
@@ -367,19 +363,19 @@ Remarks & caveats:
  - SSHShell batch method renamed to execute
 
 
-------------------------------------------------------------------
-0.7.2
+### 0.7.2
+
  - added a package object jassh to define shortcuts to fr.janalyse.ssh.SSH class and object
  - SSHOptions, host parameter is now in first position !
 
 
-------------------------------------------------------------------
-0.7.1
+### 0.7.1
+
  - fix big issue with SSHShell results separator process. => not seen using localhost tests => Must add remote tests !!
 
 
-------------------------------------------------------------------
-0.7.0
+### 0.7.0
+
  - Added new method to SSH : newShell & newSftp for user to manage themselves shell and sftp session
  - Some internal changes to SSHExec class, in order to try to remove actor dependency. Mixing actors systems looks problematic
  - SSHShell new implementation, no more actors used, better performances and behavior, ... (throughput : 504 cmd/s using persistency)
@@ -396,9 +392,8 @@ Remarks & caveats:
  - SSH.connect becomes SSH.once
  - Removing apply in SSH class as it may encourage bad usage, and close not called
 
- 
-------------------------------------------------------------------
-0.6.0
+### 0.6.0
+
  - update jsch to 0.1.46
  - update sbteclipse plugin to 2.0.0
  - update sbtassembly plugin to 0.7.3
