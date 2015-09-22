@@ -55,7 +55,7 @@ Crosson David - crosson.david@gmail.com
 
 ## Major changes
 
-### 0.9.19-SNAPSHOT (2015-07-13)
+### 0.9.19 (2015-09-22)
 
  - ShellOperations : sudoNoPasswordTest renamed to sudoSuMinusOnlyWithoutPasswordTest
  - ShellOperations : sudo operations moved to SSHShell class
