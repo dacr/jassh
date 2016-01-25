@@ -302,38 +302,39 @@ class SSH(val options: SSHOptions) extends ShellOperations with TransfertOperati
     ses.setConfig("PreferredAuthentications", "publickey,keyboard-interactive,password")
     ses.setUserInfo(SSHUserInfo(options.password.password, options.passphrase.password))
     ses.connect(options.connectTimeout.toInt)
-    if (ssh.options.noneCipher) {
-      //logger.debug("cipher.s2c : "+ses.getConfig("cipher.s2c"))
-      //logger.debug("cipher.c2s : "+ses.getConfig("cipher.c2s"))
-      /* 
-       * Default : jsch 0.1.53 (2015-08-24)
-       *   cipher.s2c=aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-ctr,aes192-cbc,aes256-ctr,aes256-cbc
-       *   cipher.c2s=aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-ctr,aes192-cbc,aes256-ctr,aes256-cbc
-       *   
-       * Default : jsch 0.1.48 (2012-06-26)
-		   *   cipher.s2c=aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc
-		   *   cipher.c2s=aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc
-       */
-      //ses.setConfig("cipher.s2c", "none,aes128-cbc,3des-cbc,blowfish-cbc")
-      //ses.setConfig("cipher.c2s", "none,aes128-cbc,3des-cbc,blowfish-cbc")
-      //      ses.setConfig("cipher.s2c", options.ciphers.mkString(","))
-      // 	    ses.setConfig("cipher.c2s", options.ciphers.mkString(","))
-      ses.setConfig("cipher.s2c", ("none" :: options.ciphers.toList).mkString(","))
-      ses.setConfig("cipher.c2s", ("none" :: options.ciphers.toList).mkString(","))
-    } else {
-      ses.setConfig("cipher.s2c", (options.ciphers).mkString(","))
-      ses.setConfig("cipher.c2s", (options.ciphers).mkString(","))
-    }
-    ses.rekey()
-    if (ssh.options.compress.isDefined) {
-      ses.setConfig("compression.s2c", "zlib@openssh.com,zlib,none");
-      ses.setConfig("compression.c2s", "zlib@openssh.com,zlib,none");
-      ses.setConfig("compression_level", ssh.options.compress.get.toString);
-    } else {
-      ses.setConfig("compression.s2c", "none,zlib@openssh.com,zlib");
-      ses.setConfig("compression.c2s", "none,zlib@openssh.com,zlib");
-      ses.setConfig("compression_level", "0");
-    }
+//    if (ssh.options.noneCipher) {
+//      //logger.debug("cipher.s2c : "+ses.getConfig("cipher.s2c"))
+//      //logger.debug("cipher.c2s : "+ses.getConfig("cipher.c2s"))
+//      /* 
+//       * Default : jsch 0.1.53 (2015-08-24)
+//       *   cipher.s2c=aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-ctr,aes192-cbc,aes256-ctr,aes256-cbc
+//       *   cipher.c2s=aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-ctr,aes192-cbc,aes256-ctr,aes256-cbc
+//       *   
+//       * Default : jsch 0.1.48 (2012-06-26)
+//		   *   cipher.s2c=aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc
+//		   *   cipher.c2s=aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc
+//       */
+//      //ses.setConfig("cipher.s2c", "none,aes128-cbc,3des-cbc,blowfish-cbc")
+//      //ses.setConfig("cipher.c2s", "none,aes128-cbc,3des-cbc,blowfish-cbc")
+//      //      ses.setConfig("cipher.s2c", options.ciphers.mkString(","))
+//      // 	    ses.setConfig("cipher.c2s", options.ciphers.mkString(","))
+//      ses.setConfig("cipher.s2c", ("none" :: options.ciphers.toList).mkString(","))
+//      ses.setConfig("cipher.c2s", ("none" :: options.ciphers.toList).mkString(","))
+//    } else {
+//      ses.setConfig("cipher.s2c", (options.ciphers).mkString(","))
+//      ses.setConfig("cipher.c2s", (options.ciphers).mkString(","))
+//    }
+//    // TODO : Why rekey method is generationg random "session is down errors" ????
+//    // ses.rekey() // if called generates random "session is down errors"
+//    if (ssh.options.compress.isDefined) {
+//      ses.setConfig("compression.s2c", "zlib@openssh.com,zlib,none");
+//      ses.setConfig("compression.c2s", "zlib@openssh.com,zlib,none");
+//      ses.setConfig("compression_level", ssh.options.compress.get.toString);
+//    } else {
+//      ses.setConfig("compression.s2c", "none,zlib@openssh.com,zlib");
+//      ses.setConfig("compression.c2s", "none,zlib@openssh.com,zlib");
+//      ses.setConfig("compression_level", "0");
+//    }
     ses
   }
 

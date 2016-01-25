@@ -32,9 +32,9 @@ class StabilityTest extends SomeHelp {
     info("Will fail  with OpenSSH_6.9p1-hpn14v5, OpenSSL 1.0.1p 9 Jul 2015 (gentoo kernel 4.0.5)")
     info("Will fail  with OpenSSH_6.9p1-hpn14v5, OpenSSL 1.0.2d 9 Jul 2015 (gentoo kernel 4.0.5)")
     info("Won't fail with OpenSSH_6.2p2, OSSLShim 0.9.8r 8 Dec 2011 (Mac OS X 10.10.5)")
-    val max = 100
+    val max = 200
     var failed = 0
-    val sshopts = SSHOptions("192.168.2.222", username = "test", password = "testtest")
+    val sshopts = SSHOptions("127.0.0.1", username = "test", password = "testtest")
     for { x <- 1 to max } {
       try {
         SSH.once(sshopts) { _.execute("true") }

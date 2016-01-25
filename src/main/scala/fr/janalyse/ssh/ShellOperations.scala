@@ -602,6 +602,17 @@ trait ShellOperations extends CommonOperations with SSHLazyLogging {
    */
   def alive():Boolean = echo("ALIVE").contains("ALIVE")
 
+  /**
+   * get command location on filesystem, based on current PATH
+   * @param command the name of the command
+   * @return full command path option or None if the command is not in the current PATH
+   */
+  def which(command:String):Option[String] = {
+    execute(s"""which $command""").trim match {
+      case "" => None
+      case location => Some(location)
+    }
+  }
   
   // ==========================================================================================
 

@@ -83,6 +83,8 @@ class ShellOperationsTest extends SomeHelp {
       notExists(testdir)      should equal(true)
       echo("hello")           should equal("hello\n")
       alive()                 should equal(true)
+      which("ls").value       should equal("/bin/ls")
+      dirname(which("ls").value)  should equal("/bin")
     }
   }
   
