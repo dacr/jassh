@@ -93,7 +93,7 @@ class SSHAPITest extends SomeHelp {
   }
 
   //==========================================================================================================
-  test("shell coherency check with long command lines (in //)") {
+  ignore("shell coherency check with long command lines (in //)") {
     SSH.once(sshopts) { ssh =>
       (1 to 10).par foreach { i =>
         ssh.shell { sh =>

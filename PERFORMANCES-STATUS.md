@@ -3,6 +3,7 @@
 ## LANFEUST
 
 ```
+2016-01-25 - 607.9 c/s - 38.8 Mb/s (gentoo4.0.5   - java hotspot 1.8.0_72 64b - OpenSSH_7.1p2-hpn14v10, OpenSSL 1.0.2e 3 Dec 2015) 
 2015-08-25 - 626.8 c/s - 42.3 Mb/s (gentoo4.0.5   - java hotspot 1.7.0_80 64b - OpenSSH_6.9p1-hpn14v5, OpenSSL 1.0.1p 9 Jul 2015
 2015-07-16 - 626.5 c/s - 39.4 Mb/s (gentoo3.18.12 - java hotspot 1.8.0_45 64b - OpenSSH_6.7p1-hpn14v5, OpenSSL 1.0.1p 9 Jul 2015
            - 618.0 c/s - 42.7 Mb/s (gentoo3.18.12 - java hotspot 1.7.0_80 64b - OpenSSH_6.7p1-hpn14v5, OpenSSL 1.0.1p 9 Jul 2015
@@ -20,6 +21,7 @@
 ## ZORGLUB
 
 ```
+2016-02-03 - 446.9 c/s - 59.3 Mb/s (macosx 10.11.3 - java hotspot 1.8.0_72 64b - OpenSSH_6.9p1, LibreSSL 2.1.8)
 2015-08-25 - 498.2 c/s - 81.5 Mb/s (macosx 10.10.5 - java hotspot 1.8.0_45 64b - OpenSSH_6.2p2, OSSLShim 0.9.8r 8 Dec 2011)
 2015-07-16 - 501.2 c/s - 87.0 Mb/s (macosx 10.10.4 - java hotspot 1.7.0_80 64b - OpenSSH_6.2p2, OSSLShim 0.9.8r 8 Dec 2011)
 2015-03-20 - 496.1 c/s - 88.0 Mb/s (macosx 10.10.2 - java hotspot 1.7.0_51 64b - OpenSSH_6.2p2, OSSLShim 0.9.8r)

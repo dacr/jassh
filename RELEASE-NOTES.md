@@ -60,6 +60,12 @@ Crosson David - crosson.david@gmail.com
  - ShellOperations : which method added
  - jsch rekey operation disabled => it generates random "session is down" ssh error !
    the same for ciphers...
+ - sbt assembly 0.14.1
+ - commons-compress 1.10
+ - sl4j-api 1.7.14
+ - scalatest 2.2.6
+ - scala 2.10.6
+
 
 ### 0.9.19 (2015-09-22)
 
