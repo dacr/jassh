@@ -6,6 +6,8 @@ import java.util.concurrent.ArrayBlockingQueue
 
 class SSHShell(implicit ssh: SSH) extends ShellOperations {
 
+  def pid:Int = execute("echo $$").trim.toInt
+  
   /**
    * Does the command "sudo su -" without password works ?
    *
@@ -79,14 +81,15 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
    */
   override def catData(data: String, filespec: String): Boolean = {
     synchronized {
-      execute(s"""touch "$filespec" >/dev/null 2>&1 ; echo $$?""").trim().equals("0") match {
+      execute(s"""touch '$filespec' >/dev/null 2>&1 ; echo $$?""").trim().equals("0") match {
         case false => false
         case true =>
-          sendCommand(s"""cat > "$filespec" """)
-          toServer.write(data)
-          toServer.nl()
-          toServer.eot()
-          val ignored = fromServer.getResponse()
+          def truncate():String = execute(s"""> '$filespec'""")
+          def append(content:String):String =  {
+            execute(s"""/bin/echo -e '$content' >> '$filespec'""")
+          }
+          truncate()
+          append(data)
           true
       }
     }
@@ -122,7 +125,7 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
     }
   }
 
-  private def becomeWithSU(someoneelse: String, password: Option[String] = None): Boolean = {
+  def becomeWithSU(someoneelse: String, password: Option[String] = None): Boolean = {
     val curuser = whoami
     if (curuser == "root") {
       execute("LANG=en; export LANG")
@@ -142,7 +145,7 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
     }
     whoami == someoneelse
   }
-  private def becomeWithSUDO(someoneelse: String): Boolean = {
+  def becomeWithSUDO(someoneelse: String): Boolean = {
     val curuser = whoami
     if (sudoSuMinusOnlyWithoutPasswordTest()) {
       execute("LANG=en; export LANG")

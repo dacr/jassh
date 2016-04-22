@@ -57,7 +57,11 @@ Crosson David - crosson.david@gmail.com
 
 ### 0.9.20-SNAPSHOT (2016-01-xx)
 
- - ShellOperations : which method added
+ - ShellOperations :
+   + `which` method added
+ - SSHShell : 
+   + `pid` method added
+   + `catData` internal temporary improvements, require more work as there's an issue with EOT 
  - jsch rekey operation disabled => it generates random "session is down" ssh error !
    the same for ciphers...
  - sbt assembly 0.14.1

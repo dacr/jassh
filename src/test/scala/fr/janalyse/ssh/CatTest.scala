@@ -28,7 +28,7 @@ import org.scalatest.OptionValues._
 class CatTest extends SomeHelp {
     
   //==========================================================================================================
-  ignore("catData test") {
+  test("catData test") {
     SSH.shell(sshopts) { sh =>
       import sh._
       rm("checkthat") 
