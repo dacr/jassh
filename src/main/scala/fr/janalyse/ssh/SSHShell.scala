@@ -4,8 +4,13 @@ import java.io._
 import com.jcraft.jsch.{ ChannelShell }
 import java.util.concurrent.ArrayBlockingQueue
 
-class SSHShell(implicit ssh: SSH) extends ShellOperations {
+class SSHShell(implicit ssh: SSH) extends SSHScp with ShellOperations {
 
+  
+  /**
+   * Returns the current shell process identifier
+   * @return current shell PID
+   */
   def pid:Int = execute("echo $$").trim.toInt
   
   /**
@@ -84,13 +89,12 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
       execute(s"""touch '$filespec' >/dev/null 2>&1 ; echo $$?""").trim().equals("0") match {
         case false => false
         case true =>
-          def truncate():String = execute(s"""> '$filespec'""")
-          def append(content:String):String =  {
-            execute(s"""/bin/echo -e '$content' >> '$filespec'""")
+          put(data, filespec)
+          get(filespec) match {
+            case None => false
+            case Some(content) if content == data => true
+            case _ => false
           }
-          truncate()
-          append(data)
-          true
       }
     }
   }
@@ -211,7 +215,8 @@ class SSHShell(implicit ssh: SSH) extends ShellOperations {
     (ch, toServer, fromServer)
   }
 
-  def close() = {
+  override def close() = {
+    super.close() // to close SCP session
     fromServer.close()
     toServer.close()
     channel.disconnect()

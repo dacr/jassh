@@ -55,20 +55,21 @@ Crosson David - crosson.david@gmail.com
 
 ## Major changes
 
-### 0.9.20-SNAPSHOT (2016-01-xx)
+### 0.9.20-SNAPSHOT (2016-04-23)
 
- - ShellOperations :
-   + `which` method added
  - SSHShell : 
    + `pid` method added
-   + `catData` internal temporary improvements, require more work as there's an issue with EOT 
+   + `catData` is now scp based !
+   + now inherits from SSHScp and is able to perform file transfert operations  
+ - ShellOperations :
+   + `which` method added
  - jsch rekey operation disabled => it generates random "session is down" ssh error !
    the same for ciphers...
  - sbt assembly 0.14.1
- - commons-compress 1.10
- - sl4j-api 1.7.14
+ - commons-compress 1.11
+ - sl4j-api 1.7.21
  - scalatest 2.2.6
- - scala 2.10.6
+ - scala 2.10.6 & 2.11.8
 
 
 ### 0.9.19 (2015-09-22)

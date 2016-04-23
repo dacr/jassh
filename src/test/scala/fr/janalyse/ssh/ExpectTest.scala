@@ -18,7 +18,7 @@ package fr.janalyse.ssh
 
 class ExpectTest extends SomeHelp {
 
-  ignore("expects test") {
+  test("expects test") {
     SSH.shell(sshopts) { sh =>
       import sh._
       val expect = Expect(_.endsWith("prompt="), "hello\n")
