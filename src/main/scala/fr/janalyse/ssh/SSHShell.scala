@@ -4,7 +4,7 @@ import java.io._
 import com.jcraft.jsch.{ ChannelShell }
 import java.util.concurrent.ArrayBlockingQueue
 
-class SSHShell(implicit ssh: SSH) extends SSHScp with ShellOperations {
+class SSHShell(implicit ssh: SSH) extends SSHScp with AllOperations {
 
   
   /**

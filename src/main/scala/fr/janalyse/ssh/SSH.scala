@@ -257,7 +257,7 @@ object SSH {
  * SSH class. This class is the main entry point to the API
  * @author David Crosson
  */
-class SSH(val options: SSHOptions) extends ShellOperations with TransfertOperations {
+class SSH(val options: SSHOptions) extends AllOperations {
   private implicit val ssh = this
   private val jsch = new JSch
 

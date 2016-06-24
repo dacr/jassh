@@ -55,12 +55,18 @@ Crosson David - crosson.david@gmail.com
 
 ## Major changes
 
-### 0.9.20-SNAPSHOT (2016-04-23)
+### 0.9.20-SNAPSHOT (2016-06-24)
 
- - SSHShell : 
+ - AllOperations trait added : for generic operations that requires both executions and transferts
+   + `rreceive` method added to recursively copy a remote directory to a local destination
+   + `rsend` method added to recursively copy a local directory to a remote destination
+ - SSHShell :
    + `pid` method added
    + `catData` is now scp based !
-   + now inherits from SSHScp and is able to perform file transfert operations  
+   + now inherits from SSHScp and is able to perform file transfert operations
+   + now comes with AllOperations trait instead of ShellOperations
+ - SSH :
+   + now comes with AllOperations trait instead of both ShellOperations and TransfertOperations
  - ShellOperations :
    + `which` method added
  - jsch rekey operation disabled => it generates random "session is down" ssh error !
