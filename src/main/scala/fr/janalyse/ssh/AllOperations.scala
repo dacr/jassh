@@ -6,8 +6,8 @@ trait AllOperations extends ShellOperations with TransfertOperations {
 
     /**
      * Recursively get a remote directory to a local destination
-     * remote : remote path, file or directory.
-     * dest : local destination directory, it it doesn't exist then it is created
+     * @param remote remote path, file or directory.
+     * @param dest local destination directory, it it doesn't exist then it is created
      */
     def rreceive(remote:String, dest:File): Unit = {
       def worker(curremote: String, curdest: File) {
@@ -27,8 +27,8 @@ trait AllOperations extends ShellOperations with TransfertOperations {
 
     /**
      * Recursively send a local directory to a remote destination
-     * src : local path, file or directory
-     * remote : remote destination directory, if it doesn't exist then it is created
+     * @param src local path, file or directory
+     * @param remote remote destination directory, if it doesn't exist then it is created
      */
     def rsend(src:File, remote:String): Unit = {
       def worker(cursrc: File, curremote: String) {
