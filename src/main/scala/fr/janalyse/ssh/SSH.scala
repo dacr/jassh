@@ -16,7 +16,7 @@
 
 package fr.janalyse.ssh
 
-import com.jcraft.jsch.{ JSch, Session }
+import com.jcraft.jsch.{ JSch, OpenSSHConfig, Session }
 import java.io.{ File, OutputStream }
 
 import language.implicitConversions
@@ -294,6 +294,9 @@ class SSH(val options: SSHOptions) extends AllOperations {
       }
     }
 
+    options.openSSHConfig.foreach(f => jsch.setConfigRepository(OpenSSHConfig.parseFile(f)))
+    options.knownHostsFile.foreach(jsch.setKnownHosts)
+
     val ses = jsch.getSession(options.username, options.host, options.port)
     for { proxy <- options.proxy } ses.setProxy(proxy)
     ses.setServerAliveInterval(5000)
@@ -301,6 +304,9 @@ class SSH(val options: SSHOptions) extends AllOperations {
     ses.setTimeout(options.connectTimeout.toInt) // Timeout for the ssh connection (unplug cable to simulate)
     ses.setConfig("PreferredAuthentications", "publickey,keyboard-interactive,password")
     ses.setUserInfo(SSHUserInfo(options.password.password, options.passphrase.password))
+
+    options.sessionConfig.foreach { case (k, v) => ses.setConfig(k, v) }
+
     ses.connect(options.connectTimeout.toInt)
 //    if (ssh.options.noneCipher) {
 //      //logger.debug("cipher.s2c : "+ses.getConfig("cipher.s2c"))
