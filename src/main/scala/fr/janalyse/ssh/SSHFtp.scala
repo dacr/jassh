@@ -95,12 +95,15 @@ class SSHFtp(implicit ssh: SSH) extends TransfertOperations with SSHLazyLogging 
     } catch {
       case e: SftpException if (e.id == 2) =>
         logger.warn(s"File '${remoteFilename}' doesn't exist")
+        throw e
       case e: IOException =>
         logger.error(s"can't receive ${remoteFilename}", e)
+        throw e
       case e: Exception =>
         logger.error(s"can't receive ${remoteFilename}", e)
+        throw e
     } finally {
-      outputStream.close      
+      outputStream.close
     }
   }
 

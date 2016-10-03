@@ -22,7 +22,7 @@
 ## ZORGLUB
 
 ```
-2016-10-03 - 437.2 c/s - 70.7 Mb/s (macosx 10.11.6 - java hotspot 1.8.0.72 64b - OpenSSH_6.9p1, LibreSSL 2.1.8)
+2016-10-03 - 439.3 c/s - 71.9 Mb/s (macosx 10.11.6 - java hotspot 1.8.0.72 64b - OpenSSH_6.9p1, LibreSSL 2.1.8)
 2016-02-03 - 446.9 c/s - 59.3 Mb/s (macosx 10.11.3 - java hotspot 1.8.0_72 64b - OpenSSH_6.9p1, LibreSSL 2.1.8)
 2015-08-25 - 498.2 c/s - 81.5 Mb/s (macosx 10.10.5 - java hotspot 1.8.0_45 64b - OpenSSH_6.2p2, OSSLShim 0.9.8r 8 Dec 2011)
 2015-07-16 - 501.2 c/s - 87.0 Mb/s (macosx 10.10.4 - java hotspot 1.7.0_80 64b - OpenSSH_6.2p2, OSSLShim 0.9.8r 8 Dec 2011)
