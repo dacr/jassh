@@ -18,7 +18,7 @@ crossScalaVersions := Seq("2.10.6", "2.11.8")
 parallelExecution in Test := false
 
 libraryDependencies ++= Seq(
-    "com.jcraft"         % "jsch"               % "0.1.53"
+    "com.jcraft"         % "jsch"               % "0.1.54"
    ,"org.apache.commons" % "commons-compress"   % "1.11"
    ,"org.slf4j"          % "slf4j-api"          % "1.7.21"
    ,"org.scalatest"     %% "scalatest"          % "2.2.6"  % "test"

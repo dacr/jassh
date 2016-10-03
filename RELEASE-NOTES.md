@@ -71,11 +71,13 @@ Crosson David - crosson.david@gmail.com
    + `which` method added
  - jsch rekey operation disabled => it generates random "session is down" ssh error !
    the same for ciphers...
- - sbt assembly 0.14.1
- - commons-compress 1.11
- - sl4j-api 1.7.21
- - scalatest 2.2.6
- - scala 2.10.6 & 2.11.8
+ - dependencies update :
+   + sbt assembly 0.14.1
+   + commons-compress 1.11
+   + sl4j-api 1.7.21
+   + scalatest 2.2.6
+   + scala 2.10.6 & 2.11.8
+   + jsch 0.1.54
 
 
 ### 0.9.19 (2015-09-22)
