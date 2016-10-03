@@ -78,6 +78,12 @@ class SSHFtp(implicit ssh: SSH) extends TransfertOperations with SSHLazyLogging 
   def rmdir(path: String): Unit = channel.rmdir(path)
 
   /**
+   * Creates a directory on a remote system
+   * @param path The name of the directory to create
+   */
+  def mkdir(path: String): Unit = channel.mkdir(path)
+
+  /**
    * Change the working directory on the remote system
    * @param path The new working directory, relative to the current one
    */
