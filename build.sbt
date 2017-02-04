@@ -19,9 +19,9 @@ parallelExecution in Test := false
 
 libraryDependencies ++= Seq(
     "com.jcraft"         % "jsch"               % "0.1.54"
-   ,"org.apache.commons" % "commons-compress"   % "1.11"
-   ,"org.slf4j"          % "slf4j-api"          % "1.7.21"
-   ,"org.scalatest"     %% "scalatest"          % "2.2.6"  % "test"
+   ,"org.apache.commons" % "commons-compress"   % "1.13"
+   ,"org.slf4j"          % "slf4j-api"          % "1.7.22"
+   ,"org.scalatest"     %% "scalatest"          % "3.0.1"  % "test"
    ,"com.github.scala-incubator.io" %% "scala-io-core"      % "0.4.3" % "test"
    ,"com.github.scala-incubator.io" %% "scala-io-file"      % "0.4.3" % "test"
 )
