@@ -1,9 +1,9 @@
 package fr.janalyse.ssh
 
 import org.scalatest.FunSuite
-import org.scalatest.ShouldMatchers
+import org.scalatest.Matchers
 
-trait SomeHelp extends FunSuite with ShouldMatchers {
+trait SomeHelp extends FunSuite with Matchers {
   val sshopts = SSHOptions("127.0.0.1", username = "test", password = "testtest")
 
   info(s"Those tests require to have a user named '${sshopts.username}' with password '${sshopts.password}' on ${sshopts.host}")
