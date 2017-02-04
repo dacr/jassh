@@ -16,9 +16,6 @@
 
 package fr.janalyse.ssh
 
-import org.scalatest.junit.JUnitRunner
-import org.scalatest.OptionValues._
-
 class SSHReactTest extends SomeHelp {
 
   

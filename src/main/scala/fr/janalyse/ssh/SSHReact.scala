@@ -3,8 +3,6 @@ package fr.janalyse.ssh
 import java.io._
 import com.jcraft.jsch.{ ChannelShell }
 import java.util.concurrent.ArrayBlockingQueue
-import scala.concurrent._
-import collection.immutable._
 
 class SSHReact(val timeout:Long)(implicit ssh: SSH) {
   val options = ssh.options

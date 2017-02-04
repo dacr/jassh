@@ -16,8 +16,6 @@
 
 package fr.janalyse.ssh
 
-import org.scalatest.OptionValues._
-
 class ShellHistoryTest extends SomeHelp {
   
   test("shell disable history test") {

@@ -16,14 +16,8 @@
 
 package fr.janalyse.ssh
 
-import org.scalatest.FunSuite
-import org.scalatest.ShouldMatchers
 import scala.io.Source
-import scala.util.Properties
-import java.io.File
-import java.io.IOException
 import scala.collection.parallel.ForkJoinTaskSupport
-import org.scalatest.OptionValues._
 
 class SSHAPITest extends SomeHelp {
 

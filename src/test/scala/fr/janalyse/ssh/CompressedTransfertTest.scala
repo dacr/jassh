@@ -16,7 +16,6 @@
 
 package fr.janalyse.ssh
 
-import org.scalatest.OptionValues._
 import scalax.file._
 import scalax.file.ImplicitConversions._
 

@@ -10,7 +10,7 @@ organizationHomepage := Some(new URL("http://www.janalyse.fr"))
 
 scalaVersion := "2.11.8"
 
-scalacOptions ++= Seq( "-deprecation", "-unchecked", "-feature")
+scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature", "-Ywarn-unused-import")
 
 crossScalaVersions := Seq("2.10.6", "2.11.8")
 

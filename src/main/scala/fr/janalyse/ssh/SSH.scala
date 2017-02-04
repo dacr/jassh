@@ -19,7 +19,6 @@ package fr.janalyse.ssh
 import com.jcraft.jsch.{ JSch, OpenSSHConfig, Session }
 import java.io.{ File, OutputStream }
 
-import language.implicitConversions
 import language.reflectiveCalls
 
 /**

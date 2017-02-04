@@ -18,9 +18,6 @@ package fr.janalyse.ssh
 
 import java.text.SimpleDateFormat
 import java.util.Date
-import scala.collection.generic.CanBuildFrom
-import java.util.Locale
-import scala.util.matching.Regex
 
 /**
  * ShellOperations defines generic shell operations and common shell commands shortcuts
