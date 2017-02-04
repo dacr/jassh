@@ -10,7 +10,12 @@ organizationHomepage := Some(new URL("http://www.janalyse.fr"))
 
 scalaVersion := "2.11.8"
 
-scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature", "-Ywarn-unused-import")
+scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature") ++ (
+  CrossVersion.partialVersion(scalaVersion.value) match {
+    case Some((2, p)) if p >= 11 => Seq("-Ywarn-unused-import")
+    case _ => Nil
+  }
+)
 
 crossScalaVersions := Seq("2.10.6", "2.11.8")
 
