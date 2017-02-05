@@ -40,7 +40,7 @@ class CompressedTransfertTest extends SomeHelp {
     doclean
     SSH.once(sshopts) { ssh =>
       ssh.receive(testedfile, testedfile)
-      Source.fromFile(testedfile).getLines should equal(content)
+      Source.fromFile(testedfile).mkString should equal(content)
       ssh.receiveNcompress(testedfile, testedfile)
       new File(gztestedfile).exists should equal(true)
       ssh.localmd5sum(gztestedfile) should equal(Some(gztestedfileMD5))
@@ -48,7 +48,7 @@ class CompressedTransfertTest extends SomeHelp {
     doclean
     SSH.shellAndFtp(sshopts) { (_, ftp) =>
       ftp.receive(testedfile, testedfile)
-      Source.fromFile(testedfile).getLines should equal(content)
+      Source.fromFile(testedfile).mkString should equal(content)
       ftp.receiveNcompress(testedfile, testedfile)
       new File(gztestedfile).exists should equal(true)
       ftp.localmd5sum(gztestedfile) should equal(Some(gztestedfileMD5))
@@ -56,7 +56,7 @@ class CompressedTransfertTest extends SomeHelp {
     doclean
     SSH.ftp(sshopts) { ftp =>
       ftp.receive(testedfile, testedfile)
-      Source.fromFile(testedfile).getLines should equal(content)
+      Source.fromFile(testedfile).mkString should equal(content)
       ftp.receiveNcompress(testedfile, testedfile)
       new File(gztestedfile).exists should equal(true)
       ftp.localmd5sum(gztestedfile) should equal(Some(gztestedfileMD5))
