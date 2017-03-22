@@ -16,8 +16,9 @@
 
 package fr.janalyse.ssh
 
-import scalax.file._
-import scalax.file.ImplicitConversions._
+import java.io.File
+import org.scalatest.OptionValues._
+import scala.io.Source
 
 class CompressedTransfertTest extends SomeHelp {
 
@@ -28,40 +29,39 @@ class CompressedTransfertTest extends SomeHelp {
     val testedfile = "testme-tobecompressed.txt"
     val gztestedfile = testedfile + ".gz"
     val gztestedfileMD5 = "38570c70a362855368dd8c5f25a157f7"
-      
+
     SSH.ftp(sshopts) { _.put(content, testedfile) }
     SSH.ftp(sshopts) { _.get(testedfile) } should equal(Some(content))
     def doclean = {
-      Path(testedfile).delete()
-      Path(gztestedfile).delete()
+      new File(testedfile).delete()
+      new File(gztestedfile).delete()
     }
     // Now let's test the compressed feature
     doclean
     SSH.once(sshopts) { ssh =>
       ssh.receive(testedfile, testedfile)
-      Path(testedfile).string should equal(content)
+      Source.fromFile(testedfile).mkString should equal(content)
       ssh.receiveNcompress(testedfile, testedfile)
-      Path(gztestedfile).exists() should equal(true)
+      new File(gztestedfile).exists should equal(true)
       ssh.localmd5sum(gztestedfile) should equal(Some(gztestedfileMD5))
     }
     doclean
     SSH.shellAndFtp(sshopts) { (_, ftp) =>
       ftp.receive(testedfile, testedfile)
-      Path(testedfile).string should equal(content)
+      Source.fromFile(testedfile).mkString should equal(content)
       ftp.receiveNcompress(testedfile, testedfile)
-      Path(gztestedfile).exists() should equal(true)
+      new File(gztestedfile).exists should equal(true)
       ftp.localmd5sum(gztestedfile) should equal(Some(gztestedfileMD5))
     }
     doclean
     SSH.ftp(sshopts) { ftp =>
       ftp.receive(testedfile, testedfile)
-      Path(testedfile).string should equal(content)
+      Source.fromFile(testedfile).mkString should equal(content)
       ftp.receiveNcompress(testedfile, testedfile)
-      Path(gztestedfile).exists() should equal(true)
+      new File(gztestedfile).exists should equal(true)
       ftp.localmd5sum(gztestedfile) should equal(Some(gztestedfileMD5))
     }
     doclean
   }
 
 }
-

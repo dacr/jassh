@@ -16,6 +16,7 @@
 
 package fr.janalyse.ssh.external
 
+
 class ExternalSSHAPITest extends fr.janalyse.ssh.SomeHelp {
 
   info(s"Those tests require to have a user named '${sshopts.username}' with password '${sshopts.password}' on ${sshopts.host}")
