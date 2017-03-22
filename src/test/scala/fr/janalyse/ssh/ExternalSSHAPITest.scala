@@ -17,7 +17,6 @@
 package fr.janalyse.ssh.external
 
 import org.scalatest.FunSuite
-import org.scalatest.ShouldMatchers
 
 class ExternalSSHAPITest extends fr.janalyse.ssh.SomeHelp {
 
