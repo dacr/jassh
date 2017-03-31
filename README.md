@@ -1,4 +1,4 @@
-#JASSH - SCALA SSH API#
+# JASSH - SCALA SSH API
 
 [![Build Status](https://travis-ci.org/dacr/jassh.png?branch=master)](https://travis-ci.org/dacr/jassh)
 
@@ -10,7 +10,7 @@ One of the main difference of this API with others is that it can work with **pe
 to an already running and **initialized** shell session ! Thanks to this feature you can greatly speed up your SSH shell performances,
 from 70 cmd/s to more than 500 hit/s ! There is no differences in API between persisted and not persisted shell sessions, that's the
 reason why the API looks very simple from scala point of view; when you execute a command in a shell persisted session you get directly
-the output of the command but not the return code. The return code will be accessible only indirectly using for example a "echo $?" command.
+the output of the command but not the return code. The return code will be accessible only indirectly using for example a `echo $?` command.
 
 The current release doesn't provide full shell interaction with executed commands, you only send a command and get the result, but
 I'm currently working to provide full interactivity, to allow interaction with commands such as to provide data after the command is
@@ -21,19 +21,19 @@ test class.
 
 [**Scala docs**](http://www.janalyse.fr/scaladocs/janalyse-ssh)
 
-**Current releases** :  **0.9.19** (for scala 2.10 and 2.11)   **0.9.5b3** (for scala 2.9.1, 2.9.2)
+**Current releases**:  **0.9.19** (for scala 2.10 and 2.11)   **0.9.5b3** (for scala 2.9.1, 2.9.2)
 
-**Declare dependency in SBT as follow** :
+**Declare dependency in SBT as follow**:
 ```
 libraryDependencies += "fr.janalyse"   %% "janalyse-ssh" % "0.9.19" % "compile"
 ```
 
-**Add JAnalyse repository in SBT as follow** :
+**Add JAnalyse repository in SBT as follow**:
 ```
 resolvers += "JAnalyse Repository" at "http://www.janalyse.fr/repository/"
 ```
 
-**The standalone jassh executable** : [jassh.jar](http://dnld.crosson.org/jassh.jar)
+**The standalone jassh executable**: [jassh.jar](http://dnld.crosson.org/jassh.jar)
 
 The procedure to generate your own executable :
 ```bash
@@ -51,11 +51,11 @@ res4: String = hello test at Sun Mar 22 16:17:55 CET 2015
 
 ----
 
-##hello world script##
+## hello world script
 
 It requires a local user named "test" with password "testtest", remember that you can remove the password, if your public key has been added in authorized_keys file of the test user.
 
-````scala
+```scala
 #!/bin/sh
 exec java -jar jassh.jar "$0" "$@"
 !#
@@ -64,9 +64,9 @@ jassh.SSH.once("localhost", "test", "testtest") { ssh =>
 }
 ```
 
-##Persisted shell session##
+## Persisted shell session
 
-````scala
+```scala
 #!/bin/sh
 exec java -jar jassh.jar "$0" "$@"
 !#
@@ -78,9 +78,9 @@ jassh.SSH.shell("localhost", "test", "testtest") { sh =>
 }
 ```
 
-##Shell session to an SSH enabled  PowerShell Server (windows)
+## Shell session to an SSH enabled  PowerShell Server (windows)
 This functions much the same as a regular SSH connection, but many of the unix like commands are not supported and the terminal behaves differently
-````scala
+```scala
 import fr.janalyse.ssh._
 
 val settings = SSHOptions(host = host, username=user, password = pass, prompt = Some(prompt), timeout = timeout)
@@ -92,7 +92,7 @@ println(shell.ls)
 println(shell.pwd)
 ```
 
-##SSH Configuration notes##
+## SSH Configuration notes
 
 To turn on/off ssh root direct access or sftp ssh subsystem.
 ```
@@ -100,25 +100,25 @@ To turn on/off ssh root direct access or sftp ssh subsystem.
     PermitRootLogin yes or no       (of course take care of security constraints)
 ```
 
-AIX SSHD CONFIGURATION :
+### AIX SSHD CONFIGURATION:
 ```
     vi /system/products/openssh/conf/sshd_config
     /etc/rc.d/rc2.d/S99sshd reload
 ```
 
-LINUX SSHD CONFIGURATION
+### LINUX SSHD CONFIGURATION
 ```
     vi /etc/ssh/sshd_config
     /etc/init.d/sshd reload
 ```
 
-SOLARIS SSHD CONFIGURATION
+### SOLARIS SSHD CONFIGURATION
 ```
     vi /usr/local/etc/ssh/sshd_config
     svcadm restart ssh
 ```
 
-MAC OS X CONFIGURATION
+### MAC OS X CONFIGURATION
 ```
     sudo vi /etc/sshd_config
     sudo launchctl load -w /System/Library/LaunchDaemons/ssh.plist
