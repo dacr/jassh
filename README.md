@@ -24,7 +24,7 @@ _(starting from 0.10, java 8 bytecodes are used, and scala 2.10, 2.11 and 2.12 a
 Latest `version`: [![Maven][mavenImg]][mavenLink] [![Scaladex][scaladexImg]][scaladexLink]
 
 
-**Old releases** : `resolvers += "JAnalyse Repository" at "http://www.janalyse.fr/repository/" 
+**Old releases** : `resolvers += "JAnalyse Repository" at "http://www.janalyse.fr/repository/"` 
 + **0.9.19** : for scala 2.10 and 2.11, java 6 bytecodes
 + **0.9.5b3** : for scala 2.9.1, 2.9.2, java 5 bytecodes
 
