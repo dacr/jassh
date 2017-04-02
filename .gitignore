@@ -16,3 +16,4 @@ bin/
 .cache-*
 .ensime
 .ensime_cache
+.DS_Store
