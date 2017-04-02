@@ -58,8 +58,8 @@ res4: String = hello test at Sun Mar 22 16:17:55 CET 2015
 [licenseImg2]: https://img.shields.io/:license-apache2-blue.svg
 [licenseLink]: LICENSE
 
-[codacyImg]: https://img.shields.io/codacy/e01ab68b61424eb69211acf2699d0756.svg
-[codacyImg2]: https://api.codacy.com/project/badge/grade/e01ab68b61424eb69211acf2699d0756
+[codacyImg]: https://img.shields.io/codacy/5dd46c29-f8c5-41b3-9a94-2c7016a3a9f7.svg
+[codacyImg2]: https://api.codacy.com/project/badge/grade/5dd46c29-f8c5-41b3-9a94-2c7016a3a9f7
 [codacyLink]: https://www.codacy.com/app/dacr/jassh/dashboard
 
 [codecovImg]: https://img.shields.io/codecov/c/github/dacr/jassh/master.svg
@@ -77,7 +77,7 @@ res4: String = hello test at Sun Mar 22 16:17:55 CET 2015
 
 It requires a local user named "test" with password "testtest", remember that you can remove the password, if your public key has been added in authorized_keys file of the test user.
 
-````scala
+```scala
 #!/bin/sh
 exec java -jar jassh.jar "$0" "$@"
 !#
@@ -88,7 +88,7 @@ jassh.SSH.once("localhost", "test", "testtest") { ssh =>
 
 ## Persisted shell session
 
-````scala
+```scala
 #!/bin/sh
 exec java -jar jassh.jar "$0" "$@"
 !#
