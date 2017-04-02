@@ -1,4 +1,4 @@
-#JASSH - SCALA SSH API#
+# JASSH - the SCALA SSH API  [![Build Status][travisImg]][travisLink] [![License][licenseImg]][licenseLink] [![Codacy][codacyImg]][codacyLink] [![codecov][codecovImg]][codecovLink]
 
 [![Build Status](https://travis-ci.org/dacr/jassh.png?branch=master)](https://travis-ci.org/dacr/jassh)
 
@@ -17,21 +17,21 @@ I'm currently working to provide full interactivity, to allow interaction with c
 started (send a password once the prompt is visible, ...). This work is currently visible through SSHReact class and SSHReactTest
 test class.  
 
-[**JAnalyse software maven repository**](http://www.janalyse.fr/repository/)
+In your build.sbt, add this :
+```
+libraryDependencies += "fr.janalyse"   %% "janalyse-ssh" % version
+```
+_(starting from 0.10, java 8 bytecodes are used, and scala 2.12 is supported)_
+
+Latest `version`: [![Maven][mavenImg]][mavenLink] [![Scaladex][scaladexImg]][scaladexLink]
+
+
+**Old releases** : `resolvers += "JAnalyse Repository" at "http://www.janalyse.fr/repository/" 
++ **0.9.19** : for scala 2.10 and 2.11, java 6 bytecodes
++ **0.9.5b3** : for scala 2.9.1, 2.9.2, java 5 bytecodes
 
 [**Scala docs**](http://www.janalyse.fr/scaladocs/janalyse-ssh)
 
-**Current releases** :  **0.9.19** (for scala 2.10 and 2.11)   **0.9.5b3** (for scala 2.9.1, 2.9.2)
-
-**Declare dependency in SBT as follow** :
-```
-libraryDependencies += "fr.janalyse"   %% "janalyse-ssh" % "0.9.19" % "compile"
-```
-
-**Add JAnalyse repository in SBT as follow** :
-```
-resolvers += "JAnalyse Repository" at "http://www.janalyse.fr/repository/"
-```
 
 **The standalone jassh executable** : [jassh.jar](http://dnld.crosson.org/jassh.jar)
 
@@ -51,7 +51,7 @@ res4: String = hello test at Sun Mar 22 16:17:55 CET 2015
 
 ----
 
-##hello world script##
+## hello world script
 
 It requires a local user named "test" with password "testtest", remember that you can remove the password, if your public key has been added in authorized_keys file of the test user.
 
@@ -64,7 +64,7 @@ jassh.SSH.once("localhost", "test", "testtest") { ssh =>
 }
 ```
 
-##Persisted shell session##
+## Persisted shell session
 
 ````scala
 #!/bin/sh
@@ -78,7 +78,7 @@ jassh.SSH.shell("localhost", "test", "testtest") { sh =>
 }
 ```
 
-##Shell session to an SSH enabled  PowerShell Server (windows)
+## Shell session to an SSH enabled  PowerShell Server (windows)
 This functions much the same as a regular SSH connection, but many of the unix like commands are not supported and the terminal behaves differently
 ````scala
 import fr.janalyse.ssh._
@@ -92,7 +92,7 @@ println(shell.ls)
 println(shell.pwd)
 ```
 
-##SSH Configuration notes##
+## SSH Configuration notes
 
 To turn on/off ssh root direct access or sftp ssh subsystem.
 ```
@@ -123,3 +123,26 @@ MAC OS X CONFIGURATION
     sudo vi /etc/sshd_config
     sudo launchctl load -w /System/Library/LaunchDaemons/ssh.plist
 ```
+
+[mavenImg]: https://img.shields.io/maven-central/v/fr.janalyse/jassh_2.12.svg
+[mavenImg2]: https://maven-badges.herokuapp.com/maven-central/fr.janalyse/jassh_2.12/badge.svg
+[mavenLink]: https://search.maven.org/#search%7Cga%7C1%7Cfr.janalyse.jassh
+
+[scaladexImg]: https://index.scala-lang.org/dacr/jassh/jassh/latest.svg
+[scaladexLink]: https://index.scala-lang.org/dacr/jassh
+
+[licenseImg]: https://img.shields.io/github/license/dacr/jassh.svg
+[licenseImg2]: https://img.shields.io/:license-apache2-blue.svg
+[licenseLink]: LICENSE
+
+[codacyImg]: https://img.shields.io/codacy/e01ab68b61424eb69211acf2699d0756.svg
+[codacyImg2]: https://api.codacy.com/project/badge/grade/e01ab68b61424eb69211acf2699d0756
+[codacyLink]: https://www.codacy.com/app/dacr/jassh/dashboard
+
+[codecovImg]: https://img.shields.io/codecov/c/github/dacr/jassh/master.svg
+[codecovImg2]: https://codecov.io/github/dacr/jassh/coverage.svg?branch=master
+[codecovLink]: http://codecov.io/github/dacr/jassh?branch=master
+
+[travisImg]: https://img.shields.io/travis/dacr/jassh.svg
+[travisImg2]: https://travis-ci.org/dacr/jassh.png?branch=master
+[travisLink]:https://travis-ci.org/dacr/jassh
