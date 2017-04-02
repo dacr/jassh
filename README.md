@@ -44,8 +44,32 @@ $ sbt assembly
 $ java -jar target/scala-2.11/jassh.jar
 scala> jassh.SSH("localhost", "test").shell(_.echo("hello $(whoami) at $(date)")).trim
 res4: String = hello test at Sun Mar 22 16:17:55 CET 2015
-
 ```
+
+
+[mavenImg]: https://img.shields.io/maven-central/v/fr.janalyse/jassh_2.12.svg
+[mavenImg2]: https://maven-badges.herokuapp.com/maven-central/fr.janalyse/jassh_2.12/badge.svg
+[mavenLink]: https://search.maven.org/#search%7Cga%7C1%7Cfr.janalyse.jassh
+
+[scaladexImg]: https://index.scala-lang.org/dacr/jassh/jassh/latest.svg
+[scaladexLink]: https://index.scala-lang.org/dacr/jassh
+
+[licenseImg]: https://img.shields.io/github/license/dacr/jassh.svg
+[licenseImg2]: https://img.shields.io/:license-apache2-blue.svg
+[licenseLink]: LICENSE
+
+[codacyImg]: https://img.shields.io/codacy/e01ab68b61424eb69211acf2699d0756.svg
+[codacyImg2]: https://api.codacy.com/project/badge/grade/e01ab68b61424eb69211acf2699d0756
+[codacyLink]: https://www.codacy.com/app/dacr/jassh/dashboard
+
+[codecovImg]: https://img.shields.io/codecov/c/github/dacr/jassh/master.svg
+[codecovImg2]: https://codecov.io/github/dacr/jassh/coverage.svg?branch=master
+[codecovLink]: http://codecov.io/github/dacr/jassh?branch=master
+
+[travisImg]: https://img.shields.io/travis/dacr/jassh.svg
+[travisImg2]: https://travis-ci.org/dacr/jassh.png?branch=master
+[travisLink]:https://travis-ci.org/dacr/jassh
+
 
 ----
 
@@ -121,26 +145,3 @@ MAC OS X CONFIGURATION
     sudo vi /etc/sshd_config
     sudo launchctl load -w /System/Library/LaunchDaemons/ssh.plist
 ```
-
-[mavenImg]: https://img.shields.io/maven-central/v/fr.janalyse/jassh_2.12.svg
-[mavenImg2]: https://maven-badges.herokuapp.com/maven-central/fr.janalyse/jassh_2.12/badge.svg
-[mavenLink]: https://search.maven.org/#search%7Cga%7C1%7Cfr.janalyse.jassh
-
-[scaladexImg]: https://index.scala-lang.org/dacr/jassh/jassh/latest.svg
-[scaladexLink]: https://index.scala-lang.org/dacr/jassh
-
-[licenseImg]: https://img.shields.io/github/license/dacr/jassh.svg
-[licenseImg2]: https://img.shields.io/:license-apache2-blue.svg
-[licenseLink]: LICENSE
-
-[codacyImg]: https://img.shields.io/codacy/e01ab68b61424eb69211acf2699d0756.svg
-[codacyImg2]: https://api.codacy.com/project/badge/grade/e01ab68b61424eb69211acf2699d0756
-[codacyLink]: https://www.codacy.com/app/dacr/jassh/dashboard
-
-[codecovImg]: https://img.shields.io/codecov/c/github/dacr/jassh/master.svg
-[codecovImg2]: https://codecov.io/github/dacr/jassh/coverage.svg?branch=master
-[codecovLink]: http://codecov.io/github/dacr/jassh?branch=master
-
-[travisImg]: https://img.shields.io/travis/dacr/jassh.svg
-[travisImg2]: https://travis-ci.org/dacr/jassh.png?branch=master
-[travisLink]:https://travis-ci.org/dacr/jassh
