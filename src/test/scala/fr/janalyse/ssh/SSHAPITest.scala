@@ -106,7 +106,7 @@ class SSHAPITest extends SomeHelp {
     }
   }
   //==========================================================================================================
-  test("SSHShell : Bad performances obtained without persistent schell ssh channel (autoclose)") {
+  ignore("SSHShell : Bad performances obtained without persistent schell ssh channel (autoclose)") {
     val howmany = 200
     for {
       (opts, comment) <- (sshopts, "") :: (sshopts.copy(execWithPty = true), "with VTY") :: Nil
@@ -121,7 +121,7 @@ class SSHAPITest extends SomeHelp {
     }
   }
   //==========================================================================================================
-  test("SSHShell : Best performance is achieved with mutiple command within the same shell channel (autoclose)") {
+  ignore("SSHShell : Best performance is achieved with mutiple command within the same shell channel (autoclose)") {
     val howmany = 5000
     for {
       (opts, comment) <- (sshopts, "") :: (sshopts.copy(execWithPty = true), "with VTY") :: Nil
@@ -138,7 +138,7 @@ class SSHAPITest extends SomeHelp {
     }
   }
   //==========================================================================================================
-  test("SSHExec : performances obtained using exec ssh channel (no persistency)") {
+  ignore("SSHExec : performances obtained using exec ssh channel (no persistency)") {
     val howmany = 200
     for {
       (opts, comment) <- (sshopts, "") :: (sshopts.copy(execWithPty = true), "with VTY") :: Nil
@@ -236,7 +236,7 @@ class SSHAPITest extends SomeHelp {
   }
 
   //==========================================================================================================
-  test("file transfert performances (with content loaded in memory)") {
+  ignore("file transfert performances (with content loaded in memory)") {
     val testfile = "test-transfert"
 
     def withSCP(filename: String, ssh: SSH, howmany: Int, sizeKb: Int) {

@@ -15,7 +15,7 @@ I'm currently working to provide full interactivity, to allow interaction with c
 started (send a password once the prompt is visible, ...). This work is currently visible through SSHReact class and SSHReactTest
 test class.  
 
-In your build.sbt, add this :
+In your build.sbt, add this (available in maven central) :
 ```
 libraryDependencies += "fr.janalyse"   %% "janalyse-ssh" % version
 ```
