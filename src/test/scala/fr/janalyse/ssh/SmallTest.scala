@@ -17,7 +17,6 @@
 package fr.janalyse.ssh
 
 import org.scalatest.FunSuite
-import org.scalatest.ShouldMatchers
 import scala.io.Source
 import scala.util.Properties
 import java.io.File
