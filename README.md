@@ -21,7 +21,7 @@ In your build.sbt, add this :
 ```
 libraryDependencies += "fr.janalyse"   %% "janalyse-ssh" % version
 ```
-_(starting from 0.10, java 8 bytecodes are used, and scala 2.12 is supported)_
+_(starting from 0.10, java 8 bytecodes are used, and scala 2.10, 2.11 and 2.12 are supported)_
 
 Latest `version`: [![Maven][mavenImg]][mavenLink] [![Scaladex][scaladexImg]][scaladexLink]
 
@@ -80,7 +80,7 @@ jassh.SSH.shell("localhost", "test", "testtest") { sh =>
 
 ## Shell session to an SSH enabled  PowerShell Server (windows)
 This functions much the same as a regular SSH connection, but many of the unix like commands are not supported and the terminal behaves differently
-````scala
+```scala
 import fr.janalyse.ssh._
 
 val settings = SSHOptions(host = host, username=user, password = pass, prompt = Some(prompt), timeout = timeout)
