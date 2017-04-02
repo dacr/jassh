@@ -1,7 +1,5 @@
 # JASSH - the SCALA SSH API  [![Build Status][travisImg]][travisLink] [![License][licenseImg]][licenseLink] [![Codacy][codacyImg]][codacyLink] [![codecov][codecovImg]][codecovLink]
 
-[![Build Status](https://travis-ci.org/dacr/jassh.png?branch=master)](https://travis-ci.org/dacr/jassh)
-
 High level scala SSH API for easy and fast operations on remote servers.
 
 This API is [JSCH](http://www.jcraft.com/jsch/) based. Interfaces are stable. Many helper functions are provided to simplify unix operations [ps, ls, cat, kill, find, ...](http://www.janalyse.fr/scaladocs/janalyse-ssh/#fr.janalyse.ssh.ShellOperations), an other goal of this API is to create an unix abstraction layer (Linux, Aix, Solaris, Darwin, ...).
@@ -44,7 +42,7 @@ $ sbt assembly
 [info] Packaging target/scala-2.11/jassh.jar ...
 [info] Done packaging.
 $ java -jar target/scala-2.11/jassh.jar
-scala> jassh.SSH("localhost", "test").shell(_.echo("hello `whoami` at `date`")).trim
+scala> jassh.SSH("localhost", "test").shell(_.echo("hello $(whoami) at $(date)")).trim
 res4: String = hello test at Sun Mar 22 16:17:55 CET 2015
 
 ```
@@ -60,7 +58,7 @@ It requires a local user named "test" with password "testtest", remember that yo
 exec java -jar jassh.jar "$0" "$@"
 !#
 jassh.SSH.once("localhost", "test", "testtest") { ssh =>
-  print(sh.execute("""echo "Hello World from `hostname`" """))
+  print(sh.execute("""echo "Hello World from $(hostname)" """))
 }
 ```
 
