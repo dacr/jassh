@@ -51,7 +51,7 @@ res4: String = hello test at Sun Mar 22 16:17:55 CET 2015
 [mavenImg2]: https://maven-badges.herokuapp.com/maven-central/fr.janalyse/janalyse-ssh_2.12/badge.svg
 [mavenLink]: https://search.maven.org/#search%7Cga%7C1%7Cfr.janalyse.janalyse-ssh
 
-[scaladexImg]: https://index.scala-lang.org/dacr/jassh/jassh/latest.svg
+[scaladexImg]: https://index.scala-lang.org/dacr/jassh/janalyse-ssh/latest.svg
 [scaladexLink]: https://index.scala-lang.org/dacr/jassh
 
 [licenseImg]: https://img.shields.io/github/license/dacr/jassh.svg
