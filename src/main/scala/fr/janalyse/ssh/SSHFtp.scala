@@ -46,6 +46,20 @@ class SSHFtp(implicit ssh: SSH) extends TransfertOperations with SSHLazyLogging 
   }
 
   /**
+    * get remote file content as an optional InputStream
+    * @param filename file content to get
+    * @return Some content or None if file was not found
+    */
+  def getStream(filename: String): Option[InputStream] = {
+    try {
+      Some(channel.get(filename))
+    } catch {
+      case e: SftpException if e.id == 2 => None // File doesn't exist
+      case e: IOException => None
+    }
+  }
+
+  /**
    * Rename a remote file or directory
    * @param origin Original remote file name
    * @param dest Destination (new) remote file name
