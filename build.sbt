@@ -5,18 +5,18 @@ assemblyJarName in assembly := "jassh.jar"
 organization :="fr.janalyse"
 homepage := Some(new URL("https://github.com/dacr/jassh"))
 
-scalaVersion := "2.11.8"
+scalaVersion := "2.12.3"
 scalacOptions ++= Seq( "-deprecation", "-unchecked", "-feature")
-crossScalaVersions := Seq("2.10.6", "2.11.8", "2.12.1")
+crossScalaVersions := Seq("2.10.6", "2.11.11", "2.12.3")
 
 // Mandatory as tests are also used for performances testing...
 parallelExecution in Test := false
 
 libraryDependencies ++= Seq(
     "com.jcraft"         % "jsch"               % "0.1.54"
-   ,"org.apache.commons" % "commons-compress"   % "1.13"
+   ,"org.apache.commons" % "commons-compress"   % "1.14"
    ,"org.slf4j"          % "slf4j-api"          % "1.7.25"
-   ,"org.scalatest"     %% "scalatest"          % "3.0.1"  % "test"
+   ,"org.scalatest"     %% "scalatest"          % "3.0.4"  % "test"
 )
 
 initialCommands in console := """
