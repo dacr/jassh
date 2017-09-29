@@ -55,7 +55,18 @@ Crosson David - crosson.david@gmail.com
 
 ## Major changes
 
-### 0.9.20-SNAPSHOT (2016-06-24)
+### 0.10.2 (2017-09-29)
+
+- Software updates (scala, scalatest, commons-compress)
+- SSHConnectionManager added
+
+### 0.10.1 (2017-04-03)
+
+- sbt release integration
+- moved to maven central
+- scala 2.12 support
+
+### 0.9.20 (2016-06-24)
 
  - AllOperations trait added : for generic operations that requires both executions and transferts
    + `rreceive` method added to recursively copy a remote directory to a local destination
