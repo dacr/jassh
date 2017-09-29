@@ -17,3 +17,6 @@ bin/
 .ensime
 .ensime_cache
 .DS_Store
+.idea
+*.iml
+
