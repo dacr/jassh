@@ -7,3 +7,4 @@
 - PreferredAuthentications : herbinator (https://github.com/herbinator)
 - Add additional SSH options : chEbba (https://github.com/chEbba)
 - Add method to create a directory on remote SFTP : davekim (https://github.com/davekim)
+- Add getStream method to SSHFtp : Dmitry Melnichenko (https://github.com/slothspot)
