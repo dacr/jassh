@@ -38,10 +38,37 @@ class SSHConnectionManager(accesses:List[AccessPath]) {
   val accessesByName=accesses.groupBy(_.name).mapValues(_.head)
 
 
+
+  def ssh[T](name:String) (withSSH: SSH => T):Option[T] = {
+    accessesByName.get(name).map{ access =>
+      SSHConnectionManager.intricate(access) { withSSH }
+    }
+  }
+
+  def shell[T](name:String) (withShell : SSHShell => T):Option[T] = {
+    accessesByName.get(name).map{ access =>
+      SSHConnectionManager.intricate(access) { ssh =>
+        ssh.shell(withShell)
+      }
+    }
+  }
+}
+
+object SSHConnectionManager {
+  def apply(accesses:List[AccessPath]):SSHConnectionManager = new SSHConnectionManager(accesses)
+
+  /**
+    * rebuild the connection access path (proxytunnels, intricated tunnels) each time it is called and
+    * execute that code
+    * @param access access path specification
+    * @param that lambda to execute
+    * @tparam T result type returned by the lambda expression
+    * @return lambda result
+    */
   def intricate[T](access:AccessPath)(that: SSH => T):T = {
     def worker(endpoints: Iterable[EndPoint],
-                  localEndPoint: Option[SshEndPoint] = None,
-                  through: Option[ProxyEndPoint] = None): T = {
+               localEndPoint: Option[SshEndPoint] = None,
+               through: Option[ProxyEndPoint] = None): T = {
       endpoints.headOption match {
         case Some(endpoint: ProxyEndPoint) =>
           worker(endpoints.tail, localEndPoint, Some(endpoint))
@@ -76,22 +103,4 @@ class SSHConnectionManager(accesses:List[AccessPath]) {
     }
     worker(access.endpoints)
   }
-
-  def ssh[T](name:String) (withSSH: SSH => T):Option[T] = {
-    accessesByName.get(name).map{ access =>
-      intricate(access) { withSSH }
-    }
-  }
-
-  def shell[T](name:String) (withShell : SSHShell => T):Option[T] = {
-    accessesByName.get(name).map{ access =>
-      intricate(access) { ssh =>
-        ssh.shell(withShell)
-      }
-    }
-  }
-}
-
-object SSHConnectionManager {
-  def apply(accesses:List[AccessPath]):SSHConnectionManager = new SSHConnectionManager(accesses)
 }
