@@ -59,6 +59,7 @@ Crosson David - crosson.david@gmail.com
 
 - Software updates (scala, scalatest, commons-compress)
 - SSHConnectionManager added
+- moved to sbt 1.0 + SBT plugins updates
 
 ### 0.10.1 (2017-04-03)
 
