@@ -18,6 +18,8 @@ libraryDependencies ++= Seq(
    ,"org.slf4j"           %  "slf4j-api"          % "1.7.25"
    ,"io.github.andrebeat" %% "scala-pool"         % "0.4.0"
    ,"org.scalatest"       %% "scalatest"          % "3.0.4"  % "test"
+   ,"ch.qos.logback"      %  "logback-classic"    % "1.2.3"  % "test"
+
 )
 
 initialCommands in console := """

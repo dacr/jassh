@@ -15,20 +15,26 @@ class SSHConnectionManagerTest extends SomeHelp  {
       AccessPath("test1", SshEndPoint(lh, "test")::Nil),
       AccessPath("test2", SshEndPoint(lh, "test")::SshEndPoint(lh, "test")::Nil),
       AccessPath("test3", SshEndPoint(lh, "test")::SshEndPoint(lh, "test")::SshEndPoint(lh, "test")::Nil),
-      //AccessPath("test4", ProxyEndPoint(lh,3128)::SshEndPoint(lh, "test")::Nil),
-      //AccessPath("test5", ProxyEndPoint(lh,3128)::SshEndPoint(lh, "test")::SshEndPoint(lh, "test")::Nil),
-      //AccessPath("test6", ProxyEndPoint(lh,3128)::SshEndPoint(lh, "test")::SshEndPoint(lh, "test")::SshEndPoint(lh, "test")::Nil),
+      AccessPath("test4", ProxyEndPoint(lh,3128)::SshEndPoint(lh, "test")::Nil),
+      AccessPath("test5", ProxyEndPoint(lh,3128)::SshEndPoint(lh, "test")::SshEndPoint(lh, "test")::Nil),
+      AccessPath("test6", ProxyEndPoint(lh,3128)::SshEndPoint(lh, "test")::SshEndPoint(lh, "test")::SshEndPoint(lh, "test")::Nil),
     )
     val cm = SSHConnectionManager(aps)
 
-    for {
+    def go = for {
       name <- aps.map(_.name)
     } {
+      cm.shell(name) { _.execute("echo 1").trim should equal("1") }
       cm.shell(name) { sh =>
         val msg = s"OK for $name"
         info(s"testing access path $name with message '$msg'")
         sh.execute(s"echo '$msg'").trim should equal(msg)
       }
     }
+
+    info("FIRST")
+    go
+    info("SECOND")
+    go
   }
 }
