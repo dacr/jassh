@@ -13,10 +13,11 @@ crossScalaVersions := Seq("2.10.6", "2.11.11", "2.12.3")
 parallelExecution in Test := false
 
 libraryDependencies ++= Seq(
-    "com.jcraft"         % "jsch"               % "0.1.54"
-   ,"org.apache.commons" % "commons-compress"   % "1.14"
-   ,"org.slf4j"          % "slf4j-api"          % "1.7.25"
-   ,"org.scalatest"     %% "scalatest"          % "3.0.4"  % "test"
+    "com.jcraft"          %  "jsch"               % "0.1.54"
+   ,"org.apache.commons"  %  "commons-compress"   % "1.14"
+   ,"org.slf4j"           %  "slf4j-api"          % "1.7.25"
+   ,"io.github.andrebeat" %% "scala-pool"         % "0.4.0"
+   ,"org.scalatest"       %% "scalatest"          % "3.0.4"  % "test"
 )
 
 initialCommands in console := """
