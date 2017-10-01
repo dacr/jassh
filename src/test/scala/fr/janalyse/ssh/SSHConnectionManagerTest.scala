@@ -14,10 +14,10 @@ class SSHConnectionManagerTest extends SomeHelp  {
     val aps = List(
       AccessPath("test1", SshEndPoint(lh, "test")::Nil),
       AccessPath("test2", SshEndPoint(lh, "test")::SshEndPoint(lh, "test")::Nil),
-      AccessPath("test3", SshEndPoint(lh, "test")::SshEndPoint(lh, "test")::SshEndPoint(lh, "test")::Nil),
-      AccessPath("test4", ProxyEndPoint(lh,3128)::SshEndPoint(lh, "test")::Nil),
-      AccessPath("test5", ProxyEndPoint(lh,3128)::SshEndPoint(lh, "test")::SshEndPoint(lh, "test")::Nil),
-      AccessPath("test6", ProxyEndPoint(lh,3128)::SshEndPoint(lh, "test")::SshEndPoint(lh, "test")::SshEndPoint(lh, "test")::Nil),
+      AccessPath("test3", SshEndPoint(lh, "test")::SshEndPoint(lh, "test")::SshEndPoint(lh, "test")::Nil)
+      //AccessPath("test4", ProxyEndPoint(lh,3128)::SshEndPoint(lh, "test")::Nil),
+      //AccessPath("test5", ProxyEndPoint(lh,3128)::SshEndPoint(lh, "test")::SshEndPoint(lh, "test")::Nil),
+      //AccessPath("test6", ProxyEndPoint(lh,3128)::SshEndPoint(lh, "test")::SshEndPoint(lh, "test")::SshEndPoint(lh, "test")::Nil),
     )
     val cm = SSHConnectionManager(aps)
 

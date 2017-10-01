@@ -40,8 +40,8 @@ class SSHConnectionManager(accesses:List[AccessPath]) {
   val accessesByName=accesses.groupBy(_.name).mapValues(_.head)
 
   case class Bounce(localEndPoint:SshEndPoint, associatedSSH:SSH)
-  var bouncers = Map.empty[List[EndPoint], Bounce]
-
+  private var bouncers = Map.empty[List[EndPoint], Bounce]
+  private var sshers = Map.empty[List[EndPoint], SSH]
 
   def pooledIntricate[T](access:AccessPath)(that: SSH => T):T = synchronized {
     val aname = access.name
@@ -49,7 +49,7 @@ class SSHConnectionManager(accesses:List[AccessPath]) {
     def worker(remainingEndPoints: Iterable[EndPoint],
                previousPosition: List[EndPoint]=Nil,
                localEndPoint: Option[SshEndPoint] = None,
-               through: Option[ProxyEndPoint] = None): SshEndPoint = {
+               through: Option[ProxyEndPoint] = None): SSH = {
       remainingEndPoints.headOption match {
         // ----------------------------------------------------------------
         case Some(endpoint: ProxyEndPoint) =>
@@ -96,16 +96,26 @@ class SSHConnectionManager(accesses:List[AccessPath]) {
 
         // ----------------------------------------------------------------
         case None if localEndPoint.isDefined =>
-          localEndPoint.get
+          val position = previousPosition
+
+          sshers.get(position) match {
+            case None =>
+              val endpoint = localEndPoint.get
+              val opts=SSHOptions(endpoint.host, username=endpoint.username, port=endpoint.port)
+              val ssh = SSH(opts)
+              sshers += position->ssh
+              ssh
+            case Some(ssh) => ssh
+          }
+
         // ----------------------------------------------------------------
         case None =>
           throw new RuntimeException("Empty ssh path")
       }
     }
-    val path = access.endpoints
-    val endpoint = worker(path)
-    val opts=SSHOptions(endpoint.host, username=endpoint.username, port=endpoint.port)
-    SSH.once(opts)(that)
+
+    val ssh = worker(access.endpoints)
+    that(ssh)
   }
 
 
@@ -126,6 +136,11 @@ class SSHConnectionManager(accesses:List[AccessPath]) {
   def close():Unit = {
     for {bouncer <- bouncers.values} {
       try {bouncer.associatedSSH.close()} catch {
+        case ex:Exception =>
+      }
+    }
+    for {ssher <- sshers.values} {
+      try {ssher.close} catch {
         case ex:Exception =>
       }
     }
