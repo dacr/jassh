@@ -1,7 +1,7 @@
 package fr.janalyse.ssh
 
 import com.jcraft.jsch.ProxyHTTP
-
+import io.github.andrebeat.pool._
 
 sealed trait EndPoint {
   val host:String
@@ -37,14 +37,17 @@ class SSHConnectionManager(accesses:List[AccessPath]) {
 
   val accessesByName=accesses.groupBy(_.name).mapValues(_.head)
 
+  var pools = Map.empty[List[EndPoint],Pool[SSH]]
 
   def pooledIntricate[T](access:AccessPath)(that: SSH => T):T = {
     def worker(endpoints: Iterable[EndPoint],
+               path: List[EndPoint]=Nil,
                localEndPoint: Option[SshEndPoint] = None,
                through: Option[ProxyEndPoint] = None): T = {
       endpoints.headOption match {
+        // ----------------------------------------------------------------
         case Some(endpoint: ProxyEndPoint) =>
-          worker(endpoints.tail, localEndPoint, Some(endpoint))
+          worker(endpoints.tail, endpoints.head::path, localEndPoint, Some(endpoint))
         // ----------------------------------------------------------------
         case Some(endpoint: SshEndPoint) if localEndPoint.isDefined => // intricate tunnel
           val proxy = through.map(p => new ProxyHTTP(p.host, p.port))
@@ -52,7 +55,7 @@ class SSHConnectionManager(accesses:List[AccessPath]) {
           SSH.once(opts) { ssh =>
             val newPort = ssh.remote2Local(endpoint.host, endpoint.port)
             val newLocalEndPoint = SshEndPoint("127.0.0.1", username = endpoint.username, port = newPort)
-            worker(endpoints.tail, Some(newLocalEndPoint))
+            worker(endpoints.tail, endpoints.head::path, Some(newLocalEndPoint))
           }
         // ----------------------------------------------------------------
         case Some(endpoint: SshEndPoint) => // first tunnel
@@ -61,7 +64,7 @@ class SSHConnectionManager(accesses:List[AccessPath]) {
           SSH.once(opts) { ssh =>
             val newPort = ssh.remote2Local("127.0.0.1", 22)
             val newLocalEndPoint = SshEndPoint("127.0.0.1", username = endpoint.username, port = newPort)
-            worker(endpoints.tail, Some(newLocalEndPoint))
+            worker(endpoints.tail, endpoints.head::path, Some(newLocalEndPoint))
           }
         // ----------------------------------------------------------------
         case None if localEndPoint.isDefined =>
