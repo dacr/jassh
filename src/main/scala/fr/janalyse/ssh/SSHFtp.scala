@@ -28,7 +28,7 @@ class SSHFtp(implicit ssh: SSH) extends TransfertOperations with SSHLazyLogging 
 
   override def get(filename: String): Option[String] = {
     try {
-      implicit val codec = new io.Codec(Charset.forName(ssh.options.charset))
+      implicit val codec = new scala.io.Codec(Charset.forName(ssh.options.charset))
       Some(new BufferedSource(channel.get(filename)).mkString)
     } catch {
       case e: SftpException if (e.id == 2) => None // File doesn't exist
