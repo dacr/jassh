@@ -5,9 +5,10 @@ assemblyJarName in assembly := "jassh.jar"
 organization :="fr.janalyse"
 homepage := Some(new URL("https://github.com/dacr/jassh"))
 
-scalaVersion := "2.12.3"
+//scalaVersion := "2.12.3"
+scalaVersion := "2.11.12"
 scalacOptions ++= Seq( "-deprecation", "-unchecked", "-feature")
-crossScalaVersions := Seq("2.10.6", "2.11.11", "2.12.3")
+crossScalaVersions := Seq("2.10.6", "2.11.12", "2.12.3")
 
 // Mandatory as tests are also used for performances testing...
 parallelExecution in Test := false

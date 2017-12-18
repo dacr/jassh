@@ -103,6 +103,16 @@ class SSHFtp(implicit ssh: SSH) extends TransfertOperations with SSHLazyLogging 
    */
   def cd(path: String): Unit = channel.cd(path)
 
+  /**
+   * Print Working Directory: returns the current remote directory in absolute form.
+   */
+  def pwd() : String = channel.pwd()
+
+  /**
+   * converts a remote path to its absolute (and to a certain degree canonical) version.
+   */
+  def realpath(path: String) : String = channel.realpath(path)
+
   override def receive(remoteFilename: String, outputStream: OutputStream) {
     try {
       channel.get(remoteFilename, outputStream)
