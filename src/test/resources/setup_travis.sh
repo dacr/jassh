@@ -5,11 +5,15 @@ sudo useradd -p `perl -e "print(crypt('testtest', 'AB'));"` test
 
 # Install ssh
 sudo apt-get update -qq
-sudo apt-get install -qq libssh2-1-dev openssh-client openssh-server
+#sudo apt-get install -qq libssh2-1-dev openssh-client openssh-server
+sudo apt-get install -qq openssh-client openssh-server
+
+sudo /etc/init.d/ssh start
 
 # Generate and Register keys
 ssh-keygen -t rsa -f ~/.ssh/id_rsa -N "" -q
 cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+ssh-keyscan -t rsa 127.0.0.1 >> ~/.ssh/known_hosts
 ssh-keyscan -t rsa localhost >> ~/.ssh/known_hosts
 sudo cp src/test/resources/sshconfig ~/.ssh/config
 sudo chmod 644 ~/.ssh/config
