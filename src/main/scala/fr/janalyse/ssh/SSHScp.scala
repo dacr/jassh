@@ -108,7 +108,7 @@ class SSHScp(implicit ssh: SSH) extends TransfertOperations {
       }
       if (datasize>0) Stream.continually(bis.read()).takeWhile(chk(_)).foreach(sout.write(_))
       */
-      var writtenBytes = 0
+      var writtenBytes = 0L
       while (writtenBytes < datasize) {
         val c = bis.read()
         if (c >= 0) {
