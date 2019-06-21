@@ -55,6 +55,13 @@ Crosson David - crosson.david@gmail.com
 
 ## Major changes
 
+### 0.10.4-SNAPSHOT (2019-06-xx)
+
+- fix integer overflow issue while sending big files / mlahia (https://github.com/mlahia)
+- update library dependencies
+- update sbt tools (plugins)
+- update scala releases
+
 ### 0.10.2 (2017-09-29)
 
 - Software updates (scala, scalatest, commons-compress)

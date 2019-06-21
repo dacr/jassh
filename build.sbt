@@ -5,22 +5,28 @@ assemblyJarName in assembly := "jassh.jar"
 organization :="fr.janalyse"
 homepage := Some(new URL("https://github.com/dacr/jassh"))
 
-//scalaVersion := "2.12.3"
-scalaVersion := "2.11.12"
+scalaVersion := "2.12.8"
+
+crossScalaVersions := Seq("2.10.7", "2.11.12", "2.12.8") //, "2.13.0")
+
+// 2.9.3   : generates java 5 bytecodes, even with run with a JVM6
+// 2.10.7  : generates java 6 bytecodes
+// 2.11.12 : generates java 6 bytecodes
+// 2.12.8  : generates java 8 bytecodes && JVM8 required for compilation
+// 2.13.0  : generates java 8 bytecodes && JVM8 required for compilation
+
 scalacOptions ++= Seq( "-deprecation", "-unchecked", "-feature")
-crossScalaVersions := Seq("2.10.6", "2.11.12", "2.12.3")
 
 // Mandatory as tests are also used for performances testing...
 parallelExecution in Test := false
 
 libraryDependencies ++= Seq(
-    "com.jcraft"          %  "jsch"               % "0.1.54"
-   ,"org.apache.commons"  %  "commons-compress"   % "1.14"
-   ,"org.slf4j"           %  "slf4j-api"          % "1.7.25"
-   ,"io.github.andrebeat" %% "scala-pool"         % "0.4.0"
-   ,"org.scalatest"       %% "scalatest"          % "3.0.4"  % "test"
-   ,"ch.qos.logback"      %  "logback-classic"    % "1.2.3"  % "test"
-
+   "com.jcraft"          %  "jsch"               % "0.1.55",
+   "org.apache.commons"  %  "commons-compress"   % "1.18",
+   "org.slf4j"           %  "slf4j-api"          % "1.7.26",
+   "io.github.andrebeat" %% "scala-pool"         % "0.4.1",
+   "org.scalatest"       %% "scalatest"          % "3.0.8"  % "test",
+   "ch.qos.logback"      %  "logback-classic"    % "1.2.3"  % "test",
 )
 
 initialCommands in console := """
@@ -48,6 +54,9 @@ publishArtifact in Test := false
 publishTo := Some(if (isSnapshot.value) Opts.resolver.sonatypeSnapshots else Opts.resolver.sonatypeStaging)
 
 scmInfo := Some(ScmInfo(url(s"https://github.com/dacr/jassh"), s"git@github.com:dacr/jassh.git"))
+
+PgpKeys.useGpg in Global := true      // workaround with pgp and sbt 1.2.x
+pgpSecretRing := pgpPublicRing.value  // workaround with pgp and sbt 1.2.x
 
 pomExtra in Global := {
   <developers>

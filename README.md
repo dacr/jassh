@@ -24,27 +24,7 @@ _(starting from 0.10, java 8 bytecodes are used, and scala 2.10, 2.11 and 2.12 a
 Latest `version`: [![Maven][mavenImg]][mavenLink] [![Scaladex][scaladexImg]][scaladexLink]
 
 
-**Old releases** : `resolvers += "JAnalyse Repository" at "http://www.janalyse.fr/repository/"` 
-+ **0.9.19** : for scala 2.10 and 2.11, java 6 bytecodes
-+ **0.9.5b3** : for scala 2.9.1, 2.9.2, java 5 bytecodes
-
 [**Scala docs**](http://www.janalyse.fr/scaladocs/janalyse-ssh)
-
-
-**The standalone jassh executable** : [jassh.jar](http://dnld.crosson.org/jassh.jar)
-
-The procedure to generate your own executable :
-```bash
-$ git clone https://github.com/dacr/jassh.git
-$ cd jassh/onejar
-$ sbt assembly
-...
-[info] Packaging target/scala-2.11/jassh.jar ...
-[info] Done packaging.
-$ java -jar target/scala-2.11/jassh.jar
-scala> jassh.SSH("localhost", "test").shell(_.echo("hello $(whoami) at $(date)")).trim
-res4: String = hello test at Sun Mar 22 16:17:55 CET 2015
-```
 
 
 [mavenImg]: https://img.shields.io/maven-central/v/fr.janalyse/janalyse-ssh_2.12.svg

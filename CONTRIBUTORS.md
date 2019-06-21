@@ -8,3 +8,4 @@
 - Add additional SSH options : chEbba (https://github.com/chEbba)
 - Add method to create a directory on remote SFTP : davekim (https://github.com/davekim)
 - Add getStream method to SSHFtp : Dmitry Melnichenko (https://github.com/slothspot)
+- Fix integer overflow issue while sending big files : mlahia (https://github.com/mlahia)
