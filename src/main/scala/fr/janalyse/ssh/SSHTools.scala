@@ -35,6 +35,6 @@ object SSHTools {
     }
     fos.toByteArray
   }
-  def basename(name: String, ext: String) = if (name contains ext) name.substring(0, name.indexOf(ext)) else name
+  def basename(name: String, ext: String): String = if (name contains ext) name.substring(0, name.indexOf(ext)) else name
 
 }

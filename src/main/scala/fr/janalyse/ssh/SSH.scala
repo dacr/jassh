@@ -45,7 +45,7 @@ object SSH {
     password: SSHPassword = NoPassword,
     passphrase: SSHPassword = NoPassword,
     port: Int = 22,
-    timeout: Int = 300000)(withssh: (SSH) => T): T = using(new SSH(SSHOptions(host = host, username = username, password = password, passphrase = passphrase, port = port, timeout = timeout))) {
+    timeout: Int = 300000)(withssh: SSH => T): T = using(new SSH(SSHOptions(host = host, username = username, password = password, passphrase = passphrase, port = port, timeout = timeout))) {
     withssh(_)
   }
   /**
@@ -54,7 +54,7 @@ object SSH {
    * @param withssh code bloc to execute
    * @return "withssh" returns type
    */
-  def once[T](options: SSHOptions)(withssh: (SSH) => T): T = using(new SSH(options)) {
+  def once[T](options: SSHOptions)(withssh: SSH => T): T = using(new SSH(options)) {
     withssh(_)
   }
   /**
@@ -63,7 +63,7 @@ object SSH {
    * @param withssh code bloc to execute
    * @return "withssh" returns type
    */
-  def once[T](someOptions: Option[SSHOptions])(withssh: (SSH) => T): Option[T] = someOptions map { options =>
+  def once[T](someOptions: Option[SSHOptions])(withssh: SSH => T): Option[T] = someOptions map { options =>
     using(new SSH(options)) {
       withssh(_)
     }
@@ -86,7 +86,7 @@ object SSH {
     password: SSHPassword = NoPassword,
     passphrase: SSHPassword = NoPassword,
     port: Int = 22,
-    timeout: Int = 300000)(withsh: (SSHShell) => T): T = shell[T](SSHOptions(host = host, username = username, password = password, passphrase = passphrase, port = port, timeout = timeout))(withsh)
+    timeout: Int = 300000)(withsh: SSHShell => T): T = shell[T](SSHOptions(host = host, username = username, password = password, passphrase = passphrase, port = port, timeout = timeout))(withsh)
 
   /**
    * Executes the given code then closes the new ssh shell associated session.
@@ -94,7 +94,7 @@ object SSH {
    * @param withsh code bloc to execute
    * @return "withssh" returns type
    */
-  def shell[T](options: SSHOptions)(withsh: (SSHShell) => T): T = using(new SSH(options)) { ssh =>
+  def shell[T](options: SSHOptions)(withsh: SSHShell => T): T = using(new SSH(options)) { ssh =>
     ssh.shell { sh => withsh(sh) }
   }
   /**
@@ -103,7 +103,7 @@ object SSH {
    * @param withsh code bloc to execute
    * @return "withssh" returns type
    */
-  def shell[T](someOptions: Option[SSHOptions])(withsh: (SSHShell) => T): Option[T] = someOptions map { shell[T](_)(withsh) }
+  def shell[T](someOptions: Option[SSHOptions])(withsh: SSHShell => T): Option[T] = someOptions map { shell[T](_)(withsh) }
 
   /**
    * Executes the given code then closes the new ssh powershell channel associated session.
@@ -122,7 +122,7 @@ object SSH {
     password: SSHPassword = NoPassword,
     passphrase: SSHPassword = NoPassword,
     port: Int = 22,
-    timeout: Int = 300000)(withsh: (SSHPowerShell) => T): T = powershell[T](SSHOptions(host = host, username = username, password = password, passphrase = passphrase, port = port, timeout = timeout))(withsh)
+    timeout: Int = 300000)(withsh: SSHPowerShell => T): T = powershell[T](SSHOptions(host = host, username = username, password = password, passphrase = passphrase, port = port, timeout = timeout))(withsh)
 
   /**
    * Executes the given code then closes the new ssh powershell associated session.
@@ -130,7 +130,7 @@ object SSH {
    * @param withsh code bloc to execute
    * @return "withssh" returns type
    */
-  def powershell[T](options: SSHOptions)(withsh: (SSHPowerShell) => T): T = using(new SSH(options)) { ssh =>
+  def powershell[T](options: SSHOptions)(withsh: SSHPowerShell => T): T = using(new SSH(options)) { ssh =>
     ssh.powershell { sh => withsh(sh) }
   }
   /**
@@ -139,7 +139,7 @@ object SSH {
    * @param withsh code bloc to execute
    * @return "withssh" returns type
    */
-  def powershell[T](someOptions: Option[SSHOptions])(withsh: (SSHPowerShell) => T): Option[T] = someOptions map { powershell[T](_)(withsh) }
+  def powershell[T](someOptions: Option[SSHOptions])(withsh: SSHPowerShell => T): Option[T] = someOptions map { powershell[T](_)(withsh) }
 
   /**
    * Executes the given code then closes the new ssh ftp channel associated session.
@@ -158,7 +158,7 @@ object SSH {
     password: SSHPassword = NoPassword,
     passphrase: SSHPassword = NoPassword,
     port: Int = 22,
-    timeout: Int = 300000)(withftp: (SSHFtp) => T): T = ftp[T](SSHOptions(host = host, username = username, password = password, passphrase = passphrase, port = port, timeout = timeout))(withftp)
+    timeout: Int = 300000)(withftp: SSHFtp => T): T = ftp[T](SSHOptions(host = host, username = username, password = password, passphrase = passphrase, port = port, timeout = timeout))(withftp)
 
   /**
    * Executes the given code then closes the new sftp associated session.
@@ -166,7 +166,7 @@ object SSH {
    * @param withftp code bloc to execute
    * @return "withftp" returns type
    */
-  def ftp[T](options: SSHOptions)(withftp: (SSHFtp) => T): T = using(new SSH(options)) { ssh =>
+  def ftp[T](options: SSHOptions)(withftp: SSHFtp => T): T = using(new SSH(options)) { ssh =>
     ssh.ftp { ftp => withftp(ftp) }
   }
 
@@ -176,7 +176,7 @@ object SSH {
    * @param withftp code bloc to execute
    * @return "withftp" returns type
    */
-  def ftp[T](someOptions: Option[SSHOptions])(withftp: (SSHFtp) => T): Option[T] = someOptions map { ftp[T](_)(withftp) }
+  def ftp[T](someOptions: Option[SSHOptions])(withftp: SSHFtp => T): Option[T] = someOptions map { ftp[T](_)(withftp) }
 
   /**
    * Executes the given code then closes the new ssh shell and ftp channels associated sessions.
@@ -246,7 +246,7 @@ object SSH {
    */
   def apply(someOptions: Option[SSHOptions]): Option[SSH] = someOptions map { new SSH(_) }
 
-  protected def using[T <: { def close() }, R](resource: T)(block: T => R) = {
+  protected def using[T <: { def close():Unit }, R](resource: T)(block: T => R): R = {
     try block(resource)
     finally resource.close()
   }
@@ -258,7 +258,7 @@ object SSH {
  * @author David Crosson
  */
 class SSH(val options: SSHOptions) extends AllOperations {
-  private implicit val ssh = this
+  private implicit val ssh: SSH = this
   private val jsch = new JSch
 
   val jschsession: () => Session = {
@@ -274,7 +274,7 @@ class SSH(val options: SSHOptions) extends AllOperations {
       } catch {
         case ex: Exception =>
           try { checkedsession.disconnect() } catch { case e: Exception => }
-          logger.warn("Session is KO, reconnecting...");
+          logger.warn("Session is KO, reconnecting...")
           checkedsession = buildSession()
       }
       checkedsession
@@ -285,7 +285,7 @@ class SSH(val options: SSHOptions) extends AllOperations {
     for {
       ident <- options.identities
       fident = new File(ident.privkey)
-      if fident.isFile()
+      if fident.isFile
       passphraseOpt = ident.passphrase.password.orElse(options.passphrase.password)
     } {
       passphraseOpt match {
@@ -344,35 +344,35 @@ class SSH(val options: SSHOptions) extends AllOperations {
     ses
   }
 
-  def shell[T](proc: (SSHShell) => T) = SSH.using(new SSHShell) { proc(_) }
+  def shell[T](proc: SSHShell => T): T = SSH.using(new SSHShell) { proc(_) }
 
-  def powershell[T](proc: (SSHPowerShell) => T) = SSH.using(new SSHPowerShell) { proc(_) }
+  def powershell[T](proc: SSHPowerShell => T): T = SSH.using(new SSHPowerShell) { proc(_) }
 
-  def ftp[T](proc: (SSHFtp) => T) = SSH.using(new SSHFtp) { proc(_) }
+  def ftp[T](proc: SSHFtp => T): T = SSH.using(new SSHFtp) { proc(_) }
 
-  def scp[T](proc: (SSHScp) => T) = SSH.using(new SSHScp) { proc(_) }
+  def scp[T](proc: SSHScp => T): T = SSH.using(new SSHScp) { proc(_) }
 
-  def noerr(data: ExecResult) {}
+  def noerr(data: ExecResult):Unit = {}
 
   def run(cmd: String, out: ExecResult => Any, err: ExecResult => Any = noerr) = new SSHExec(cmd, out, err)
 
-  override def execute(cmd: SSHCommand) = execOnce(cmd) // Using SSHExec channel (better performances)
+  override def execute(cmd: SSHCommand): String = execOnce(cmd) // Using SSHExec channel (better performances)
 
-  override def executeWithStatus(cmd: SSHCommand): Tuple2[String, Int] = execOnceWithStatus(cmd)
+  override def executeWithStatus(cmd: SSHCommand): (String, Int) = execOnceWithStatus(cmd)
 
-  override def executeAll(cmds: SSHBatch) = shell { _ executeAll cmds }
+  override def executeAll(cmds: SSHBatch): Iterable[String] = shell { sh => cmds.cmdList.map{cmd => sh.execute(cmd)}}
 
-  def execOnceAndTrim(scmd: SSHCommand) = execOnce(scmd).trim()
+  def execOnceAndTrim(scmd: SSHCommand): String = execOnce(scmd).trim()
 
-  def execOnce(scmd: SSHCommand) = {
+  def execOnce(scmd: SSHCommand): String = {
     val (result, _) = execOnceWithStatus(scmd)
     result
   }
-  def execOnceWithStatus(scmd: SSHCommand): Tuple2[String, Int] = {
+  def execOnceWithStatus(scmd: SSHCommand): (String, Int) = {
     val stdout = new StringBuilder()
     val stderr = new StringBuilder()
     var exitCode = -1
-    def outputReceiver(buffer: StringBuilder)(content: ExecResult) {
+    def outputReceiver(buffer: StringBuilder)(content: ExecResult):Unit = {
       content match {
         case ExecPart(part) =>
           if (buffer.size > 0) buffer.append("\n")
@@ -419,30 +419,30 @@ class SSH(val options: SSHOptions) extends AllOperations {
       ssh.scp(_ getBytes remoteFilename),
       ssh.ftp(_ getBytes remoteFilename))
 
-  override def receive(remoteFilename: String, outputStream: OutputStream) {
+  override def receive(remoteFilename: String, outputStream: OutputStream):Unit = {
     opWithFallback(
       ssh.scp(_.receive(remoteFilename, outputStream)),
       ssh.ftp(_.receive(remoteFilename, outputStream)))
   }
 
-  override def put(data: String, remoteDestination: String) {
+  override def put(data: String, remoteDestination: String):Unit = {
     opWithFallback(
       ssh.scp(_ put (data, remoteDestination)),
       ssh.ftp(_ put (data, remoteDestination)))
   }
 
-  override def putBytes(data: Array[Byte], remoteDestination: String) {
+  override def putBytes(data: Array[Byte], remoteDestination: String):Unit = {
     opWithFallback(
       ssh.scp(_ putBytes (data, remoteDestination)),
       ssh.ftp(_ putBytes (data, remoteDestination)))
   }
 
-  override def putFromStream(data: java.io.InputStream, howmany: Int, remoteDestination: String) {
+  override def putFromStream(data: java.io.InputStream, howmany: Int, remoteDestination: String):Unit = {
     // Never use fallback mechanism for that case, because data stream is consumed...
     ssh.scp(_ putFromStream (data, howmany, remoteDestination))
   }
 
-  override def send(fromLocalFile: File, remoteDestination: String) {
+  override def send(fromLocalFile: File, remoteDestination: String):Unit = {
     opWithFallback(
       ssh.scp(_.send(fromLocalFile, remoteDestination)),
       ssh.ftp(_.send(fromLocalFile, remoteDestination)))
@@ -459,18 +459,17 @@ class SSH(val options: SSHOptions) extends AllOperations {
    * @param host  remote host (accessed through ssh server side)
    * @param hport remote port (on remote host) to bring back locally
    */
-  def remote2Local(lport: Int, host: String, hport: Int) = {
+  def remote2Local(lport: Int, host: String, hport: Int): Int = {
     jschsession().setPortForwardingL(lport, host, hport)
   }
 
   /**
    * Remote host/port => local port (client-side automatically chosen)
-   * @param lport remote host port will be mapped on this port on client side (bound to localhost)
    * @param host  remote host (accessed through ssh server side)
    * @param hport remote port (on remote host) to bring back locally
    * @return chosen local listening port
    */
-  def remote2Local(host: String, hport: Int) = {
+  def remote2Local(host: String, hport: Int): Int = {
     jschsession().setPortForwardingL(0, host, hport)
   }
 
@@ -480,13 +479,13 @@ class SSH(val options: SSHOptions) extends AllOperations {
    * @param lhost local host (accessible from ssh client host) from which we'll forward a port
    * @param lport the port to foward
    */
-  def local2Remote(rport: Int, lhost: String, lport: Int) {
-    jschsession().setPortForwardingR(rport, lhost, lport);
+  def local2Remote(rport: Int, lhost: String, lport: Int):Unit = {
+    jschsession().setPortForwardingR(rport, lhost, lport)
   }
 
   /**
    * Get access to a remote SSH through current SSH session
-   * @param options ssh options
+   * @param remoteOptions ssh options
    * @return SSH session
    */
   def remote(remoteOptions: SSHOptions): SSH = {
@@ -516,22 +515,22 @@ class SSH(val options: SSHOptions) extends AllOperations {
   /**
    * returns a new shell for current SSH session, you must manage close operation by your self
    */
-  def newShell = new SSHShell
+  def newShell: SSHShell = new SSHShell
 
   /**
    * returns a new powershell for current SSH session, you must manage close operation by your self
    */
-  def newPowerShell = new SSHPowerShell
+  def newPowerShell: SSHPowerShell = new SSHPowerShell
 
   /**
    * returns a new ftp for current SSH session, you must manage close operation by your self
    * @return sftp instance
    */
-  def newSftp = new SSHFtp
+  def newSftp: SSHFtp = new SSHFtp
 
   /**
    * close current ssh session
    */
-  def close() { jschsession().disconnect }
+  def close():Unit = { jschsession().disconnect }
 
 }

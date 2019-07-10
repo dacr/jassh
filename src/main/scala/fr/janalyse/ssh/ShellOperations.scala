@@ -18,7 +18,6 @@ package fr.janalyse.ssh
 
 import java.text.SimpleDateFormat
 import java.util.Date
-import scala.collection.generic.CanBuildFrom
 import java.util.Locale
 import scala.util.matching.Regex
 
@@ -50,18 +49,6 @@ trait ShellOperations extends CommonOperations with SSHLazyLogging {
   def executeAll(cmds: SSHBatch): Iterable[String] = cmds.cmdList.map(execute(_))
 
   /**
-   * Execute a collection of commands and returns the associated result collections
-   * @param commands commands collection
-   * @return commands executions results collection
-   */
-  @deprecated("","0.9.14")
-  def execute[I <: Iterable[String]](commands: I)(implicit bf: CanBuildFrom[I, String, I]): I = {
-    var builder = bf()
-    for (cmd <- commands) builder += execute(cmd)
-    builder.result
-  }
-
-  /**
    * Execute the current command and pass the result to the given code
    * @param cmd command to be executed
    * @param cont continuation code
@@ -89,7 +76,7 @@ trait ShellOperations extends CommonOperations with SSHLazyLogging {
    * @return result trimmed string collection
    */
   @deprecated("","0.9.14")
-  def executeAllAndTrim(cmds: SSHBatch) = executeAll(cmds.cmdList) map { _.trim }
+  def executeAllAndTrim(cmds: SSHBatch): Iterable[String] = executeAll(cmds.cmdList) map { _.trim }
 
   /**
    * Execute the current batch (list of commands) and return the result as a string collection
@@ -97,13 +84,13 @@ trait ShellOperations extends CommonOperations with SSHLazyLogging {
    * @return result trimmed splitted string collection
    */
   @deprecated("","0.9.14")
-  def executeAllAndTrimSplit(cmds: SSHBatch) = executeAll(cmds.cmdList) map { _.trim.split("\r?\n") }
+  def executeAllAndTrimSplit(cmds: SSHBatch): Iterable[Array[String]] = executeAll(cmds.cmdList) map { _.trim.split("\r?\n") }
 
   /**
    * Disable shell history, the goal is to not add noises to your shell history, to 
    * keep your shell commands history clean.
    */
-  def disableHistory() {
+  def disableHistory():Unit = {
     execute("unset HISTFILE")
     execute("HISTSIZE=0")
   }
@@ -128,20 +115,20 @@ trait ShellOperations extends CommonOperations with SSHLazyLogging {
       case Linux =>
         // 2013-02-27 18:08:51.252312190 +0100
         genoptcmd(s"""stat -c '%y' '$filename' """)
-           .map { lmLinuxFix(_) }
+           .map { lmLinuxFix }
       // -------------------------------------------------------      
       case Darwin =>
         // Modify: 2014-07-03 21:43:08 CEST
         genoptcmd(s"""stat -t '%Y-%m-%d %H:%M:%S %Z' -x '$filename' | grep Modify""")
            .map {_.split(":",2).drop(1).mkString.trim }
-           .map { lmDarwinSDF.parse(_)}
+           .map { lmDarwinSDF.parse}
       // -------------------------------------------------------
       case AIX =>
         // Last modified:  Fri Apr 30 09:10:22 DFT 2010
         genoptcmd(s"""istat '$filename' | grep "Last modified" """)
           .map {_.split(":",2).drop(1).mkString.trim }
           .map {_.replaceFirst("DFT","CET")} // Because DFT is a specific AIX TZ naming for CET !!!
-          .map { lmAixSDF.parse(_) }
+          .map { lmAixSDF.parse }
       // -------------------------------------------------------
       case _ => ???
     }
@@ -250,7 +237,7 @@ trait ShellOperations extends CommonOperations with SSHLazyLogging {
    */
   def ls(dirname: String): Iterable[String] = {
     //executeAndTrimSplit("""ls --format=single-column "%s" """.format(dirname))
-    executeAndTrimSplit("""ls "%s" | cat """.format(dirname)).filter(_.size > 0)
+    executeAndTrimSplit("""ls "%s" | cat """.format(dirname)).filter(_.nonEmpty)
   }
 
   /**
@@ -263,14 +250,14 @@ trait ShellOperations extends CommonOperations with SSHLazyLogging {
    * Change current working directory to home directory
    * Of course this requires a persistent shell session to be really useful...
    */
-  def cd { execute("cd") }
+  def cd:Unit = { execute("cd") }
 
   /**
    * Change current working directory to the specified directory
    * Of course this requires a persistent shell session to be really useful...
    * @param dirname directory name
    */
-  def cd(dirname: String) { execute(s"""cd "$dirname" """) }
+  def cd(dirname: String):Unit = { execute(s"""cd "$dirname" """) }
 
   /**
    * Get remote host name
@@ -503,17 +490,17 @@ trait ShellOperations extends CommonOperations with SSHLazyLogging {
   /**
    * kill specified processes
    */
-  def kill(pids: Iterable[Int]) { execute(s"""kill -9 ${pids.mkString(" ")}""") }
+  def kill(pids: Iterable[Int]):Unit = { execute(s"""kill -9 ${pids.mkString(" ")}""") }
 
   /**
    * delete a file
    */
-  def rm(file: String) { rm(file::Nil) }
+  def rm(file: String):Unit = { rm(file::Nil) }
 
   /**
    * delete files
    */
-  def rm(files: Iterable[String]) { execute(s"""rm -f ${files.mkString("'", "' '", "'")}""") }
+  def rm(files: Iterable[String]):Unit = { execute(s"""rm -f ${files.mkString("'", "' '", "'")}""") }
 
   /**
    * delete directory (directory must be empty)
@@ -580,7 +567,7 @@ trait ShellOperations extends CommonOperations with SSHLazyLogging {
    * touch
    * @param files list of files to touch
    */
-  def touch(files:String*) { execute(s"""touch ${files.mkString("'", "' '", "'")}""") }
+  def touch(files:String*):Unit = { execute(s"""touch ${files.mkString("'", "' '", "'")}""") }
 
   /**
    * Get used id information
@@ -597,7 +584,6 @@ trait ShellOperations extends CommonOperations with SSHLazyLogging {
 
   /**
    * get dir name
-   * @param name a filename
    * @return directory name
    */
   def alive():Boolean = echo("ALIVE").contains("ALIVE")

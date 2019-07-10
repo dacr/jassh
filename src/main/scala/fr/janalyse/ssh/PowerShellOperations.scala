@@ -18,9 +18,6 @@ package fr.janalyse.ssh
 
 import java.text.SimpleDateFormat
 import java.util.Date
-import scala.collection.generic.CanBuildFrom
-import java.util.Locale
-import scala.util.matching.Regex
 
 /**
  * ShellOperations defines generic shell operations and common shell commands shortcuts
@@ -69,7 +66,7 @@ trait PowerShellOperations extends SSHLazyLogging {
    */
   def ls(dirname: String): Iterable[String] = {
     //executeAndTrimSplit("""ls --format=single-column "%s" """.format(dirname))
-    executeAndTrimSplit("""ls "%s" """.format(dirname)).filter(_.size > 0)
+    executeAndTrimSplit("""ls "%s" """.format(dirname)).filter(_.nonEmpty)
   }
 
   /**
@@ -82,14 +79,14 @@ trait PowerShellOperations extends SSHLazyLogging {
    * Change current working directory to home directory
    * Of course this requires a persistent shell session to be really useful...
    */
-  def cd { execute("cd") }
+  def cd: Unit = { execute("cd") }
 
   /**
    * Change current working directory to the specified directory
    * Of course this requires a persistent shell session to be really useful...
    * @param dirname directory name
    */
-  def cd(dirname: String) { execute(s"""cd "$dirname" """) }
+  def cd(dirname: String): Unit = { execute(s"""cd "$dirname" """) }
 
   /**
    * Get remote host name
@@ -113,14 +110,14 @@ trait PowerShellOperations extends SSHLazyLogging {
    * @param filename get the content of this filename
    * @return file content
    */
-  def cat(filename: String) = execute("cat %s".format(filename))
+  def cat(filename: String): String = execute("cat %s".format(filename))
 
   /**
    * Get contents of a list of files
    * @param filenames get the content of this list of filenames
    * @return files contents concatenation
    */
-  def cat(filenames: List[String]) = execute("cat %s".format(filenames.mkString(" ")))
+  def cat(filenames: List[String]): String = execute("cat %s".format(filenames.mkString(" ")))
 
   /**
    * get current SSH options
@@ -132,26 +129,26 @@ trait PowerShellOperations extends SSHLazyLogging {
   /**
    * kill specified processes
    */
-  def kill(pids: Iterable[Int]) { execute(s"""kill -9 ${pids.mkString(" ")}""") }
+  def kill(pids: Iterable[Int]):Unit = { execute(s"""kill -9 ${pids.mkString(" ")}""") }
 
   /**
    * delete a file
    */
-  def rm(file: String) { rm(file::Nil) }
+  def rm(file: String):Unit = { rm(file::Nil) }
 
   /**
    * delete files
    */
-  def rm(files: Iterable[String]) { execute(s"""rm -f ${files.mkString("'", "' '", "'")}""") }
+  def rm(files: Iterable[String]):Unit = { execute(s"""rm -f ${files.mkString("'", "' '", "'")}""") }
 
   /**
    * delete directory (directory must be empty)
    */
-  def rmdir(dir: String) { rmdir(dir::Nil)}
+  def rmdir(dir: String):Unit = { rmdir(dir::Nil)}
 
   /**
    * delete directories (directories must be empty)
    */
-  def rmdir(dirs: Iterable[String]) { execute(s"""rmdir ${dirs.mkString("'", "' '", "'")}""") }
+  def rmdir(dirs: Iterable[String]):Unit = { execute(s"""rmdir ${dirs.mkString("'", "' '", "'")}""") }
 
 }

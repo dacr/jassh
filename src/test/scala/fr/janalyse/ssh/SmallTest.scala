@@ -21,7 +21,6 @@ import scala.io.Source
 import scala.util.Properties
 import java.io.File
 import java.io.IOException
-import scala.collection.parallel.ForkJoinTaskSupport
 import org.scalatest.OptionValues._
 
 class SmallTest extends SomeHelp {

@@ -44,11 +44,11 @@ case class SSHOptions(
   knownHostsFile: Option[String] = None
   ) {
   //val keyfiles2lookup = sshKeyFile ++ List("id_rsa", "id_dsa") // ssh key search order (from sshUserDir)
-  def compressed = this.copy(compress=Some(5))
-  def viaProxyHttp(host:String, port:Int=80) = this.copy(proxy = Some(new ProxyHTTP(host,port)))
-  def viaProxySOCKS4(host:String, port:Int=1080) = this.copy(proxy = Some(new ProxySOCKS4(host,port)))
-  def viaProxySOCKS5(host:String, port:Int=1080) = this.copy(proxy = Some(new ProxySOCKS5(host,port)))
-  def addIdentity(identity:SSHIdentity) = this.copy(identities = identity::identities)
+  def compressed: SSHOptions = this.copy(compress=Some(5))
+  def viaProxyHttp(host:String, port:Int=80): SSHOptions = this.copy(proxy = Some(new ProxyHTTP(host,port)))
+  def viaProxySOCKS4(host:String, port:Int=1080): SSHOptions = this.copy(proxy = Some(new ProxySOCKS4(host,port)))
+  def viaProxySOCKS5(host:String, port:Int=1080): SSHOptions = this.copy(proxy = Some(new ProxySOCKS5(host,port)))
+  def addIdentity(identity:SSHIdentity): SSHOptions = this.copy(identities = identity::identities)
 }
 
 object SSHOptions {

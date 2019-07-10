@@ -1,7 +1,7 @@
 package fr.janalyse.ssh
 
 import java.io._
-import com.jcraft.jsch.{ChannelExec}
+import com.jcraft.jsch.ChannelExec
 
 
 
@@ -25,7 +25,7 @@ class SSHScp(implicit ssh: SSH) extends TransfertOperations {
     }
   }
 
-  override def receive(remoteFilename: String, outputStream: OutputStream) {
+  override def receive(remoteFilename: String, outputStream: OutputStream):Unit = {
     def filename2outputStream(filename: String) = outputStream // just One file supported
     remoteFile2OutputStream(remoteFilename, filename2outputStream) match {
       case 0 => throw new RuntimeException("Remote file name '%s' not found".format(remoteFilename))
@@ -34,35 +34,35 @@ class SSHScp(implicit ssh: SSH) extends TransfertOperations {
     }
   }
 
-  override def put(data: String, remoteDestination: String) {
+  override def put(data: String, remoteDestination: String):Unit = {
     putBytes(data.getBytes(ssh.options.charset), remoteDestination)
   }
 
-  override def putBytes(data: Array[Byte], remoteDestination: String) {
+  override def putBytes(data: Array[Byte], remoteDestination: String):Unit = {
     val sz = data.length
     val linput = new ByteArrayInputStream(data)
     val parts = remoteDestination.split("/")
     val rfilename = parts.last
-    val rDirectory = if (parts.init.size == 0) "." else parts.init.mkString("/")
+    val rDirectory = if (parts.init.length == 0) "." else parts.init.mkString("/")
 
     inputStream2remoteFile(linput, sz, rfilename, rDirectory)
   }
 
-  override def putFromStream(data: java.io.InputStream, howmany:Int, remoteDestination: String) {
+  override def putFromStream(data: java.io.InputStream, howmany:Int, remoteDestination: String):Unit = {
     val parts = remoteDestination.split("/")
     val rfilename = parts.last
-    val rDirectory = if (parts.init.size == 0) "." else parts.init.mkString("/")
+    val rDirectory = if (parts.init.length == 0) "." else parts.init.mkString("/")
 
     inputStream2remoteFile(data, howmany, rfilename, rDirectory)
     
   }
   
-  override def send(fromLocalFile: File, remoteDestination: String) {
+  override def send(fromLocalFile: File, remoteDestination: String):Unit = {
     val sz = fromLocalFile.length
     val linput = new FileInputStream(fromLocalFile)
     val parts = remoteDestination.split("/", -1)
     val rfilename = if (parts.last.length == 0) fromLocalFile.getName else parts.last
-    val rDirectory = if (parts.init.size == 0) "." else parts.init.mkString("/")
+    val rDirectory = if (parts.init.length == 0) "." else parts.init.mkString("/")
 
     inputStream2remoteFile(linput, sz, rfilename, rDirectory)
   }
@@ -79,12 +79,12 @@ class SSHScp(implicit ssh: SSH) extends TransfertOperations {
     localinput: InputStream,
     datasize: Long,
     remoteFilename: String,
-    remoteDirectory: String) {
+    remoteDirectory: String):Unit = {
     val ch = ssh.jschsession().openChannel("exec").asInstanceOf[ChannelExec]
     try {
       ch.setCommand("""scp -p -t "%s"""".format(remoteDirectory))
-      val sin = new BufferedInputStream(ch.getInputStream())
-      val sout = ch.getOutputStream()
+      val sin = new BufferedInputStream(ch.getInputStream)
+      val sout = ch.getOutputStream
       ch.connect(ssh.options.connectTimeout.toInt)
 
       checkAck(sin)
@@ -125,7 +125,7 @@ class SSHScp(implicit ssh: SSH) extends TransfertOperations {
       checkAck(sin)
 
     } finally {
-      if (ch.isConnected) ch.disconnect
+      if (ch.isConnected) ch.disconnect()
     }
   }
 
@@ -138,12 +138,12 @@ class SSHScp(implicit ssh: SSH) extends TransfertOperations {
 
   def remoteFile2OutputStream(
     remoteFilenameMask: String,
-    outputStreamBuilder: (String) => OutputStream): Int = {
+    outputStreamBuilder: String => OutputStream): Int = {
     val ch = ssh.jschsession().openChannel("exec").asInstanceOf[ChannelExec]
     try {
       ch.setCommand("""scp -f "%s"""".format(remoteFilenameMask))
-      val sin = new BufferedInputStream(ch.getInputStream())
-      val sout = ch.getOutputStream()
+      val sin = new BufferedInputStream(ch.getInputStream)
+      val sout = ch.getOutputStream
       ch.connect(ssh.options.connectTimeout.toInt)
 
       sout.write(0)
@@ -151,20 +151,20 @@ class SSHScp(implicit ssh: SSH) extends TransfertOperations {
 
       var count = 0
       val buf = new StringBuilder() // Warning : Mutable state, take care
-      def bufAppend(x: Int) { buf.append(x.asInstanceOf[Char]) }
-      def bufReset() { buf.setLength(0) }
-      def bufStr = buf.toString
+      def bufAppend(x: Int):Unit = { buf.append(x.asInstanceOf[Char]) }
+      def bufReset():Unit = { buf.setLength(0) }
+      def bufStr: String = buf.toString
 
       while (checkAck(sin) == 'C') {
         val fileRights = new Array[Byte](5)
         sin.read(fileRights, 0, 5)
 
         bufReset()
-        Stream.continually(sin.read()).takeWhile(_ != ' ').foreach(bufAppend(_))
+        Stream.continually(sin.read()).takeWhile(_ != ' ').foreach(bufAppend)
         val fz = bufStr.toLong
 
         bufReset()
-        Stream.continually(sin.read()).takeWhile(_ != 0x0a).foreach(bufAppend(_))
+        Stream.continually(sin.read()).takeWhile(_ != 0x0a).foreach(bufAppend)
         val filename = bufStr
 
         //println(remoteFilenameMask+ " " + count + " " + new String(fileRights)+ " '"+ filename + "' #" + fz)
@@ -194,7 +194,7 @@ class SSHScp(implicit ssh: SSH) extends TransfertOperations {
           }
         }
 
-        fos.close
+        fos.close()
 
         count += 1
 
@@ -205,12 +205,12 @@ class SSHScp(implicit ssh: SSH) extends TransfertOperations {
 
       count
     } finally {
-      if (ch.isConnected) ch.disconnect
+      if (ch.isConnected) ch.disconnect()
     }
   }
 
   private def checkAck(in: InputStream): Int = {
-    def consumeMessage() = {
+    def consumeMessage(): Unit = {
       val sb = new StringBuffer()
       Stream.continually(in.read())
         .takeWhile(x => (x != '\n') && (x != -1))
@@ -223,6 +223,6 @@ class SSHScp(implicit ssh: SSH) extends TransfertOperations {
     }
   }
 
-  def close() {}
+  def close():Unit = {}
 
 }

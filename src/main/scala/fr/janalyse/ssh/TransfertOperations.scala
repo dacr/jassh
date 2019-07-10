@@ -26,14 +26,14 @@ trait TransfertOperations extends CommonOperations {
    * @param remoteFilename Source file name (on remote system)
    * @param outputStream Destination stream (local system)
    */
-  def receive(remoteFilename: String, outputStream: OutputStream)
+  def receive(remoteFilename: String, outputStream: OutputStream):Unit
   
   /**
    * Copy a remote file to a local one
    * @param remoteFilename Source file name (on remote system)
-   * @param localFile Destination file (local system)
+   * @param toLocalFile Destination file (local system)
    */
-  def receive(remoteFilename: String, toLocalFile: File) {
+  def receive(remoteFilename: String, toLocalFile: File):Unit = {
     receive(remoteFilename, new FileOutputStream(toLocalFile))
   }
   
@@ -42,14 +42,14 @@ trait TransfertOperations extends CommonOperations {
    * @param remoteFilename Source file name (on remote system)
    * @param localFilename Destination file name (local system)
    */
-  def receive(remoteFilename: String, localFilename: String) {
+  def receive(remoteFilename: String, localFilename: String):Unit = {
     receive(remoteFilename, new File(localFilename))
   }
   
   /**
    * Copy and compress (if required) a remote file to a local one
    * @param remoteFilename Source file name (on remote system)
-   * @param localfilename Destination filename (without compressed extension)
+   * @param localFilename Destination filename (without compressed extension)
    * @return local file used
    */
   def receiveNcompress(remoteFilename:String, localFilename:String):File  = {
@@ -103,7 +103,7 @@ trait TransfertOperations extends CommonOperations {
    * Copy a remote file to a local one using the same filename
    * @param filename file name
    */
-  def receive(filename: String) {
+  def receive(filename: String):Unit = {
     receive(filename, new File(filename))
   }
 
@@ -112,14 +112,14 @@ trait TransfertOperations extends CommonOperations {
    * @param data content to upload in the remote file
    * @param remoteDestination remote destination
    */
-  def put(data: String, remoteDestination: String)
+  def put(data: String, remoteDestination: String):Unit
 
   /**
    * upload bytes array content to a remote file, if file already exists, it is overwritten
    * @param data content to upload in the remote file
    * @param remoteDestination remote destination
    */
-  def putBytes(data: Array[Byte], remoteDestination: String)
+  def putBytes(data: Array[Byte], remoteDestination: String):Unit
 
   /**
    * upload bytes coming from the input stream to a remote file, if file already exists, it is overwritten
@@ -127,14 +127,14 @@ trait TransfertOperations extends CommonOperations {
    * @param howmany how much data to write to remote destination
    * @param remoteDestination remote destination
    */
-  def putFromStream(data: java.io.InputStream, howmany:Int, remoteDestination: String)
+  def putFromStream(data: java.io.InputStream, howmany:Int, remoteDestination: String):Unit
 
   /**
    * Copy a local file to a remote one
    * @param fromLocalFilename Source file name (local system)
    * @param remoteDestination Destination file name (on remote system)
    */
-  def send(fromLocalFilename: String, remoteDestination: String) {
+  def send(fromLocalFilename: String, remoteDestination: String):Unit = {
     send(new File(fromLocalFilename), remoteDestination)
   }
 
@@ -142,7 +142,7 @@ trait TransfertOperations extends CommonOperations {
    * Copy a local file to a remote one using the same name
    * @param filename file name
    */
-  def send(filename: String) {
+  def send(filename: String):Unit = {
     send(new File(filename), filename)
   }
 
@@ -151,6 +151,6 @@ trait TransfertOperations extends CommonOperations {
    * @param fromLocalFile Source file (local system)
    * @param remoteDestination Destination file name (on remote system)
    */
-  def send(fromLocalFile: File, remoteDestination: String)
+  def send(fromLocalFile: File, remoteDestination: String):Unit
 
 }

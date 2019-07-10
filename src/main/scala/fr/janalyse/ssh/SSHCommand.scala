@@ -13,5 +13,5 @@ case class SSHCommand(cmd: String)
  * @author David Crosson
  */
 object SSHCommand {
-  implicit def stringToCommand(cmd: String) = new SSHCommand(cmd)
+  implicit def stringToCommand(cmd: String): SSHCommand = new SSHCommand(cmd)
 }

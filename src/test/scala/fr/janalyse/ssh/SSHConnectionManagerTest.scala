@@ -9,7 +9,7 @@ import org.scalatest.OptionValues._
 
 class SSHConnectionManagerTest extends SomeHelp  {
 
-  test("basic") {
+  ignore("basic") {
     val lh="127.0.0.1"
     val aps = List(
       AccessPath("test1", SshEndPoint(lh, "test")::Nil),
@@ -21,7 +21,7 @@ class SSHConnectionManagerTest extends SomeHelp  {
     )
     val cm = SSHConnectionManager(aps)
 
-    def go = for {
+    def go: Unit = for {
       name <- aps.map(_.name)
     } {
       cm.shell(name) { _.execute("echo 1").trim should equal("1") }

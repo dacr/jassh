@@ -4,7 +4,10 @@ import org.scalatest.FunSuite
 import org.scalatest.Matchers
 
 trait SomeHelp extends FunSuite with Matchers {
-  val sshopts = SSHOptions("127.0.0.1", username = "test", password = "testtest")
+  val defaultUsername = "test"
+  val defaultPassword = "testtest"
+  val defaultHost = "127.0.0.1"
+  val sshopts = SSHOptions(defaultHost, username = defaultUsername, password = defaultPassword)
 
   info(s"Those tests require to have a user named '${sshopts.username}' with password '${sshopts.password}' on ${sshopts.host}")
   
@@ -12,7 +15,7 @@ trait SomeHelp extends FunSuite with Matchers {
 
   def now = new java.util.Date()
   
-  def howLongFor[T](what: => T) = {
+  def howLongFor[T](what: => T): (Long, T) = {
     val begin = System.currentTimeMillis()
     val result = what
     val end = System.currentTimeMillis()

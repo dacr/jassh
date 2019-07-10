@@ -7,7 +7,7 @@ homepage := Some(new URL("https://github.com/dacr/jassh"))
 
 scalaVersion := "2.12.8"
 
-crossScalaVersions := Seq("2.10.7", "2.11.12", "2.12.8") //, "2.13.0")
+crossScalaVersions := Seq("2.10.7", "2.11.12", "2.12.8", "2.13.0")
 
 // 2.9.3   : generates java 5 bytecodes, even with run with a JVM6
 // 2.10.7  : generates java 6 bytecodes
@@ -24,10 +24,18 @@ libraryDependencies ++= Seq(
    "com.jcraft"          %  "jsch"               % "0.1.55",
    "org.apache.commons"  %  "commons-compress"   % "1.18",
    "org.slf4j"           %  "slf4j-api"          % "1.7.26",
-   "io.github.andrebeat" %% "scala-pool"         % "0.4.1",
    "org.scalatest"       %% "scalatest"          % "3.0.8"  % "test",
    "ch.qos.logback"      %  "logback-classic"    % "1.2.3"  % "test",
 )
+
+libraryDependencies ++= {
+  CrossVersion.partialVersion(scalaVersion.value) match {
+    case Some((2, major)) if major >= 13 =>
+      Seq("org.scala-lang.modules" %% "scala-parallel-collections" % "0.2.0" % "test")
+    case _ =>
+      Seq()
+  }
+}
 
 initialCommands in console := """
     |import fr.janalyse.ssh._

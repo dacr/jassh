@@ -10,7 +10,7 @@ trait AllOperations extends ShellOperations with TransfertOperations {
      * @param dest local destination directory, it it doesn't exist then it is created
      */
     def rreceive(remote:String, dest:File): Unit = {
-      def worker(curremote: String, curdest: File) {
+      def worker(curremote: String, curdest: File):Unit = {
         if (isDirectory(curremote)) {
           for {
             found <- ls(curremote)
@@ -31,8 +31,8 @@ trait AllOperations extends ShellOperations with TransfertOperations {
      * @param remote remote destination directory, if it doesn't exist then it is created
      */
     def rsend(src:File, remote:String): Unit = {
-      def worker(cursrc: File, curremote: String) {
-        if (cursrc.isDirectory()) {
+      def worker(cursrc: File, curremote: String): Unit = {
+        if (cursrc.isDirectory) {
           for {
             found <- cursrc.listFiles
             newsrc = new File(cursrc, found.getName)

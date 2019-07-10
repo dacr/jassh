@@ -10,7 +10,7 @@
   </appender>
 
 
-  <logger name="fr.janalyse.ssh" level="DEBUG"/>
+  <logger name="fr.janalyse.ssh" level="WARN"/>
 
 
   <root level="WARN">

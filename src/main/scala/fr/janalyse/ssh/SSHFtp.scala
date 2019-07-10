@@ -1,9 +1,10 @@
 package fr.janalyse.ssh
 
-import com.jcraft.jsch.{ChannelSftp, SftpException, SftpATTRS}
+import com.jcraft.jsch.{ChannelSftp, SftpATTRS, SftpException}
 import java.io._
 import java.nio.charset.Charset
-import scala.io.BufferedSource
+
+import scala.io.{BufferedSource, Codec}
 import collection.JavaConverters._
 
 object SSHFtp {
@@ -21,18 +22,18 @@ class SSHFtp(implicit ssh: SSH) extends TransfertOperations with SSHLazyLogging 
     ch
   }
 
-  def close() = {
-    channel.quit
-    channel.disconnect
+  def close(): Unit = {
+    channel.quit()
+    channel.disconnect()
   }
 
   override def get(filename: String): Option[String] = {
     try {
-      implicit val codec = new scala.io.Codec(Charset.forName(ssh.options.charset))
+      implicit val codec: Codec = new scala.io.Codec(Charset.forName(ssh.options.charset))
       Some(new BufferedSource(channel.get(filename)).mkString)
     } catch {
-      case e: SftpException if (e.id == 2) => None // File doesn't exist
-      case e: IOException => None
+      case e: SftpException if e.id == 2 => None // File doesn't exist
+      case _: IOException => None
     }
   }
 
@@ -40,8 +41,8 @@ class SSHFtp(implicit ssh: SSH) extends TransfertOperations with SSHLazyLogging 
     try {
       Some(SSHTools.inputStream2ByteArray(channel.get(filename)))
     } catch {
-      case e: SftpException if (e.id == 2) => None // File doesn't exist
-      case e: IOException => None
+      case e: SftpException if e.id == 2 => None // File doesn't exist
+      case _: IOException => None
     }
   }
 
@@ -55,7 +56,7 @@ class SSHFtp(implicit ssh: SSH) extends TransfertOperations with SSHLazyLogging 
       Some(channel.get(filename))
     } catch {
       case e: SftpException if e.id == 2 => None // File doesn't exist
-      case e: IOException => None
+      case _: IOException => None
     }
   }
 
@@ -64,7 +65,7 @@ class SSHFtp(implicit ssh: SSH) extends TransfertOperations with SSHLazyLogging 
    * @param origin Original remote file name
    * @param dest Destination (new) remote file name
    */
-  def rename(origin: String, dest: String) = {
+  def rename(origin: String, dest: String): Unit = {
     channel.rename(origin, dest)
   }
 
@@ -113,41 +114,41 @@ class SSHFtp(implicit ssh: SSH) extends TransfertOperations with SSHLazyLogging 
    */
   def realpath(path: String) : String = channel.realpath(path)
 
-  override def receive(remoteFilename: String, outputStream: OutputStream) {
+  override def receive(remoteFilename: String, outputStream: OutputStream):Unit = {
     try {
       channel.get(remoteFilename, outputStream)
     } catch {
-      case e: SftpException if (e.id == 2) =>
-        logger.warn(s"File '${remoteFilename}' doesn't exist")
+      case e: SftpException if e.id == 2 =>
+        logger.warn(s"File '$remoteFilename' doesn't exist")
         throw e
       case e: IOException =>
-        logger.error(s"can't receive ${remoteFilename}", e)
+        logger.error(s"can't receive $remoteFilename", e)
         throw e
       case e: Exception =>
-        logger.error(s"can't receive ${remoteFilename}", e)
+        logger.error(s"can't receive $remoteFilename", e)
         throw e
     } finally {
-      outputStream.close
+      outputStream.close()
     }
   }
 
-  override def put(data: String, remoteFilename: String) {
+  override def put(data: String, remoteFilename: String): Unit = {
     channel.put(new ByteArrayInputStream(data.getBytes(ssh.options.charset)), remoteFilename)
   }
 
-  override def putBytes(data: Array[Byte], remoteFilename: String) {
+  override def putBytes(data: Array[Byte], remoteFilename: String): Unit = {
     channel.put(new ByteArrayInputStream(data), remoteFilename)
   }
 
-  override def putFromStream(data: java.io.InputStream, howmany:Int, remoteDestination: String) {
+  override def putFromStream(data: java.io.InputStream, howmany:Int, remoteDestination: String): Unit = {
     putFromStream(data, remoteDestination) // In that case howmany is ignored !
   }
   
-  def putFromStream(data: java.io.InputStream, remoteDestination: String) {
+  def putFromStream(data: java.io.InputStream, remoteDestination: String): Unit = {
     channel.put(data, remoteDestination)
   }
   
-  override def send(localFile: File, remoteFilename: String) {
+  override def send(localFile: File, remoteFilename: String): Unit = {
     channel.put(new FileInputStream(localFile), remoteFilename)
   }
 

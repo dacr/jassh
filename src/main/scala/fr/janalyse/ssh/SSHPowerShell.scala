@@ -1,7 +1,7 @@
 package fr.janalyse.ssh
 
 import java.io._
-import com.jcraft.jsch.{ ChannelShell }
+import com.jcraft.jsch.ChannelShell
 import java.util.concurrent.ArrayBlockingQueue
 
 class SSHPowerShell(implicit ssh: SSH) extends PowerShellOperations {
@@ -14,9 +14,9 @@ class SSHPowerShell(implicit ssh: SSH) extends PowerShellOperations {
   }
 
   private val defaultPrompt = """_T-:+"""
-  val prompt = ssh.options.prompt getOrElse defaultPrompt
+  val prompt: String = ssh.options.prompt getOrElse defaultPrompt
 
-  val options = ssh.options
+  val options: SSHOptions = ssh.options
 
   private val (channel, toServer, fromServer) = {
     var ch: ChannelShell = ssh.jschsession().openChannel("shell").asInstanceOf[ChannelShell]
@@ -36,7 +36,7 @@ class SSHPowerShell(implicit ssh: SSH) extends PowerShellOperations {
     (ch, toServer, fromServer)
   }
 
-  def close() = {
+  def close(): Unit = {
     fromServer.close()
     toServer.close()
     channel.disconnect()
@@ -60,24 +60,24 @@ class SSHPowerShell(implicit ssh: SSH) extends PowerShellOperations {
   }
   // -----------------------------------------------------------------------------------
   class Producer(output: OutputStream) {
-    private def sendChar(char: Int) {
+    private def sendChar(char: Int):Unit = {
       output.write(char)
       output.flush()
     }
-    private def sendString(cmd: String) {
+    private def sendString(cmd: String):Unit = {
       output.write(cmd.getBytes)
       nl()
       output.flush()
     }
-    def send(cmd: String) { sendString(cmd) }
+    def send(cmd: String):Unit = { sendString(cmd) }
 
-    def break() { sendChar(3) } // Ctrl-C
-    def exit() { sendChar(4) } // Ctrl-D
-    def excape() { sendChar(27) } // ESC
-    def nl() { sendChar(10) } // LF or NEWLINE or ENTER or Ctrl-J
-    def cr() { sendChar(13) } // CR
+    def break():Unit = { sendChar(3) } // Ctrl-C
+    def exit():Unit = { sendChar(4) } // Ctrl-D
+    def excape():Unit = { sendChar(27) } // ESC
+    def nl():Unit = { sendChar(10) } // LF or NEWLINE or ENTER or Ctrl-J
+    def cr():Unit = { sendChar(13) } // CR
 
-    def close() { output.close() }
+    def close():Unit = { output.close() }
   }
 
   // -----------------------------------------------------------------------------------
@@ -87,9 +87,9 @@ class SSHPowerShell(implicit ssh: SSH) extends PowerShellOperations {
 
     private val resultsQueue = new ArrayBlockingQueue[String](10)
 
-    def hasResponse() = resultsQueue.size > 0
+    def hasResponse(): Boolean = resultsQueue.size > 0
 
-    def getResponse(timeout: Long = ssh.options.timeout) = {
+    def getResponse(timeout: Long = ssh.options.timeout): String = {
       if (timeout == 0L) resultsQueue.take()
       else {
         resultsQueue.poll(timeout, TimeUnit.MILLISECONDS) match {
@@ -107,9 +107,9 @@ class SSHPowerShell(implicit ssh: SSH) extends PowerShellOperations {
     }
 
     private val consumerAppender = new StringBuilder(8192)
-    private val promptSize = prompt.size
+    private val promptSize = prompt.length
 
-    def write(b: Int) {
+    def write(b: Int):Unit = {
       if (b != 13) { //CR removed... CR is always added by JSCH !!!!
         val ch = b.toChar
         consumerAppender.append(ch) // TODO - Add charset support

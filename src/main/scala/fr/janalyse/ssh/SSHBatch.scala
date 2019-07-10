@@ -13,5 +13,5 @@ case class SSHBatch(cmdList: Iterable[String])
  * @author David Crosson
  */
 object SSHBatch {
-  implicit def stringListToBatchList(cmdList: Iterable[String]) = new SSHBatch(cmdList)
+  implicit def stringListToBatchList(cmdList: Iterable[String]): SSHBatch = new SSHBatch(cmdList)
 }

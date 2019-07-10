@@ -21,8 +21,9 @@ import scala.io.Source
 import scala.util.Properties
 import java.io.File
 import java.io.IOException
-import scala.collection.parallel.ForkJoinTaskSupport
 import org.scalatest.OptionValues._
+
+import scala.collection.parallel.CollectionConverters._
 
 class SSHAPITest extends SomeHelp {
 
@@ -30,8 +31,7 @@ class SSHAPITest extends SomeHelp {
   test("One line exec with automatic resource close") {
     SSH.once(sshopts) { _.execute("expr 1 + 1").trim } should equal("2")
     SSH.once(sshopts) { _.executeAndTrim("expr 1 + 1") } should equal("2")
-    SSH.once(sshopts) { _.executeAllAndTrim("echo 1" :: "echo 2" :: Nil) } should equal("1" :: "2" :: Nil)
-    SSH.once(sshopts) { _.execute("echo 1" :: "echo 2" :: Nil) }.map(_.trim) should equal("1" :: "2" :: Nil)
+    //SSH.once(sshopts) { _.execute("echo 1" :: "echo 2" :: Nil) }.map(_.trim) should equal("1" :: "2" :: Nil)
     val year = SSH.once(sshopts) { _.executeAndTrim("expr 1 + 10").toInt }
     year should equal(11)
   }
@@ -199,9 +199,9 @@ class SSHAPITest extends SomeHelp {
     val cnxinfos = List(sshopts, sshopts, sshopts, sshopts, sshopts)
     val sshs = cnxinfos.par map { SSH(_) }
 
-    sshs.tasksupport = new ForkJoinTaskSupport(new scala.concurrent.forkjoin.ForkJoinPool(6))
+    //sshs.tasksupport = new ForkJoinTaskSupport(new scala.concurrent.forkjoin.ForkJoinPool(6))
 
-    val unames = sshs map { _ execute "date; sleep 5" }
+    val unames = sshs map { ssh => scala.concurrent.blocking {ssh.execute("date; sleep 5") }}
     info(unames.mkString("----"))
 
     (System.currentTimeMillis() - started) should be < (8000L) //(and not 5s * 5 = 25s)
@@ -209,7 +209,7 @@ class SSHAPITest extends SomeHelp {
 
   //==========================================================================================================
   test("Simplified persistent ssh shell usage") {
-    SSH.shell("localhost", "test") { sh =>
+    SSH.shell(defaultHost, defaultUsername, defaultPassword) { sh =>
       sh.execute("ls -la")
       sh.execute("uname")
     }
@@ -313,8 +313,8 @@ class SSHAPITest extends SomeHelp {
       info("Bytes rate : %.1fMb/s %dMb in %.1fs for %d files - %s".format(howmany * sizeKb * 1000L / d / 1024d, sizeKb * howmany / 1024, d / 1000d, howmany, comments))
     }
 
-    val withCompress = SSHOptions("localhost", "test", compress = None)
-    val noCompress = SSHOptions("localhost", "test", compress = Some(9))
+    val withCompress = sshopts.copy(compress = None)
+    val noCompress = sshopts.copy(compress = Some(9))
 
     SSH.once(withCompress)(toTest(withReusedSFTP, 1, 100 * 1024, "byterates using SFTP (max compression)"))
     SSH.once(noCompress)(toTest(withReusedSFTP, 1, 100 * 1024, "byterates using SFTP (no compression)"))
@@ -322,9 +322,9 @@ class SSHAPITest extends SomeHelp {
 
   //==========================================================================================================
   test("tunneling test remote->local") {
-    SSH.once("localhost", "test", port = 22) { ssh1 =>
-      ssh1.remote2Local(22022, "localhost", 22)
-      SSH.once("localhost", "test", port = 22022) { ssh2 =>
+    SSH.once(defaultHost, defaultUsername, defaultPassword, port = 22) { ssh1 =>
+      ssh1.remote2Local(22022, defaultHost, 22)
+      SSH.once(defaultHost, defaultUsername, defaultPassword, port = 22022) { ssh2 =>
         ssh2.executeAndTrim("echo 'works'") should equal("works")
       }
     }
@@ -332,9 +332,9 @@ class SSHAPITest extends SomeHelp {
 
   //==========================================================================================================
   test("tunneling test local->remote") {
-    SSH.once("localhost", "test", port = 22) { ssh1 =>
-      ssh1.local2Remote(33033, "localhost", 22)
-      SSH.once("localhost", "test", port = 33033) { ssh2 =>
+    SSH.once(defaultHost, defaultUsername, defaultPassword, port = 22) { ssh1 =>
+      ssh1.local2Remote(33033, defaultHost, 22)
+      SSH.once(defaultHost, defaultUsername, defaultPassword, port = 33033) { ssh2 =>
         ssh2.executeAndTrim("echo 'works'") should equal("works")
       }
     }
@@ -364,12 +364,12 @@ class SSHAPITest extends SomeHelp {
     def intricate[T](path: Iterable[Sub], curSSHPort: Int = 22)(proc: (SSH) => T): T = {
       path.headOption match {
         case Some(curSub) =>
-          SSH.once(curSub.host, "test", port = curSub.port) { ssh =>
+          SSH.once(curSub.host, defaultUsername, defaultPassword, port = curSub.port) { ssh =>
             ssh.remote2Local(curSub.tport, curSub.fhost, curSub.fport)
             intricate(path.tail, curSub.tport)(proc)
           }
         case None =>
-          SSH.once("localhost", "test", port = curSSHPort) { ssh =>
+          SSH.once("localhost", defaultUsername, defaultPassword, port = curSSHPort) { ssh =>
             proc(ssh)
           }
       }

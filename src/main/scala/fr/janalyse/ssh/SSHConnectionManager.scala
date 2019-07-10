@@ -3,7 +3,6 @@ package fr.janalyse.ssh
 import com.jcraft.jsch.ProxyHTTP
 import org.slf4j.LoggerFactory
 
-import io.github.andrebeat.pool._
 
 sealed trait EndPoint {
   val host:String

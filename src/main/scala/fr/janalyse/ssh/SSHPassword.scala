@@ -7,7 +7,7 @@ import language.implicitConversions
  * @author David Crosson
  */
 case class SSHPassword(password: Option[String]) {
-  override def toString = password getOrElse ""
+  override def toString: String = password getOrElse ""
 }
 
 /**
@@ -21,11 +21,11 @@ object NoPassword extends SSHPassword(None)
  * @author David Crosson
  */
 object SSHPassword {
-  implicit def string2password(pass: String) = pass match {
+  implicit def string2password(pass: String): SSHPassword = pass match {
     case "" => NoPassword
     case password => SSHPassword(Some(pass))
   }
-  implicit def stringOpt2password(passopt: Option[String]) = passopt match {
+  implicit def stringOpt2password(passopt: Option[String]): SSHPassword = passopt match {
     case Some(password) => string2password(password)
     case None => NoPassword
   }

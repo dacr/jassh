@@ -1,6 +1,6 @@
 package fr.janalyse.ssh
 
-import com.jcraft.jsch.{ChannelExec}
+import com.jcraft.jsch.ChannelExec
 import java.nio.charset.Charset
 import java.nio.ByteBuffer
 import java.io.{InputStream, BufferedInputStream, InterruptedIOException}
@@ -10,9 +10,9 @@ class SSHExec(cmd: String, out: ExecResult => Any, err: ExecResult => Any)(impli
   private val (channel, stdout, stderr, stdin) = {
     val ch = ssh.jschsession().openChannel("exec").asInstanceOf[ChannelExec]
     ch.setCommand(cmd.getBytes())
-    val stdout = ch.getInputStream()
-    val stderr = ch.getErrStream()
-    val stdin = ch.getOutputStream()
+    val stdout = ch.getInputStream
+    val stderr = ch.getErrStream
+    val stdin = ch.getOutputStream
     ch.setPty(ssh.options.execWithPty)
     ch.connect(ssh.options.connectTimeout.toInt)
     (ch, stdout, stderr, stdin)
@@ -24,20 +24,20 @@ class SSHExec(cmd: String, out: ExecResult => Any, err: ExecResult => Any)(impli
     stderrThread.interrupt()
     }
 
-  def giveInputLine(line: String) {
+  def giveInputLine(line: String):Unit = {
     stdin.write(line.getBytes())
     stdin.write("\n".getBytes())
     stdin.flush()
   }
 
-  def waitForEnd {
+  def waitForEnd: Unit = {
     stdoutThread.join()
     stderrThread.join()
     if (timeoutThread.interrupted) throw new InterruptedException("Timeout Reached")
     close()
   }
 
-  def close() {
+  def close(): Unit = {
     stdin.close()
     stdoutThread.interrupt()
     stderrThread.interrupt()
@@ -47,7 +47,7 @@ class SSHExec(cmd: String, out: ExecResult => Any, err: ExecResult => Any)(impli
 
   private class TimeoutManagerThread(timeout:Long)(todo : =>Any) extends Thread {
     var interrupted=false
-    override def run() {
+    override def run(): Unit = {
       if (timeout>0) {
 	      try {
 	        Thread.sleep(timeout)
@@ -68,7 +68,7 @@ class SSHExec(cmd: String, out: ExecResult => Any, err: ExecResult => Any)(impli
   }
   
   private class InputStreamThread(channel: ChannelExec, input: InputStream, output: ExecResult => Any) extends Thread {
-    override def run() {
+    override def run():Unit = {
       val bufsize = 16 * 1024
       val charset = Charset.forName(ssh.options.charset)
       val binput = new BufferedInputStream(input)
@@ -87,7 +87,7 @@ class SSHExec(cmd: String, out: ExecResult => Any, err: ExecResult => Any)(impli
 	          buffer.flip()
 	          val cbOut = charset.decode(buffer)
 	          buffer.compact()
-	          appender.append(cbOut.toString())
+	          appender.append(cbOut.toString)
 	          var s = 0
 	          var e = 0
 	          do {
@@ -100,7 +100,7 @@ class SSHExec(cmd: String, out: ExecResult => Any, err: ExecResult => Any)(impli
 	          appender.delete(0, s)
 	        }
 	      } while (!eofreached) // && !channel.isEOF() && !channel.isClosed()) // => This old test is not good as data may remaining on the stream
-          if (appender.size > 0) output(ExecPart(appender.toString()))
+          if (appender.nonEmpty) output(ExecPart(appender.toString()))
 	      output(ExecEnd(channel.getExitStatus()))
       } catch {
         case e:InterruptedIOException =>
@@ -111,7 +111,7 @@ class SSHExec(cmd: String, out: ExecResult => Any, err: ExecResult => Any)(impli
     }
   }
   private object InputStreamThread {
-    def apply(channel: ChannelExec, input: InputStream, output: ExecResult => Any) = {
+    def apply(channel: ChannelExec, input: InputStream, output: ExecResult => Any): InputStreamThread = {
       val newthread = new InputStreamThread(channel, input, output)
       newthread.start()
       newthread
