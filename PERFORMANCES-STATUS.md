@@ -1,5 +1,11 @@
 # PERFORMANCES STATUS AND TREND
 
+## NEW LANFEUST
+
+```
+2019-07-14 - 1782.5 c/s - 150.8 Mb/s (Mint 4.15    -  java hotspot 1.8.0_172 64b - OpenSSH 1:7.6p1-4ubuntu0.3,    OpenSSL 1.1.1-1ubuntu2.1~18.04.3) 
+```
+
 ## LANFEUST
 
 ```

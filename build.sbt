@@ -81,7 +81,7 @@ import ReleaseTransformations._
 releaseProcess := Seq[ReleaseStep](
     checkSnapshotDependencies,
     inquireVersions,
-    //runClean,
+    runClean,
     runTest,
     setReleaseVersion,
     commitReleaseVersion,

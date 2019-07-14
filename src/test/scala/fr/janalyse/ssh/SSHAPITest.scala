@@ -23,7 +23,7 @@ import java.io.File
 import java.io.IOException
 import org.scalatest.OptionValues._
 
-import scala.collection.parallel.CollectionConverters._
+import scala.collection.parallel.immutable.ParVector
 
 class SSHAPITest extends SomeHelp {
 
@@ -94,7 +94,7 @@ class SSHAPITest extends SomeHelp {
   //==========================================================================================================
   ignore("shell coherency check with long command lines (in //)") {
     SSH.once(sshopts) { ssh =>
-      (1 to 10).par foreach { i =>
+      (ParVector()++(1 to 10)) foreach { i =>
         ssh.shell { sh =>
           def mkmsg(base: String) = base * 100 + i
           sh.executeAndTrim("echo %s".format(mkmsg("Z"))) should equal(mkmsg("Z"))
@@ -106,7 +106,7 @@ class SSHAPITest extends SomeHelp {
     }
   }
   //==========================================================================================================
-  ignore("SSHShell : Bad performances obtained without persistent schell ssh channel (autoclose)") {
+  test("SSHShell : Bad performances obtained without persistent schell ssh channel (autoclose)") {
     val howmany = 200
     for {
       (opts, comment) <- (sshopts, "") :: (sshopts.copy(execWithPty = true), "with VTY") :: Nil
@@ -121,7 +121,7 @@ class SSHAPITest extends SomeHelp {
     }
   }
   //==========================================================================================================
-  ignore("SSHShell : Best performance is achieved with mutiple command within the same shell channel (autoclose)") {
+  test("SSHShell : Best performance is achieved with mutiple command within the same shell channel (autoclose)") {
     val howmany = 5000
     for {
       (opts, comment) <- (sshopts, "") :: (sshopts.copy(execWithPty = true), "with VTY") :: Nil
@@ -138,7 +138,7 @@ class SSHAPITest extends SomeHelp {
     }
   }
   //==========================================================================================================
-  ignore("SSHExec : performances obtained using exec ssh channel (no persistency)") {
+  test("SSHExec : performances obtained using exec ssh channel (no persistency)") {
     val howmany = 200
     for {
       (opts, comment) <- (sshopts, "") :: (sshopts.copy(execWithPty = true), "with VTY") :: Nil
@@ -196,8 +196,8 @@ class SSHAPITest extends SomeHelp {
   //==========================================================================================================
   test("Simultaenous SSH operations") {
     val started = System.currentTimeMillis()
-    val cnxinfos = List(sshopts, sshopts, sshopts, sshopts, sshopts)
-    val sshs = cnxinfos.par map { SSH(_) }
+    val cnxinfos = ParVector(sshopts, sshopts, sshopts, sshopts, sshopts)
+    val sshs = cnxinfos map { SSH(_) }
 
     //sshs.tasksupport = new ForkJoinTaskSupport(new scala.concurrent.forkjoin.ForkJoinPool(6))
 
@@ -236,7 +236,7 @@ class SSHAPITest extends SomeHelp {
   }
 
   //==========================================================================================================
-  ignore("file transfert performances (with content loaded in memory)") {
+  test("file transfert performances (with content loaded in memory)") {
     val testfile = "test-transfert"
 
     def withSCP(filename: String, ssh: SSH, howmany: Int, sizeKb: Int) {
