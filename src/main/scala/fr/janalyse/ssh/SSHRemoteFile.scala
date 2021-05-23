@@ -26,5 +26,5 @@ case class SSHRemoteFile(remoteFilename: String) {
  * @author David Crosson
  */
 object SSHRemoteFile {
-  implicit def stringToRemoteFile(filename: String) = new SSHRemoteFile(filename)
+  implicit def stringToRemoteFile(filename: String):SSHRemoteFile = new SSHRemoteFile(filename)
 }

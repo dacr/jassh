@@ -389,7 +389,7 @@ class SSH(val options: SSHOptions) extends AllOperations {
       case e: InterruptedException =>
         throw new SSHTimeoutException(stdout.toString, stderr.toString)
     } finally {
-      runner foreach { _.close }
+      runner foreach { _.close() }
     }
     (stdout.toString(), exitCode)
   }

@@ -22,9 +22,9 @@ class SSHExec(cmd: String, out: ExecResult => Any, err: ExecResult => Any)(impli
   private val timeoutThread = TimeoutManagerThread(ssh.options.timeout) {
     stdoutThread.interrupt()
     stderrThread.interrupt()
-    }
+  }
 
-  def giveInputLine(line: String):Unit = {
+  def giveInputLine(line: String): Unit = {
     stdin.write(line.getBytes())
     stdin.write("\n".getBytes())
     stdin.flush()
@@ -45,30 +45,32 @@ class SSHExec(cmd: String, out: ExecResult => Any, err: ExecResult => Any)(impli
     timeoutThread.interrupt()
   }
 
-  private class TimeoutManagerThread(timeout:Long)(todo : =>Any) extends Thread {
-    var interrupted=false
+  private class TimeoutManagerThread(timeout: Long)(todo: => Any) extends Thread {
+    var interrupted = false
+
     override def run(): Unit = {
-      if (timeout>0) {
-	      try {
-	        Thread.sleep(timeout)
-	        interrupted=true
-	        todo
-	      } catch {
-	        case e:InterruptedException => 
-	      }
+      if (timeout > 0) {
+        try {
+          Thread.sleep(timeout)
+          interrupted = true
+          todo
+        } catch {
+          case e: InterruptedException =>
+        }
       }
     }
   }
+
   private object TimeoutManagerThread {
-    def apply(timeout:Long)(todo : => Any):TimeoutManagerThread = {
+    def apply(timeout: Long)(todo: => Any): TimeoutManagerThread = {
       val thread = new TimeoutManagerThread(timeout)(todo)
       thread.start()
       thread
     }
   }
-  
+
   private class InputStreamThread(channel: ChannelExec, input: InputStream, output: ExecResult => Any) extends Thread {
-    override def run():Unit = {
+    override def run(): Unit = {
       val bufsize = 16 * 1024
       val charset = Charset.forName(ssh.options.charset)
       val binput = new BufferedInputStream(input)
@@ -77,39 +79,40 @@ class SSHExec(cmd: String, out: ExecResult => Any, err: ExecResult => Any)(impli
       val appender = new StringBuilder()
       var eofreached = false
       try {
-	      do {
-	        // Notes : It is important to try to read something even available == 0 in order to be able to get EOF message !
-	        // Notes : After some tests, looks like jsch input stream is probably line oriented... so no need to use available !
-	        val howmany = binput.read(bytes, 0, bufsize /*if (available < bufsize) available else bufsize*/ )
-	        if (howmany == -1) eofreached = true
-	        if (howmany > 0) {
-	          buffer.put(bytes, 0, howmany)
-	          buffer.flip()
-	          val cbOut = charset.decode(buffer)
-	          buffer.compact()
-	          appender.append(cbOut.toString)
-	          var s = 0
-	          var e = 0
-	          do {
-	            e = appender.indexOf("\n", s)
-	            if (e >= 0) {
-	              output(ExecPart(appender.substring(s, e)))
-	              s = e + 1
-	            }
-	          } while (e != -1)
-	          appender.delete(0, s)
-	        }
-	      } while (!eofreached) // && !channel.isEOF() && !channel.isClosed()) // => This old test is not good as data may remaining on the stream
-          if (appender.nonEmpty) output(ExecPart(appender.toString()))
-	      output(ExecEnd(channel.getExitStatus()))
+        while (!eofreached) {
+          // Notes : It is important to try to read something even available == 0 in order to be able to get EOF message !
+          // Notes : After some tests, looks like jsch input stream is probably line oriented... so no need to use available !
+          val howmany = binput.read(bytes, 0, bufsize /*if (available < bufsize) available else bufsize*/)
+          if (howmany == -1) eofreached = true
+          if (howmany > 0) {
+            buffer.put(bytes, 0, howmany)
+            buffer.flip()
+            val cbOut = charset.decode(buffer)
+            buffer.compact()
+            appender.append(cbOut.toString)
+            var s = 0
+            var e = 0
+            while (e != -1) {
+              e = appender.indexOf("\n", s)
+              if (e >= 0) {
+                output(ExecPart(appender.substring(s, e)))
+                s = e + 1
+              }
+            }
+            appender.delete(0, s)
+          }
+        } // && !channel.isEOF() && !channel.isClosed()) // => This old test is not good as data may remaining on the stream
+        if (appender.nonEmpty) output(ExecPart(appender.toString()))
+        output(ExecEnd(channel.getExitStatus()))
       } catch {
-        case e:InterruptedIOException =>
+        case e: InterruptedIOException =>
           output(ExecTimeout)
-        case e:InterruptedException =>
+        case e: InterruptedException =>
           output(ExecTimeout)
       }
     }
   }
+
   private object InputStreamThread {
     def apply(channel: ChannelExec, input: InputStream, output: ExecResult => Any): InputStreamThread = {
       val newthread = new InputStreamThread(channel, input, output)

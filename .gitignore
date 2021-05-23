@@ -16,7 +16,8 @@ bin/
 .cache-*
 .ensime
 .ensime_cache
-.DS_Store
-.idea
+.DS_Store/
+.idea/
+.bsp/
 *.iml
 

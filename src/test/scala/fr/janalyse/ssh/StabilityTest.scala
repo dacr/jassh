@@ -16,7 +16,6 @@
 
 package fr.janalyse.ssh
 
-import org.scalatest.FunSuite
 import scala.io.Source
 import scala.util.Properties
 import java.io.File

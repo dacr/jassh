@@ -16,8 +16,6 @@
 
 package fr.janalyse.ssh.external
 
-import org.scalatest.FunSuite
-
 class ExternalSSHAPITest extends fr.janalyse.ssh.SomeHelp {
 
   info(s"Those tests require to have a user named '${sshopts.username}' with password '${sshopts.password}' on ${sshopts.host}")
@@ -25,35 +23,45 @@ class ExternalSSHAPITest extends fr.janalyse.ssh.SomeHelp {
   // -------------------------------------------------------------------
   // -- With a global import
   {
-	  import jassh._
-	
-	  test("Hello 1") {
-	    SSH.once(sshopts) { _.executeAndTrim("echo 'hello'") } should equal("hello")
-	  }
-	
-	  test("Hello 2") {
-	    SSH.shell(sshopts) { _.executeAndTrim("echo 'hello'") } should equal("hello")
-	  }
-	
-	  test("Hello 3") {
-	    import sshopts.{host, username=>user, password=>pass}
-	    SSH.shell(host, user, password=pass) { _.executeAndTrim("echo 'hello'") } should equal("hello")
-	  }
+    import jassh._
+
+    test("Hello 1") {
+      SSH.once(sshopts) {
+        _.executeAndTrim("echo 'hello'")
+      } should equal("hello")
+    }
+
+    test("Hello 2") {
+      SSH.shell(sshopts) {
+        _.executeAndTrim("echo 'hello'")
+      } should equal("hello")
+    }
+
+    test("Hello 3") {
+      import sshopts.{host, username => user, password => pass}
+      SSH.shell(host, user, password = pass) {
+        _.executeAndTrim("echo 'hello'")
+      } should equal("hello")
+    }
   }
 
-  
+
   // -------------------------------------------------------------------
   // -- Without any jassh imports
   {
     test("Hello 4") {
-      fr.janalyse.ssh.SSH.once(sshopts) { _.executeAllAndTrim(List("echo 'hello'")) } should equal(List("hello"))
+      fr.janalyse.ssh.SSH.once(sshopts) {
+        _.executeAllAndTrim(List("echo 'hello'"))
+      } should equal(List("hello"))
     }
     test("Hello 5") {
-      jassh.SSH.once(sshopts) { _.executeAllAndTrim(List("echo 'hello'")) } should equal(List("hello"))
+      jassh.SSH.once(sshopts) {
+        _.executeAllAndTrim(List("echo 'hello'"))
+      } should equal(List("hello"))
     }
   }
-  
-  
+
+
 }
 
 

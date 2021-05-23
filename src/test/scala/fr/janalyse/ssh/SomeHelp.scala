@@ -1,9 +1,9 @@
 package fr.janalyse.ssh
 
-import org.scalatest.FunSuite
-import org.scalatest.Matchers
+import org.scalatest.funsuite._
+import org.scalatest.matchers.should
 
-trait SomeHelp extends FunSuite with Matchers {
+trait SomeHelp extends AnyFunSuite with should.Matchers {
   val defaultUsername = "test"
   val defaultPassword = "testtest"
   val defaultHost = "127.0.0.1"

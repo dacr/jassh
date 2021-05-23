@@ -244,7 +244,7 @@ trait ShellOperations extends CommonOperations with SSHLazyLogging {
    * Get current working directory
    * @return current directory
    */
-  def pwd(): String = executeAndTrim("pwd")
+  def pwd: String = executeAndTrim("pwd")
 
   /**
    * Change current working directory to home directory

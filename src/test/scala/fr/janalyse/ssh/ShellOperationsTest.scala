@@ -42,7 +42,7 @@ class ShellOperationsTest extends SomeHelp {
       whoami                  should equal(sshopts.username)
       osid                    should (equal(Linux) or equal(Darwin) or equal(AIX) or equal(SunOS))
       id                      should include("test")
-      arch                    should not be 'empty
+      arch                    should not be empty
       env.size                should be > (0)
       hostname                should equal(rhostname)
       fileSize(testfile)      should equal(Some(4))
@@ -64,8 +64,8 @@ class ShellOperationsTest extends SomeHelp {
       findAfterDate(".", started).size should (be >=(1) and be <=(3)) // because of .bash_history
       val reftime = now.getTime
       date().getTime          should (be>(reftime-5000) and be<(reftime+5000))
-      fsFreeSpace("/tmp")     should be('defined)
-      fileRights("/tmp")      should be('defined)
+      fsFreeSpace("/tmp")     shouldBe defined
+      fileRights("/tmp")      shouldBe defined
       ps().filter(_.cmdline contains "java").size should be >(0)
       du("/bin").value        should be >(0L)
       cat(testfile)           should include("toto")
@@ -73,8 +73,8 @@ class ShellOperationsTest extends SomeHelp {
       notExists(testfile)     should equal(true)
       rmdir(testdir)          should equal(true)
       mkcd(testdir)           should equal(true)
-      basename(pwd())         should equal(testdir)
-      dirname(pwd())          should equal(homedir)
+      basename(pwd)         should equal(testdir)
+      dirname(pwd)          should equal(homedir)
       touch("hello")
       exists("hello")         should equal(true)
       rm("hello")
@@ -141,7 +141,7 @@ class ShellOperationsTest extends SomeHelp {
       ls("truc").size        should equal(0)
       rmdir("truc"::Nil)     should equal(true)
       mkcd("machin")         should equal(true)
-      pwd().split("/").last  should equal("machin")
+      pwd.split("/").last  should equal("machin")
       cd("..")
       rmdir("machin")        should equal(true)
     }

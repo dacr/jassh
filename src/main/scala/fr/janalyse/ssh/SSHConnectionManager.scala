@@ -142,7 +142,7 @@ class SSHConnectionManager(accesses:List[AccessPath]) {
       }
     }
     for {ssher <- sshers.values} {
-      try {ssher.close} catch {
+      try {ssher.close()} catch {
         case ex:Exception =>
       }
     }

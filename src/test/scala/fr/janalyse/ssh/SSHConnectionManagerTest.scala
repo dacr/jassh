@@ -1,7 +1,5 @@
 package fr.janalyse.ssh
 
-import org.scalatest.FunSuite
-
 import scala.io.Source
 import scala.util.Properties
 import org.scalatest.OptionValues._

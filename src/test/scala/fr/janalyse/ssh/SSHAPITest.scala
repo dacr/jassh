@@ -16,7 +16,6 @@
 
 package fr.janalyse.ssh
 
-import org.scalatest.FunSuite
 import scala.io.Source
 import scala.util.Properties
 import java.io.File
@@ -97,10 +96,10 @@ class SSHAPITest extends SomeHelp {
       (ParVector()++(1 to 10)) foreach { i =>
         ssh.shell { sh =>
           def mkmsg(base: String) = base * 100 + i
-          sh.executeAndTrim("echo %s".format(mkmsg("Z"))) should equal(mkmsg("Z"))
-          sh.executeAndTrim("echo %s".format(mkmsg("ga"))) should equal(mkmsg("ga"))
-          sh.executeAndTrim("echo %s".format(mkmsg("PXY"))) should equal(mkmsg("PXY"))
-          sh.executeAndTrim("echo %s".format(mkmsg("GLoups"))) should equal(mkmsg("GLoups"))
+          sh.executeAndTrim("echo %s".format(mkmsg("Z"))) shouldBe mkmsg("Z")
+          sh.executeAndTrim("echo %s".format(mkmsg("ga"))) shouldBe mkmsg("ga")
+          sh.executeAndTrim("echo %s".format(mkmsg("PXY"))) shouldBe mkmsg("PXY")
+          sh.executeAndTrim("echo %s".format(mkmsg("GLoups"))) shouldBe mkmsg("GLoups")
         }
       }
     }
@@ -159,7 +158,7 @@ class SSHAPITest extends SomeHelp {
 
       var x = List.empty[String]
 
-      def receiver(result: ExecResult) { result match { case ExecPart(d) => x = x :+ d case _ => } }
+      def receiver(result: ExecResult):Unit= { result match { case ExecPart(d) => x = x :+ d case _ => } }
       val executor = ssh.run("for i in 1 2 3 4 5 ; do echo hello$1 ; done", receiver)
 
       executor.waitForEnd
@@ -187,7 +186,7 @@ class SSHAPITest extends SomeHelp {
         val meminfo = ftp.get("/proc/meminfo")
       }
       // output streaming
-      def receiver(result: ExecResult) { result match { case ExecPart(m) => info(s"received :$m") case _ => } }
+      def receiver(result: ExecResult):Unit = { result match { case ExecPart(m) => info(s"received :$m") case _ => } }
       val executor = ssh.run("for i in 1 2 3 ; do echo hello$i ; done", receiver)
       executor.waitForEnd
     }
@@ -239,15 +238,15 @@ class SSHAPITest extends SomeHelp {
   test("file transfert performances (with content loaded in memory)") {
     val testfile = "test-transfert"
 
-    def withSCP(filename: String, ssh: SSH, howmany: Int, sizeKb: Int) {
+    def withSCP(filename: String, ssh: SSH, howmany: Int, sizeKb: Int):Unit = {
       for (_ <- 1 to howmany)
         ssh.getBytes(filename).map(_.length) should equal(Some(sizeKb * 1024))
     }
-    def withSFTP(filename: String, ssh: SSH, howmany: Int, sizeKb: Int) {
+    def withSFTP(filename: String, ssh: SSH, howmany: Int, sizeKb: Int):Unit = {
       for (_ <- 1 to howmany)
         ssh.ftp(_.getBytes(filename)).map(_.length) should equal(Some(sizeKb * 1024))
     }
-    def withReusedSFTP(filename: String, ssh: SSH, howmany: Int, sizeKb: Int) {
+    def withReusedSFTP(filename: String, ssh: SSH, howmany: Int, sizeKb: Int):Unit = {
       ssh.ftp { ftp =>
         for (_ <- 1 to howmany)
           ftp.getBytes(filename).map(_.length) should equal(Some(sizeKb * 1024))
@@ -257,7 +256,7 @@ class SSHAPITest extends SomeHelp {
     def toTest(thattest: (String, SSH, Int, Int) => Unit,
                howmany: Int,
                sizeKb: Int,
-               comments: String)(ssh: SSH) {
+               comments: String)(ssh: SSH) = {
       ssh.execute("dd count=%d bs=1024 if=/dev/zero of=%s".format(sizeKb, testfile))
       val (d, _) = howLongFor {
         thattest(testfile, ssh, howmany, sizeKb)
@@ -287,25 +286,25 @@ class SSHAPITest extends SomeHelp {
   test("ssh compression") {
     val testfile = "test-transfert"
 
-    def withSCP(filename: String, ssh: SSH, howmany: Int, sizeKb: Int) {
+    def withSCP(filename: String, ssh: SSH, howmany: Int, sizeKb: Int):Unit = {
       for (_ <- 1 to howmany)
-        ssh.getBytes(filename).map(_.length) should equal(Some(sizeKb * 1024))
+        ssh.getBytes(filename).map(_.length) shouldBe Some(sizeKb * 1024)
     }
-    def withSFTP(filename: String, ssh: SSH, howmany: Int, sizeKb: Int) {
+    def withSFTP(filename: String, ssh: SSH, howmany: Int, sizeKb: Int):Unit = {
       for (_ <- 1 to howmany)
-        ssh.ftp(_.getBytes(filename)).map(_.length) should equal(Some(sizeKb * 1024))
+        ssh.ftp(_.getBytes(filename)).map(_.length) shouldBe Some(sizeKb * 1024)
     }
-    def withReusedSFTP(filename: String, ssh: SSH, howmany: Int, sizeKb: Int) {
+    def withReusedSFTP(filename: String, ssh: SSH, howmany: Int, sizeKb: Int):Unit = {
       ssh.ftp { ftp =>
         for (_ <- 1 to howmany)
-          ftp.getBytes(filename).map(_.length) should equal(Some(sizeKb * 1024))
+          ftp.getBytes(filename).map(_.length) shouldBe Some(sizeKb * 1024)
       }
     }
 
     def toTest(thattest: (String, SSH, Int, Int) => Unit,
                howmany: Int,
                sizeKb: Int,
-               comments: String)(ssh: SSH) {
+               comments: String)(ssh: SSH):Unit = {
       ssh.execute("dd count=%d bs=1024 if=/dev/zero of=%s".format(sizeKb, testfile))
       val (d, _) = howLongFor {
         thattest(testfile, ssh, howmany, sizeKb)
@@ -390,7 +389,7 @@ class SSHAPITest extends SomeHelp {
 
     rssh.executeAndTrim("echo 'hello'") should equal("hello")
 
-    rssh.close
+    rssh.close()
   }
   //==========================================================================================================
   test("SCP/SFTP and special system file") {
