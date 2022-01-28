@@ -62,7 +62,7 @@ It requires a local user named "test" with password "testtest", remember that yo
 exec java -jar jassh.jar "$0" "$@"
 !#
 jassh.SSH.once("localhost", "test", "testtest") { ssh =>
-  print(sh.execute("""echo "Hello World from $(hostname)" """))
+  print(ssh.execute("""echo "Hello World from $(hostname)" """))
 }
 ```
 
