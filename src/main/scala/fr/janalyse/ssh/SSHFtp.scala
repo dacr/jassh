@@ -80,7 +80,7 @@ class SSHFtp(implicit ssh: SSH) extends TransfertOperations with SSHLazyLogging 
       .map(entry => SSHFtp.LsEntry(entry.getFilename, entry.getLongname, entry.getAttrs))
       .toList
 
-  /*
+  /**
    * Remove a file from a remote system
    * @param path The path of the remote file to remove
    */
@@ -97,6 +97,34 @@ class SSHFtp(implicit ssh: SSH) extends TransfertOperations with SSHLazyLogging 
    * @param path The name of the directory to create
    */
   def mkdir(path: String): Unit = channel.mkdir(path)
+
+  /**
+   * Change file modes
+   * @param permissions The new permissions in octal string format
+   * @param path        The path of the remote file or directory to change permissions
+   */
+  def chmod(permissions: String, path: String): Unit = chmod(Integer.parseInt(permissions, 8), path)
+
+  /**
+   * Change file modes
+   * @param permissions The new permissions
+   * @param path        The path of the remote file or directory to change permissions
+   */
+  def chmod(permissions: Int, path: String): Unit = channel.chmod(permissions, path)
+
+  /**
+   * Change file owner
+   * @param uid New Owner User Identifier
+   * @param path The path of the remote file or directory to change owner
+   */
+  def chown(uid: Int, path: String): Unit = channel.chown(uid, path)
+
+  /**
+   * Change file group
+   * @param gid New Owner Group Identifier
+   * @param path The path of the remote file or directory to change group
+   */
+  def chgrp(gid: Int, path: String): Unit = channel.chgrp(gid, path)
 
   /**
    * Change the working directory on the remote system
