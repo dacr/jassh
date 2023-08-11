@@ -1,4 +1,4 @@
-# JASSH - the SCALA SSH API  [![Build Status][travisImg]][travisLink] [![License][licenseImg]][licenseLink] [![Codacy][codacyImg]][codacyLink] [![codecov][codecovImg]][codecovLink]
+# JASSH - the SCALA SSH API  [![Build Status][travisImg]][travisLink] [![License][licenseImg]][licenseLink] [![Maven][mavenImg]][mavenLink] [![Scaladex][scaladexImg]][scaladexLink]
 
 High level scala SSH API for easy and fast operations on remote servers.
 
