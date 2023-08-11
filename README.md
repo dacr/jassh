@@ -27,8 +27,8 @@ Latest `version`: [![Maven][mavenImg]][mavenLink] [![Scaladex][scaladexImg]][sca
 [**Scala docs**](http://www.janalyse.fr/scaladocs/janalyse-ssh)
 
 
-[mavenImg]: https://img.shields.io/maven-central/v/fr.janalyse/janalyse-ssh_2.12.svg
-[mavenImg2]: https://maven-badges.herokuapp.com/maven-central/fr.janalyse/janalyse-ssh_2.12/badge.svg
+[mavenImg]: https://img.shields.io/maven-central/v/fr.janalyse/janalyse-ssh_3.svg
+[mavenImg2]: https://maven-badges.herokuapp.com/maven-central/fr.janalyse/janalyse-ssh_3/badge.svg
 [mavenLink]: https://search.maven.org/#search%7Cga%7C1%7Cfr.janalyse.janalyse-ssh
 
 [scaladexImg]: https://index.scala-lang.org/dacr/jassh/janalyse-ssh/latest.svg
