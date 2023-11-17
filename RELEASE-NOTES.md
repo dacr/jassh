@@ -1,8 +1,8 @@
-#JASSH - JANALYSE-SSH - SCALA SSH API
+# JASSH - JANALYSE-SSH - SCALA SSH API
 
 Crosson David - crosson.david@gmail.com
 
-##Remarks & caveats:
+## Remarks & caveats:
 
 ```
   => ssh persisted shell session operations must be executed within the same thread,
@@ -55,16 +55,18 @@ Crosson David - crosson.david@gmail.com
 
 ## Major changes
 
-### 1.1.0-SNAPSHOT (2023-11-17)
+### 1.1.0 (2023-11-17)
 
-- switch to jsch fork
+- switch to jsch fork from @mwiede :)
 - dependency updates
+- fix tests for execution on NixOS
+- fix various code issues reported by scala 3.3 compiler :)
 
-### 1.0.0-SNAPSHOT (2021-05-03)
+### 1.0.0 (2021-05-03)
 
 - scala3 support
 
-### 0.10.4-SNAPSHOT (2019-07-14)
+### 0.10.4 (2019-07-14)
 
 - fix integer overflow issue while sending big files / mlahia (https://github.com/mlahia)
 - Add support for scala 2.13
