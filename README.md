@@ -53,28 +53,37 @@ Latest `version`: [![Maven][mavenImg]][mavenLink] [![Scaladex][scaladexImg]][sca
 
 ## hello world script
 
-It requires a local user named "test" with password "testtest", remember that you can remove the password, if your public key has been added in authorized_keys file of the test user.
+It requires a local user named "test" with password "testtest",
+remember that you can remove the password, if your public key has
+been added in authorized_keys file of the test user.
 
 ```scala
-#!/bin/sh
-exec java -jar jassh.jar "$0" "$@"
-!#
-jassh.SSH.once("localhost", "test", "testtest") { ssh =>
-  print(ssh.execute("""echo "Hello World from $(hostname)" """))
+// ---------------------
+//> using scala  "3.3.1"
+//> using dep "fr.janalyse::janalyse-ssh:1.1.0"
+//> using lib "org.slf4j:slf4j-nop:2.0.9"
+// ---------------------
+
+jassh.SSH.once("127.0.0.1", "test", "testtest") { ssh =>
+  println(ssh.execute("""echo "Hello World from $(hostname)" """))
 }
 ```
 
 ## Persisted shell session
 
 ```scala
-#!/bin/sh
-exec java -jar jassh.jar "$0" "$@"
-!#
-jassh.SSH.shell("localhost", "test", "testtest") { sh =>
-  import sh._
-  println(s"initial directory is ${pwd}")
+// ---------------------
+//> using scala  "3.3.1"
+//> using dep "fr.janalyse::janalyse-ssh:1.1.0"
+//> using lib "org.slf4j:slf4j-nop:2.0.9"
+// ---------------------
+
+jassh.SSH.shell("localhost", "test") { sh =>
+  import sh.*
+  println(s"initial directory is $pwd")
   cd("/tmp")
-  println(s"now it is ${pwd}")
+  println(s"now it is $pwd")
+  println(echo("Hello world !"))
 }
 ```
 
