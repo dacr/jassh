@@ -76,7 +76,7 @@ class SSHFtp(implicit ssh: SSH) extends TransfertOperations with SSHLazyLogging 
   def ls(path: String): List[SSHFtp.LsEntry] =
     channel.ls(path)
       .asScala
-      .map(_.asInstanceOf[channel.LsEntry])
+      //.map(_.asInstanceOf[ChannelSftp.LsEntry])
       .map(entry => SSHFtp.LsEntry(entry.getFilename, entry.getLongname, entry.getAttrs))
       .toList
 

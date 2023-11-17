@@ -55,6 +55,15 @@ Crosson David - crosson.david@gmail.com
 
 ## Major changes
 
+### 1.1.0-SNAPSHOT (2023-11-17)
+
+- switch to jsch fork
+- dependency updates
+
+### 1.0.0-SNAPSHOT (2021-05-03)
+
+- scala3 support
+
 ### 0.10.4-SNAPSHOT (2019-07-14)
 
 - fix integer overflow issue while sending big files / mlahia (https://github.com/mlahia)

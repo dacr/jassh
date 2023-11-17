@@ -45,7 +45,7 @@ class SSHAPITest extends SomeHelp {
       }
       clean
 
-      val msg = ssh execute "/bin/echo -n 'Hello %s'".format(util.Properties.userName)
+      val msg = ssh execute "echo -n 'Hello %s'".format(util.Properties.userName)
 
       ssh.put(msg, rfile)
 
@@ -68,7 +68,7 @@ class SSHAPITest extends SomeHelp {
       }
       clean
 
-      val msg = sh execute "/bin/echo -n 'Hello %s'".format(util.Properties.userName)
+      val msg = sh execute "echo -n 'Hello %s'".format(util.Properties.userName)
 
       ftp.put(msg, rfile)
 

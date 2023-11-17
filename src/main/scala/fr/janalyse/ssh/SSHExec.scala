@@ -33,7 +33,7 @@ class SSHExec(cmd: String, out: ExecResult => Any, err: ExecResult => Any)(impli
   def waitForEnd: Unit = {
     stdoutThread.join()
     stderrThread.join()
-    if (timeoutThread.interrupted) throw new InterruptedException("Timeout Reached")
+    if (timeoutThread.interruptedStatus) throw new InterruptedException("Timeout Reached")
     close()
   }
 
@@ -46,13 +46,13 @@ class SSHExec(cmd: String, out: ExecResult => Any, err: ExecResult => Any)(impli
   }
 
   private class TimeoutManagerThread(timeout: Long)(todo: => Any) extends Thread {
-    var interrupted = false
+    var interruptedStatus = false
 
     override def run(): Unit = {
       if (timeout > 0) {
         try {
           Thread.sleep(timeout)
-          interrupted = true
+          interruptedStatus = true
           todo
         } catch {
           case e: InterruptedException =>
