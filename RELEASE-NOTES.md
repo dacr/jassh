@@ -462,3 +462,4 @@ Crosson David - crosson.david@gmail.com
 ### 0.0.0 (2011-11-25)
 
 - first project commit (SVN)
+- scala 2.8 !
