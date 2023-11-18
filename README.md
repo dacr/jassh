@@ -2,7 +2,7 @@
 
 High level scala SSH API for easy and fast operations on remote servers.
 
-This API is [JSCH](http://www.jcraft.com/jsch/) based. Interfaces are stable. Many helper functions are provided to simplify unix operations [ps, ls, cat, kill, find, ...](https://javadoc.io/doc/fr.janalyse/janalyse-ssh_3/latest/api/fr/janalyse/ssh/AllOperations.html), an other goal of this API is to create an unix abstraction layer (Linux, Aix, Solaris, Darwin, ...).
+This API is [JSCH](https://github.com/mwiede/jsch) based. Interfaces are stable. Many helper functions are provided to simplify unix operations [ps, ls, cat, kill, find, ...](https://javadoc.io/doc/fr.janalyse/janalyse-ssh_3/latest/api/fr/janalyse/ssh/AllOperations.html), an other goal of this API is to create an unix abstraction layer (Linux, Aix, Solaris, Darwin, ...).
 
 One of the main difference of this API with others is that it can work with **persisted shell sessions**. Many commands can then be sent
 to an already running and **initialized** shell session ! Thanks to this feature you can greatly speed up your SSH shell performances,
