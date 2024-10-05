@@ -41,7 +41,8 @@ case class SSHOptions(
   proxy:Option[Proxy]=None,
   sessionConfig: Map[String, String] = Map.empty,
   openSSHConfig: Option[String] = None,
-  knownHostsFile: Option[String] = None
+  knownHostsFile: Option[String] = None,
+  historize:Boolean = false
   ) {
   //val keyfiles2lookup = sshKeyFile ++ List("id_rsa", "id_dsa") // ssh key search order (from sshUserDir)
   def compressed: SSHOptions = this.copy(compress=Some(5))

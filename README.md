@@ -59,7 +59,7 @@ been added in authorized_keys file of the test user.
 
 ```scala
 // ---------------------
-//> using scala  "3.3.1"
+//> using scala "3.3.1"
 //> using dep "fr.janalyse::janalyse-ssh:1.1.0"
 //> using lib "org.slf4j:slf4j-nop:2.0.9"
 // ---------------------

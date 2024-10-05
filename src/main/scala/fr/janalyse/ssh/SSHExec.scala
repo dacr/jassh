@@ -9,7 +9,7 @@ class SSHExec(cmd: String, out: ExecResult => Any, err: ExecResult => Any)(impli
 
   private val (channel, stdout, stderr, stdin) = {
     val ch = ssh.jschsession().openChannel("exec").asInstanceOf[ChannelExec]
-    ch.setCommand(cmd.getBytes())
+    ch.setCommand(s" $cmd".getBytes())
     val stdout = ch.getInputStream
     val stderr = ch.getErrStream
     val stdin = ch.getOutputStream

@@ -3,6 +3,7 @@
 ## NEW LANFEUST
 
 ```
+2024-10-05 - 332.6 c/s  - 267.9 Mb/s (NixOS 24.05  -  openjdk 21.0.3 2024-04-16  - OpenSSH_9.8p1,               OpenSSL 3.0.14 4 Jun 2024)
 2023-11-17 - 339.3 c/s  - 303.0 Mb/s (NixOS 23.05  -  openjdk 21 2023-09-19      - OpenSSH_9.3p2,               OpenSSL 3.0.12 24 Oct 2023)
 2019-07-14 - 1782.5 c/s - 150.8 Mb/s (Mint 4.15    -  java hotspot 1.8.0_172 64b - OpenSSH 1:7.6p1-4ubuntu0.3,  OpenSSL 1.1.1-1ubuntu2.1~18.04.3) 
 ```

@@ -48,7 +48,7 @@ trait ShellOperations extends CommonOperations with SSHLazyLogging {
     *   result string collection
     */
   @deprecated("", "0.9.14")
-  def executeAll(cmds: SSHBatch): Iterable[String] = cmds.cmdList.map(execute(_))
+  def executeAll(cmds: SSHBatch): Iterable[String] = cmds.cmdList.map((cmd: String) => execute(cmd))
 
   /** Execute the current command and pass the result to the given code
     * @param cmd

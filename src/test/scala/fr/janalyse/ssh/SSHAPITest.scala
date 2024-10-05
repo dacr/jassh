@@ -45,7 +45,7 @@ class SSHAPITest extends SomeHelp {
       }
       clean
 
-      val msg = ssh execute "echo -n 'Hello %s'".format(util.Properties.userName)
+      val msg = ssh.execute("echo -n 'Hello %s'".format(util.Properties.userName))
 
       ssh.put(msg, rfile)
 
@@ -68,7 +68,7 @@ class SSHAPITest extends SomeHelp {
       }
       clean
 
-      val msg = sh execute "echo -n 'Hello %s'".format(util.Properties.userName)
+      val msg = sh.execute("echo -n 'Hello %s'".format(util.Properties.userName))
 
       ftp.put(msg, rfile)
 
@@ -112,7 +112,7 @@ class SSHAPITest extends SomeHelp {
     } {
       SSH.once(opts) { ssh =>
         val (dur, _) = howLongFor {
-          for (i <- 1 to howmany) { ssh.shell(_ execute "ls -d /tmp && echo 'done'") }
+          for (i <- 1 to howmany) { ssh.shell(_.execute("ls -d /tmp && echo 'done'")) }
         }
         val throughput = howmany.doubleValue() / dur * 1000
         info(f"Performance using shell without channel persistency : $throughput%.1f cmd/s $comment")
@@ -128,7 +128,9 @@ class SSHAPITest extends SomeHelp {
       SSH.once(opts) {
         _.shell { sh =>
           val (dur, _) = howLongFor {
-            for (i <- 1 to howmany) { sh execute "ls -d /tmp && echo 'done'" }
+            for (i <- 1 to howmany) {
+              sh.execute("ls -d /tmp && echo 'done'")
+            }
           }
           val throughput = howmany.doubleValue() / dur * 1000
           info(f"Performance using with channel persistency : $throughput%.1f cmd/s $comment%s")
@@ -174,7 +176,7 @@ class SSHAPITest extends SomeHelp {
     SSH.once(sshopts) { ssh =>
 
       val uname = ssh executeAndTrim "uname -a"
-      val fsstatus = ssh execute "df -m"
+      val fsstatus = ssh.execute("df -m")
       val fmax = ssh get "/etc/lsb-release" // Warning SCP only work with regular file
 
       ssh.shell { sh => // For higher performances

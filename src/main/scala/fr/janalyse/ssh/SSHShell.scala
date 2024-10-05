@@ -50,7 +50,7 @@ class SSHShell(implicit ssh: SSH) extends SSHScp with AllOperations {
    */
   def sudoSuMinusOnlyWithPasswordTest(): Boolean = {
     val prompt = "password:"
-    val sudosu = s"""SUDO_PROMPT="$prompt" sudo -S su -"""
+    val sudosu = s""" SUDO_PROMPT="$prompt" sudo -S su -"""
     val expect = Expect(_.endsWith(prompt), options.password.password.getOrElse("")+"\n")
     val (_, rc) = executeWithExpects(sudosu, expect::Nil)
     val result = rc==0 && whoami == "root"
@@ -116,7 +116,8 @@ class SSHShell(implicit ssh: SSH) extends SSHScp with AllOperations {
 
   override def execute(cmd: SSHCommand): String = {
     synchronized {
-      sendCommand(cmd.cmd)
+      if (options.historize) sendCommand(s"${cmd.cmd}")
+      else sendCommand(s" ${cmd.cmd}")
       fromServer.getResponse()
     }
   }
@@ -132,13 +133,13 @@ class SSHShell(implicit ssh: SSH) extends SSHScp with AllOperations {
   def becomeWithSU(someoneelse: String, password: Option[String] = None): Boolean = {
     val curuser = whoami
     if (curuser == "root") {
-      execute("LANG=en; export LANG")
-      sendCommand(s"su - $someoneelse")
+      execute(" LANG=en; export LANG")
+      sendCommand(s" su - $someoneelse")
       Thread.sleep(2000) // TODO - TO BE IMPROVED
       shellInit()
     } else if (password.isDefined) {
-      execute("LANG=en; export LANG")
-      sendCommand(s"su - $someoneelse")
+      execute(" LANG=en; export LANG")
+      sendCommand(s" su - $someoneelse")
       Thread.sleep(2000) // TODO - TO BE IMPROVED
       try {
         password.foreach { it => toServer.send(it) }
@@ -152,12 +153,12 @@ class SSHShell(implicit ssh: SSH) extends SSHScp with AllOperations {
   def becomeWithSUDO(someoneelse: String): Boolean = {
     val curuser = whoami
     if (sudoSuMinusOnlyWithoutPasswordTest()) {
-      execute("LANG=en; export LANG")
-      sendCommand(s"sudo -n su - $someoneelse")
+      execute(" LANG=en; export LANG")
+      sendCommand(s" sudo -n su - $someoneelse")
       shellInit()
     } else {
-      execute("LANG=en; export LANG")
-      sendCommand(s"sudo -S su - $someoneelse")
+      execute(" LANG=en; export LANG")
+      sendCommand(s" sudo -S su - $someoneelse")
       Thread.sleep(2000) // TODO - TO BE IMPROVED
       try {
         if (curuser != "root") { // do not use whoami here as we are in transitional state...
@@ -227,16 +228,18 @@ class SSHShell(implicit ssh: SSH) extends SSHScp with AllOperations {
       // if no prompt is given we assume that a standard sh/bash/ksh shell is used
       val readyMessage = createReadyMessage
       fromServer.setReadyMessage(readyMessage)
-      toServer.send("unset LS_COLORS")
-      toServer.send("unset EDITOR")
-      toServer.send("unset PAGER")
-      toServer.send("COLUMNS=500")
-      toServer.send("SUDO_PS1='%s'".format(defaultPrompt)) // MUST BE REMOVED FROM THE HISTORY !!
-      toServer.send("PS1='%s'".format(defaultPrompt))      // MUST BE REMOVED FROM THE HISTROY !!
-      toServer.send("history -d $((HISTCMD-3)) && history -d $((HISTCMD-2)) && history -d $((HISTCMD-1))") // REMOVING DEDICATED PS1 VAR EN COMMANDS
+      toServer.send(" TERM=dumb; export TERM")
+      toServer.send(" unset LS_COLORS")
+      toServer.send(" unset COLOR_TERM")
+      toServer.send(" unset EDITOR")
+      toServer.send(" unset PAGER")
+      toServer.send(" COLUMNS=500")
+      toServer.send(" SUDO_PS1='%s'".format(defaultPrompt)) // MUST BE REMOVED FROM THE HISTORY !!
+      toServer.send(" PS1='%s'".format(defaultPrompt))      // MUST BE REMOVED FROM THE HISTROY !!
+      //toServer.send("history -d $((HISTCMD-3)) && history -d $((HISTCMD-2)) && history -d $((HISTCMD-1))") // REMOVING DEDICATED PS1 VAR EN COMMANDS
       //toServer.sendCommand("set +o emacs")  // => Makes everything not working anymore, JSCH problem ?
       //toServer.sendCommand("set +o vi") // => Makes everything not working anymore, JSCH problem ?
-      toServer.send("echo '%s'".format(readyMessage)) // ' are important to distinguish between the command and the result
+      toServer.send(" echo '%s'".format(readyMessage)) // ' are important to distinguish between the command and the result
       fromServer.waitReady()
       fromServer.getResponse() // ready response
     } else {

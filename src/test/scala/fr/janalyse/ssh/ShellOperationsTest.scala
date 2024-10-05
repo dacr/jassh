@@ -91,8 +91,10 @@ class ShellOperationsTest extends SomeHelp {
   test("shell disable history test") {
     SSH.shell(sshopts) {sh =>
       import sh._
-      val hfiles=List(".bash_history")
-      for {hfile <- hfiles if exists(hfile)} {
+      val hfile = ".test_history"
+      sh.execute(s"HISTFILE=~/$hfile; set -o history")
+      sh.execute(s"history -w")
+      if (exists(hfile)) {
         val msgBefore = s"shell history before test $now"
         val msgAfter = s"shell history after test $now"
         sh.execute(s"echo $msgBefore")
