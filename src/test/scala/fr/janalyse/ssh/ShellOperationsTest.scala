@@ -89,7 +89,7 @@ class ShellOperationsTest extends SomeHelp {
   }
   
   test("shell disable history test") {
-    SSH.shell(sshopts) {sh =>
+    SSH.shell(sshopts.copy(historize=true)) {sh =>
       import sh._
       val hfile = ".test_history"
       sh.execute(s"HISTFILE=~/$hfile; set -o history")
@@ -109,7 +109,7 @@ class ShellOperationsTest extends SomeHelp {
   
   // TODO : improvements to be done within shell engine
   test("shell history test") {
-    SSH.shell(sshopts) {sh =>
+    SSH.shell(sshopts.copy(historize=true)) {sh =>
       import sh._
       sh.execute("history")
       whoami                  should equal(sshopts.username)
